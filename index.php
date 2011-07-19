@@ -8,7 +8,7 @@
 </head>
 <body> 
     <div data-role="page">
-        <div data-role="header">
+        <div data-role="header" data-position='fixed'>
             <h1> Dermatopathology Atlas</h1>
         </div>
 
@@ -42,14 +42,14 @@
 		}	
 ?>
             </ul>
+
+
         </div>
+				<div data-role="footer" class="ui-bar" data-position='fixed'>
+					<a href="index.php" data-role="button" data-icon="arrow-u">Up</a>
+					<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
+				</div>
     </div>
-
-<div data-role="footer" class="ui-bar">
-	<a href="index.php" data-role="button" data-icon="arrow-u">Up</a>
-	<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
-</div>
-
 
 
 </body>
