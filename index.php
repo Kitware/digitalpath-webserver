@@ -44,5 +44,13 @@
             </ul>
         </div>
     </div>
+
+<div data-role="footer" class="ui-bar">
+	<a href="index.php" data-role="button" data-icon="arrow-u">Up</a>
+	<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
+</div>
+
+
+
 </body>
 </html>
