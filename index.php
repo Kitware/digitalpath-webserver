@@ -8,7 +8,7 @@
 </head>
 <body> 
     <div data-role="page">
-        <div data-role="header" data-position='fixed'>
+        <div data-role="header" data-position='fixed' data-fullscreen='false'>
             <h1> Dermatopathology Atlas</h1>
         </div>
 
@@ -37,15 +37,15 @@
 	foreach ($cursor as $val) 
 		{
 		$name = $val['name'];
-		#var_dump($val);
-		echo('<li><a href="./information.html">' . $name . '</a></li>');
+		var_dump($val);
+		echo('<li><a href="http://ayodhya:82/chapter.php?id=' . $val['_id'] . '">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
 
 
         </div>
-				<div data-role="footer" class="ui-bar" data-position='fixed'>
+				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
 					<a href="index.php" data-role="button" data-icon="arrow-u">Up</a>
 					<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
 				</div>
