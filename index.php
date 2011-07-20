@@ -37,8 +37,8 @@
 	foreach ($cursor as $val) 
 		{
 		$name = $val['name'];
-		var_dump($val);
-		echo('<li><a href="http://ayodhya:82/chapter.php?id=' . $val['_id'] . '">' . $name . '</a></li>');
+		#var_dump($val);
+		echo('<li><a href="/chapter.php?id=' . $val['_id'] . '">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
