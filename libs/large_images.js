@@ -1,12 +1,15 @@
 
 // Large image view related scripts 
 
-var lmap;
+var map;
 var annotations;
 
 // Need to get these definitions
-var tileSize;
-var zoomLevels;
+var tileSize = 256;
+var zoomLevels = 8;
+var baseName = 'pathdemo';
+var imageName = '939';
+
 
 function get_my_url (bounds)
   {
@@ -51,7 +54,7 @@ function get_my_url (bounds)
         xVal -= zoomPow;
         yVal -= zoomPow;
         }
-      }
+			}
     }
 	var some = "http://paraviewweb.kitware.com:82/tile.py/" + baseName + "/" + imageName + "/" + tileName+".jpg";
 	return some
@@ -64,9 +67,17 @@ function init()
   
 	var boundSize = tileSize *  Math.pow(2,zoomLevels-1); 
   //create the map  
-  lmap = new OpenLayers.Map('map',
-    {
-    // Need to set proper extent using number of zoom levels
+  map = new OpenLayers.Map( {
+			div: 'map',
+			theme : null,
+			controls: [
+					new OpenLayers.Control.Attribution(),
+					new OpenLayers.Control.TouchNavigation({
+							dragPanOptions: {
+									enableKinetic: true
+							}
+					}),
+			],
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
