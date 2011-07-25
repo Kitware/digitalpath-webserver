@@ -13,6 +13,7 @@
 		<script src="libs/OpenLayers.mobile.js"></script>
 		<script src="libs/mobile-base.js"></script>
 		<script src="libs/mobile-jq.js"></script>
+		<script src="libs/large_images.js"> </script>
 </head>
 <body> 
 
