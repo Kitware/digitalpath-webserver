@@ -1,5 +1,5 @@
 // Start with the map page
-window.location.replace(window.location.href.split("#")[0] + "#mappage");
+//window.location.replace(window.location.href.split("#")[0] + "#mappage");
 
 var selectedFeature = null;
 
