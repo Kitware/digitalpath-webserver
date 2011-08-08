@@ -130,6 +130,9 @@ else
 		{
 		echo 'Message: ' .$e->getMessage();
 		}
+
+	# Now upload the annotations into some database already opened
+
   }
 ?>
 
