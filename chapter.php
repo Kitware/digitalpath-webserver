@@ -74,7 +74,7 @@ catch (Exception $e)
 		{
 		$name = $val['name'];
 		#var_dump($val);
-		echo('<li><a rel="external"  href="http://digitalpath.kitware.com/index.php#mappage">' . $name . '</a></li>');
+		echo('<li><a rel="external" href="\image.php">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
