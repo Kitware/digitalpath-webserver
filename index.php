@@ -2,9 +2,9 @@
 <html>
     <head>
     <title>dermatopathology atlas</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
-    <script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
+		<link href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" rel="stylesheet" type="text/css" />
+		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+		<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
@@ -42,7 +42,7 @@
 									{
 									$name = $val['name'];
 									#var_dump($val);
-									echo('<li><a rel="external" href="\chapter.php?id=');
+									echo('<li><a data-ajax="false" rel="external" href="chapter.php?id=');
 									echo($val['_id']);
 									echo('">' . $name . '</a></li>');
 									}	

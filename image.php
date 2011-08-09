@@ -9,7 +9,7 @@ try
 	# If parameters not available
 	if(!isset($chapter_id))
 		{
-		$chapter_id = "4e25e244114d97093500005";
+		$chapter_id = "4e25e244114d970935000051";
 
 		}
 	
@@ -52,10 +52,12 @@ catch (Exception $e)
 
 <?php
 	# Create javascript variables for large_images.js 
-	echo("var tileSize =  256;");
-	echo("var zoomLevels = 8;");
-	echo("var baseName = 'pathdemo';");
-	echo("var imageName = '939';");
+	echo("var tileSize =  256;\n");
+	echo("var zoomLevels = 8;\n");
+	echo("var baseName = 'book';\n");
+	echo("var imageName = '");
+	echo($chapter_id);
+	echo("';\n");
 ?>
 		</script>
 	
