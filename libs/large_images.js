@@ -4,6 +4,10 @@
 var map;
 var annotations;
 
+
+//baseName = 'pathdemo';
+//imageName = '939';
+
 function get_my_url (bounds)
   {
   var res = this.map.getResolution();

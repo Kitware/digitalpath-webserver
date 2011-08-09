@@ -15,9 +15,10 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors','On'); 
 
 @$cmd = $_FILES["file"];
+@$image_id = $_POST['image_id'];
 
 if(!isset($cmd))
-	{
+{
 ?>
 
 <html>
@@ -34,10 +35,17 @@ enctype="multipart/form-data">
 </body>
 </html> 
 
-
 <?
 	exit();	
 	}
+
+
+if(!isset($image_id))
+{
+	echo("Destination image ID required for processing"); 
+	return;
+}
+
 
 if ($_FILES["file"]["error"] > 0)
   {

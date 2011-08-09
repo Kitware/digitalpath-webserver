@@ -76,7 +76,7 @@ catch (Exception $e)
 
 			<div data-role="footer">
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-				<a href="#info" id="locate" data-icon="locate" data-role="button">Info</a>
+				<a href="#imageinfo" id="locate" data-icon="locate" data-role="button">Info</a>
 				<a href="#annotations" data-icon="annotations" data-role="button">Layers</a>
 			</div>
 			
@@ -94,9 +94,9 @@ catch (Exception $e)
 			</div>
 			<div data-role="content">
 			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="image_id" value="<? echo($chapter_id); ?>">
 				<label for="file">Filename:</label>
 				<input type="file" name="file" id="file" />
-				<br />
 				<input type="submit" name="submit" value="Submit" />
 			</form>
 
@@ -107,20 +107,11 @@ catch (Exception $e)
 		</div>
 
 		<div data-role="page" id="imageinfo">
-			<div data-role="header">
-				<h1>Image Information</h1>
-			</div>
-			<div data-role="content">
-			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
-				<label for="file">Filename:</label>
-				<input type="file" name="file" id="file" />
-				<br />
-				<input type="submit" name="submit" value="Submit" />
-			</form>
-
 				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
 				   </ul>
 				-->
+				No image info to display
+				
 			</div>
 		</div>
 
