@@ -25,7 +25,7 @@
 			<div data-role="footer">
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
 				<a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>
-				<a href="#layerspage" data-icon="layers" data-role="button">Layers</a>
+				<a href="#annotations" data-icon="annotations" data-role="button">Layers</a>
 			</div>
 			
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
@@ -33,6 +33,24 @@
 					 data-iconpos="notext"></a>
 				<a href="#" data-role="button" data-icon="minus" id="minus"
 					 data-iconpos="notext"></a>
+			</div>
+		</div>
+		
+		<div data-role="page" id="annotations">
+			<div data-role="header">
+				<h1>Annotations</h1>
+			</div>
+			<div data-role="content">
+			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
+				<label for="file">Filename:</label>
+				<input type="file" name="file" id="file" />
+				<br />
+				<input type="submit" name="submit" value="Submit" />
+			</form>
+
+				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
+				   </ul>
+				-->
 			</div>
 		</div>
 </body>
