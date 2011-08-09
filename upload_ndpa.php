@@ -53,10 +53,11 @@ if ($_FILES["file"]["error"] > 0)
   }
 else
   {
-  echo "Upload: " . $_FILES["file"]["name"] . "<br />";
-  echo "Type: " . $_FILES["file"]["type"] . "<br />";
-  echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
-  echo "Stored in: " . $_FILES["file"]["tmp_name"] . ",br/>";
+
+	# echo "Upload: " . $_FILES["file"]["name"] . "<br />";
+  # echo "Type: " . $_FILES["file"]["type"] . "<br />";
+  # echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
+  # echo "Stored in: " . $_FILES["file"]["tmp_name"] . ",br/>";
 	
 	# Analyze the XML file and follow python code
 	try
@@ -128,14 +129,30 @@ else
 			$annot['points'] = $points;
 			$bookmark['annotation'] = $annot; 
 			$bookmarks[] = $bookmark;	
-			}
+			}	
+		# Ready for uplaod
+		# connect
+		$m = new Mongo('amber11:27017', array('persist' => 'path'));
+		
+		# select a collection (analogous to a relational database's table)
+		$collection = $m->selectDB("book")->selectCollection("images"); 
+
+		# Perform the query to get chapter name
+		$oid = new MongoId($image_id);
+		echo("Here .. ");
+		
+		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
+		# Have the image object now in $cursor
+		$obj = $collection->findOne(array( "_id" => $oid));
+		echo $image_id . "<br/>";	
 		echo "<pre> ";
-		print_r($bookmarks);
+		print_r($obj);
 		echo "</pre>";
 		}
 	//catch exception
 	catch(Exception $e)
 		{
+		echo 'Error !!';
 		echo 'Message: ' .$e->getMessage();
 		}
 
