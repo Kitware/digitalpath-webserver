@@ -99,6 +99,8 @@ catch (Exception $e)
 				<input type="file" name="file" id="file" />
 				<input type="submit" name="submit" value="Submit" />
 			</form>
+			
+			Note: Annotations will be overwrittern <br/>
 
 				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
 				   </ul>

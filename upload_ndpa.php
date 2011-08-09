@@ -142,22 +142,31 @@ else
 		echo("Here .. ");
 		
 		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
+		
 		# Have the image object now in $cursor
-		$obj = $collection->findOne(array( "_id" => $oid));
-		echo $image_id . "<br/>";	
-		echo "<pre> ";
-		print_r($obj);
-		echo "</pre>";
+		#$obj = $collection->findOne(array( "_id" => $oid));
+		#echo $image_id . "<br/>";	
+		#echo "<pre> ";
+		#print_r($obj);
+		#echo "</pre>";
+
+		# Output success
 		}
 	//catch exception
 	catch(Exception $e)
 		{
 		echo 'Error !!';
 		echo 'Message: ' .$e->getMessage();
+		return;
 		}
+
+		header('location:image.php');
 
 	# Now upload the annotations into some database already opened
 
   }
 ?>
+
+
+
 
