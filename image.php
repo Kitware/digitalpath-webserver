@@ -1,4 +1,44 @@
 <!doctype html>
+<?php
+
+try
+	{
+	# Process command line parameters if any
+	@$ihapter_id =  $_GET['id'];
+	
+	# If parameters not available
+	if(!isset($chapter_id))
+		{
+		$chapter_id = "4e25e244114d97093500005";
+
+		}
+	
+	# Perform database initialization and get chapter name
+	
+	# connect
+	$m = new Mongo('amber11:27017', array('persist' => 'path'));
+	
+	# select a collection (analogous to a relational database's table)
+	$collection = $m->selectDB("book")->selectCollection("chapters"); 
+
+	# Perform the query to get chapter name
+  $oid = new MongoId($chapter_id);
+	
+	$query = array( "_id" => $oid);
+	$cursor = $collection->findOne($query);
+	$chapter_title = $cursor['name'];
+
+	}
+
+# Error handling	
+catch (Exception $e) 
+	{
+	header('content-type: text/plain');
+  echo 'Caught exception: ',  $e->getMessage(), "\n";
+	return;
+	}
+?>
+
 <html>
     <head>
     <title>dermatopathology atlas</title>
@@ -8,7 +48,17 @@
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
-		
+		<script>
+
+<?php
+	# Create javascript variables for large_images.js 
+	echo("var tileSize =  256;");
+	echo("var zoomLevels = 8;");
+	echo("var baseName = 'pathdemo';");
+	echo("var imageName = '939';");
+?>
+		</script>
+	
 		
 		<script src="libs/OpenLayers.mobile.js"></script>
 		<script src="libs/TMS.js"></script>
@@ -24,7 +74,7 @@
 
 			<div data-role="footer">
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-				<a href="#" id="locate" data-icon="locate" data-role="button">Locate</a>
+				<a href="#info" id="locate" data-icon="locate" data-role="button">Info</a>
 				<a href="#annotations" data-icon="annotations" data-role="button">Layers</a>
 			</div>
 			
@@ -53,6 +103,25 @@
 				-->
 			</div>
 		</div>
+
+		<div data-role="page" id="imageinfo">
+			<div data-role="header">
+				<h1>Image Information</h1>
+			</div>
+			<div data-role="content">
+			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
+				<label for="file">Filename:</label>
+				<input type="file" name="file" id="file" />
+				<br />
+				<input type="submit" name="submit" value="Submit" />
+			</form>
+
+				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
+				   </ul>
+				-->
+			</div>
+		</div>
+
 </body>
 </html>
  

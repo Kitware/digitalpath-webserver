@@ -4,13 +4,6 @@
 var map;
 var annotations;
 
-// Need to get these definitions
-var tileSize = 256;
-var zoomLevels = 8;
-var baseName = 'pathdemo';
-var imageName = '939';
-
-
 function get_my_url (bounds)
   {
   var res = this.map.getResolution();

@@ -74,7 +74,9 @@ catch (Exception $e)
 		{
 		$name = $val['name'];
 		#var_dump($val);
-		echo('<li><a rel="external" href="\image.php">' . $name . '</a></li>');
+		echo('<li><a rel="external" href="\image.php?id=');
+		echo($val['_id']);
+		echo('">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
