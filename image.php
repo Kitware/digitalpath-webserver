@@ -76,7 +76,7 @@ catch (Exception $e)
 			<div data-role="footer">
 				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
 				<a href="#imageinfo" id="locate" data-icon="locate" data-role="button">Info</a>
-				<a href="#annotations" data-icon="annotations" data-role="button">Layers</a>
+				<a href="#annotations" data-icon="annotations" data-role="button">Annotations</a>
 			</div>
 			
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
