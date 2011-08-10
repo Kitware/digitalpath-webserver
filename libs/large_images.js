@@ -68,7 +68,7 @@ function get_annotations(layer)
 			function(data, textStatus, jqXHR)
 			{
 			// obj is the javascript object
-			alert(data.length)
+			alert(data["bookmarks"].length)
 			},
 		error: 
 			function(obj)

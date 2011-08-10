@@ -27,7 +27,8 @@ try
 	$query = array( "_id" => $oid);
 	$obj = $collection->findOne($query);
 
-	echo json_encode($obj["bookmarks"]);
+	echo json_encode(array("bookmarks" => $obj["bookmarks"], 
+				"spacing" => $obj["spacing"], "origin" => $obj["origin"]));
 	}
 
 # Error handling	
