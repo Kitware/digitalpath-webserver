@@ -1,16 +1,19 @@
 <!doctype html>
 <html>
-    <head>
-    <title>dermatopathology atlas</title>
-		<link href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" rel="stylesheet" type="text/css" />
+	<head>
+		<title>dermatopathology atlas</title>
+		<meta charset='utf-8' />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<meta name = "viewport" content = "width = device-width">
+    <link rel="apple-touch-icon" href="favicon.ico" />
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
-</head>
-<body> 
-
+	</head>
+	<body> 
 		<!-- Index pages -->
     <div data-role="page">
         <div data-role="header" data-position='fixed' data-fullscreen='false'>
@@ -54,7 +57,5 @@
 					<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
 				</div>
     </div>
-
-				
-</body>
+	</body>
 </html>
