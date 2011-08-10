@@ -2,7 +2,7 @@
 // Large image view related scripts 
 
 var map;
-var annotations;
+var anno;
 
 
 //baseName = 'pathdemo';
@@ -57,6 +57,28 @@ function get_my_url (bounds)
 	return some
   }
 
+function get_annotations(layer)
+	{
+	// Get the json full of bookmarks of current image
+	
+	$.ajax({
+		url: "bookmarks.php?id="+imageName,
+		dataType: 'json',
+		success:  
+			function(data, textStatus, jqXHR)
+			{
+			// obj is the javascript object
+			alert(data.length)
+			},
+		error: 
+			function(obj)
+			{
+			alert("Annotations could not be loaded");
+			}
+		});
+
+	}
+
 
 
 function init()
@@ -98,12 +120,15 @@ function init()
   map.addLayer(tms);
   map.zoomToMaxExtent();
 	
+		
 		  
 	// Uncomment for display Annotations 
-	//annotations = new OpenLayers.Layer.Vector("Annotations");
+	anno = new OpenLayers.Layer.Vector("Annotations");
+  map.addLayer(anno);
+
+	get_annotations(anno);
+
   //annotations.events.register("featureselected", vector_layer, displayAnnotation);
-	//annotations.transitionEffect = 'resize';
-  //map.addLayer(annotations);
   
   var zoom = this.map.getZoom();
   // Uncomment to display zoom information 
@@ -111,3 +136,7 @@ function init()
   //  "slice: (" + currentSlice + " / " + maximumSlice + "), , zoom: (" + zoom +
   //  " / " + this.map.getNumZoomLevels() + ")");
 } 
+
+
+
+
