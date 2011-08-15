@@ -81,7 +81,7 @@ function get_annotations(lay)
 					switch (annot["annotation"]["type"])
 						{
 						case "pointer":
-							alert("arrow")
+							//alert("arrow")
 						default : 
 							var pointList = []
 		
