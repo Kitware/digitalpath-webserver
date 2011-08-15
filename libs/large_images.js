@@ -84,7 +84,9 @@ function get_annotations(lay)
 						case "pointer":
 							//create pointlist for the arrow
 							// Blue style
+							var lineList = [];
 							var pointList = [];	
+							var ratio = 0.5;
 						
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
 							local_style.strokeColor = annot["annotation"]["color"];
@@ -98,8 +100,45 @@ function get_annotations(lay)
 								
 								pointList.push(new OpenLayers.Geometry.Point(x,y));
 								}
+							// Add two more line segments
+							lineList.push(new OpenLayers.Geometry.LineString(pointList));
+
+							// find out length and angle
+							var dx = pointList[1].x - pointList[0].x;
+							var dy = pointList[1].y - pointList[0].y;
+	
+							var length = Math.sqrt(dx*dx + dy*dy);
+							var awithx = Math.acos(dx / length);
+						
+							alert( awithx * 180.0 / Math.PI);
+
+							// find one line 
+							var line1_points = [];
+							line1_points.push(pointList[0]);
+
+							var ang = awithx + Math.PI / 4.0;
+							line1_points.push(new OpenLayers.Geometry.Point(
+								pointList[0].x + length * ratio * Math.cos(ang),
+								pointList[0].y + length  * ratio * Math.sin(ang)));
+
 							
-							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList), null, local_style );
+							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
+	
+							// find one line 
+							var line2_points = [];
+							line2_points.push(pointList[0]);
+
+							var ang = awithx - Math.PI / 4.0;
+							line2_points.push(new OpenLayers.Geometry.Point(
+								pointList[0].x + length * ratio * Math.cos(ang),
+								pointList[0].y + length  * ratio * Math.sin(ang)));
+
+							lineList.push(new OpenLayers.Geometry.LineString(line2_points));
+						
+							local_style.strokeColor = annot["annotation"]["color"];
+							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
+	
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.MultiLineString(lineList),attrib, local_style );
 							lay.addFeatures(feature);
 	
 							break;
