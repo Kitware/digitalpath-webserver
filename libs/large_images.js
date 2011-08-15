@@ -71,25 +71,34 @@ function get_annotations(lay)
 			// obj is the javascript object
 			spacing = data["spacing"];
 			origin = data["origin"];
+
+
 			try 	
 				{
 				for (var i = 0; i < data["bookmarks"].length ; i ++)
 					{		
 					var annot = data["bookmarks"][i];
-
-					for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
+					switch (annot["annotation"]["type"])
 						{
-						var p = annot["annotation"]["points"][j];
+						case "arrow":
+							alert("arrow")
+						default : 
+							var pointList = []
+		
+							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
+								{
+								var p = annot["annotation"]["points"][j];
 
-						var x = (p[0]-origin[0]) / spacing[0];
-						var y = (p[1]-origin[1]) / spacing[1] * -1;
-						
-						//alert([x,y]);
-						var point = new OpenLayers.Geometry.Point(x,y);
-						var feature = new OpenLayers.Feature.Vector(point);
-						lay.addFeatures(feature);
-						}
-					}
+								var x = (p[0]-origin[0]) / spacing[0];
+								var y = (p[1]-origin[1]) / spacing[1] * -1;
+								
+								pointList.push(new OpenLayers.Geometry.Point(x,y));
+								}
+
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList));
+							lay.addFeatures(feature);
+						} // End switch
+					}	
 				}
 			catch(err)
 				{
@@ -146,8 +155,26 @@ function init()
   map.zoomToMaxExtent();
 		
 		  
+	
+  // we want opaque external graphics and non-opaque internal graphics
+	var layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+	layer_style.fillOpacity = 0
+	layer_style.graphicOpacity = 1;
+
+	// Blue style
+	var style_blue = OpenLayers.Util.extend({}, layer_style);
+	style_blue.strokeColor = "blue";
+	style_blue.fillColor = "blue";
+	style_blue.graphicName = "star";
+	style_blue.pointRadius = 10;
+	style_blue.strokeWidth = 3;
+	style_blue.rotation = 45;
+	style_blue.strokeLinecap = "butt";
+
 	// Uncomment for display Annotations 
-	anno = new OpenLayers.Layer.Vector("Annotations");
+	anno = new OpenLayers.Layer.Vector("Annotations", {style: layer_style});
+	//anno = new OpenLayers.Layer.Vector("Annotations");
+  
 	map.addLayer(anno);
 	
 	get_annotations(anno);
