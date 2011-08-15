@@ -5,7 +5,7 @@ var map;
 var anno;
 var origin;
 var spacing;
-
+var vector_styles;
 
 //baseName = 'pathdemo';
 //imageName = '939';
@@ -80,7 +80,7 @@ function get_annotations(lay)
 					var annot = data["bookmarks"][i];
 					switch (annot["annotation"]["type"])
 						{
-						case "arrow":
+						case "pointer":
 							alert("arrow")
 						default : 
 							var pointList = []
@@ -95,7 +95,11 @@ function get_annotations(lay)
 								pointList.push(new OpenLayers.Geometry.Point(x,y));
 								}
 
-							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList));
+							// Blue style
+							var local_style = OpenLayers.Util.extend({}, vector_styles);
+							local_style.strokeColor = annot["annotation"]["color"];
+							
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList), null, local_style );
 							lay.addFeatures(feature);
 						} // End switch
 					}	
@@ -157,24 +161,15 @@ function init()
 		  
 	
   // we want opaque external graphics and non-opaque internal graphics
-	var layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-	layer_style.fillOpacity = 0
-	layer_style.graphicOpacity = 1;
-	layer_style.strokeColor = "blue";
-	layer_style.strokeWidth = 3;
+	vector_styles = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+	vector_styles.fillOpacity = 0
+	vector_styles.graphicOpacity = 1;
+	vector_styles.strokeColor = "blue";
+	vector_styles.strokeWidth = 3;
 
-	// Blue style
-	var style_blue = OpenLayers.Util.extend({}, layer_style);
-	style_blue.strokeColor = "blue";
-	style_blue.fillColor = "blue";
-	style_blue.graphicName = "star";
-	style_blue.pointRadius = 10;
-	style_blue.strokeWidth = 3;
-	style_blue.rotation = 45;
-	style_blue.strokeLinecap = "butt";
 
 	// Uncomment for display Annotations 
-	anno = new OpenLayers.Layer.Vector("Annotations", {style: layer_style});
+	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles});
 	//anno = new OpenLayers.Layer.Vector("Annotations");
   
 	map.addLayer(anno);
