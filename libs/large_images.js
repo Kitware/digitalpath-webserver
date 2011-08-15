@@ -6,6 +6,7 @@ var anno;
 var origin;
 var spacing;
 var vector_styles;
+var selControl;
 
 //baseName = 'pathdemo';
 //imageName = '939';
@@ -81,9 +82,30 @@ function get_annotations(lay)
 					switch (annot["annotation"]["type"])
 						{
 						case "pointer":
-							//alert("arrow")
+							//create pointlist for the arrow
+							// Blue style
+							var pointList = [];	
+						
+							var local_style = OpenLayers.Util.extend({}, vector_styles);
+							local_style.strokeColor = annot["annotation"]["color"];
+							
+							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
+								{
+								var p = annot["annotation"]["points"][j];
+
+								var x = (p[0]-origin[0]) / spacing[0];
+								var y = (p[1]-origin[1]) / spacing[1] * -1;
+								
+								pointList.push(new OpenLayers.Geometry.Point(x,y));
+								}
+							
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList), null, local_style );
+							lay.addFeatures(feature);
+	
+							break;
+
 						default : 
-							var pointList = []
+							var pointList = [];
 		
 							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
 								{
@@ -94,12 +116,15 @@ function get_annotations(lay)
 								
 								pointList.push(new OpenLayers.Geometry.Point(x,y));
 								}
-
+						
+							pointList.push(pointList[0]);
 							// Blue style
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
 							local_style.strokeColor = annot["annotation"]["color"];
+							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
+ 
 							
-							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LinearRing(pointList), null, local_style );
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList), attrib, local_style );
 							lay.addFeatures(feature);
 						} // End switch
 					}	
@@ -117,8 +142,14 @@ function get_annotations(lay)
 
 	}
 
+function displayAnnotation(evt)
+  {
+	// alert("Hello");
+  alert(evt.feature.attributes.title + ",\n Details: " + evt.feature.attributes.text);
+  // selControl.unselect(evt.feature);
+  }
 
-
+	
 function init()
   {
   
@@ -131,7 +162,7 @@ function init()
 					new OpenLayers.Control.Attribution(),
 					new OpenLayers.Control.TouchNavigation({
 							dragPanOptions: {
-									enableKinetic: true
+									enableKinetic: false
 							}
 					}),
 			],
@@ -157,29 +188,35 @@ function init()
 
   map.addLayer(tms);
   map.zoomToMaxExtent();
-		
 		  
 	
   // we want opaque external graphics and non-opaque internal graphics
 	vector_styles = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-	vector_styles.fillOpacity = 0
-	vector_styles.graphicOpacity = 1;
+	vector_styles.fillOpacity = 0.2
 	vector_styles.strokeColor = "blue";
 	vector_styles.strokeWidth = 3;
 
-
+	
 	// Uncomment for display Annotations 
 	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles});
-	//anno = new OpenLayers.Layer.Vector("Annotations");
-  
+	
+	anno.events.register("featureselected", anno, displayAnnotation);
+	
 	map.addLayer(anno);
 	
 	get_annotations(anno);
   
 	map.addLayer(anno);
+	selControl = new OpenLayers.Control.SelectFeature(
+		anno,
+		{
+		multiple: false, hover: false,
+		});
+ 
 
-  //annotations.events.register("featureselected", vector_layer, displayAnnotation);
-  
+	map.addControl(selControl);
+	selControl.activate();
+
   var zoom = this.map.getZoom();
   // Uncomment to display zoom information 
 	//$(".slider_info").text(
