@@ -160,6 +160,8 @@ function init()
 	var layer_style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
 	layer_style.fillOpacity = 0
 	layer_style.graphicOpacity = 1;
+	layer_style.strokeColor = "blue";
+	layer_style.strokeWidth = 3;
 
 	// Blue style
 	var style_blue = OpenLayers.Util.extend({}, layer_style);
