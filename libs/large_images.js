@@ -73,7 +73,6 @@ function get_annotations(lay)
 			spacing = data["spacing"];
 			origin = data["origin"];
 
-
 			try 	
 				{
 				for (var i = 0; i < data["bookmarks"].length ; i ++)
@@ -87,52 +86,51 @@ function get_annotations(lay)
 							var lineList = [];
 							var pointList = [];	
 							var ratio = 0.5;
-						
+							var orig_pointlist = [];
+
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
 							local_style.strokeColor = annot["annotation"]["color"];
-							
+								
 							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
 								{
 								var p = annot["annotation"]["points"][j];
 
 								var x = (p[0]-origin[0]) / spacing[0];
-								var y = (p[1]-origin[1]) / spacing[1] * -1;
-								
+								var y = (p[1]-origin[1]) / spacing[1];
+								orig_pointlist.push(new OpenLayers.Geometry.Point(x, -1 * y));
 								pointList.push(new OpenLayers.Geometry.Point(x,y));
 								}
 							// Add two more line segments
-							lineList.push(new OpenLayers.Geometry.LineString(pointList));
-
+							lineList.push(new OpenLayers.Geometry.LineString(orig_pointlist));
 							// find out length and angle
 							var dx = pointList[1].x - pointList[0].x;
 							var dy = pointList[1].y - pointList[0].y;
-	
+				
 							var length = Math.sqrt(dx*dx + dy*dy);
-							var awithx = Math.acos(dx / length);
-						
-							alert( awithx * 180.0 / Math.PI);
-
+							var awithx = Math.asin(dy / length);
+	
+							//awithx = Math.abs(awithx);
 							// find one line 
 							var line1_points = [];
-							line1_points.push(pointList[0]);
+							line1_points.push(orig_pointlist[0]);
 
-							var ang = awithx + Math.PI / 4.0;
+							var ang1 = awithx +  (Math.PI / 4.0);
 							line1_points.push(new OpenLayers.Geometry.Point(
-								pointList[0].x + length * ratio * Math.cos(ang),
-								pointList[0].y + length  * ratio * Math.sin(ang)));
-
+								pointList[0].x + length * ratio * Math.cos(ang1),
+								-1 * (pointList[0].y + length  * ratio * Math.sin(ang1))));
 							
-							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
 	
 							// find one line 
 							var line2_points = [];
-							line2_points.push(pointList[0]);
+							line2_points.push(orig_pointlist[0]);
 
-							var ang = awithx - Math.PI / 4.0;
+							var ang2 = awithx - (Math.PI / 4.0);
 							line2_points.push(new OpenLayers.Geometry.Point(
-								pointList[0].x + length * ratio * Math.cos(ang),
-								pointList[0].y + length  * ratio * Math.sin(ang)));
+								pointList[0].x + length * ratio * Math.cos(ang2),
+								-1 * (pointList[0].y + length  * ratio * Math.sin(ang2))));
 
+							
+							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
 							lineList.push(new OpenLayers.Geometry.LineString(line2_points));
 						
 							local_style.strokeColor = annot["annotation"]["color"];
@@ -170,6 +168,7 @@ function get_annotations(lay)
 				}
 			catch(err)
 				{
+				alert("error");
 				}
 			},
 		error: 
