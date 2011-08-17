@@ -1,4 +1,8 @@
 <?php
+# Report all PHP errors (see changelog)
+error_reporting(E_ALL ^ E_NOTICE);
+#ini_set('display_errors','On'); 
+
 if (!isset ($_cookie[ini_get('session.name')])) {
   session_start();
 }

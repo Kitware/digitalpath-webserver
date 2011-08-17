@@ -11,9 +11,6 @@
 # was not successfully returned
 
 # Report all PHP errors (see changelog)
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors','On'); 
-
 require_once("config.php"); 
 
 @$cmd = $_FILES["file"];
