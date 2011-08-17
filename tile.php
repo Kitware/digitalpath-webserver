@@ -1,13 +1,13 @@
 <?php
 # vim:tabstop=2:softtabstop=2:shiftwidth=2:noexpandtab
-
+require_once("config.php"); 
+//var_dump($_SESSION['book']);
 # Process the command line parameters
 @$col_name =  $_GET['image'];
 @$fname =     $_GET['name'];
-
-header('content-type: image/jpeg');
-
+//header('content-type: image/jpeg');
 # Return grey image as there is error or parameters not set
+header('content-type: image/jpeg');
 function grey_out()
 	{
 	#header('content-type: image/jpeg');
@@ -21,10 +21,6 @@ if(!isset($col_name) || !isset($fname))
 	grey_out();
 	return;
   }
-
-# Perform database initialization and get chapter name
-require_once("config.php"); 
-
 try
 	{
 	# Connect
@@ -46,4 +42,3 @@ try
 	grey_out();
 	}
 ?>
-

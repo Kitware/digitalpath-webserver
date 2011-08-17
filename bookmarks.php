@@ -27,11 +27,17 @@ try
 	
 	$query = array( "_id" => $oid);
 	$obj = $collection->findOne($query);
-
-	echo json_encode(array("bookmarks" => $obj["bookmarks"], 
-				"spacing" => $obj["spacing"], "origin" => $obj["origin"]));
+	
+	if($obj != null)
+		{
+		echo json_encode(array("bookmarks" => $obj["bookmarks"], 
+					"spacing" => $obj["spacing"], "origin" => $obj["origin"]));
+		}
+	else
+		{
+		echo json_encode(array());
+		} 
 	}
-
 # Error handling	
 catch (Exception $e) 
 	{

@@ -4,6 +4,7 @@
 try
 	{
 	# Process command line parameters if any
+	session_start();
 	@$image_id =  $_GET['id'];
 	
 	# If parameters not available
@@ -29,7 +30,7 @@ try
 
 	$cursor = $collection->findOne($query, $exclude);
 	#TODO: Error handling while getting level
-	$level = $cursor['level'];
+	$level = $cursor['level']+1;
 	}
 
 # Error handling	
@@ -96,7 +97,7 @@ catch (Exception $e)
 			</div>
 			<div data-role="content">
 			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="image_id" value="<? echo($chapter_id); ?>">
+				<input type="hidden" name="image_id" value="<? echo($image_id); ?>">
 				<label for="file">Filename:</label>
 				<input type="file" name="file" id="file" />
 				<input type="submit" name="submit" value="Submit" />

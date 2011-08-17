@@ -14,6 +14,8 @@
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors','On'); 
 
+require_once("config.php"); 
+
 @$cmd = $_FILES["file"];
 @$image_id = $_POST['image_id'];
 
@@ -132,7 +134,6 @@ else
 			}	
 		# Ready for uplaod
 		# Perform database initialization and get chapter name
-		require_once("config.php"); 
 
 		# connect
 		$m = new Mongo($server, array('persist' => 'path'));
@@ -142,7 +143,6 @@ else
 
 		# Perform the query to get chapter name
 		$oid = new MongoId($image_id);
-		echo("Here .. ");
 		
 		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
 		
@@ -163,7 +163,9 @@ else
 		return;
 		}
 
-		header('location:image.php');
+		#$headstring = 'location:image.php&id='. $image_id;
+		#header($headstring);
+		echo $image_id;
 
 	# Now upload the annotations into some database already opened
 

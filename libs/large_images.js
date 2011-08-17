@@ -175,7 +175,7 @@ function get_annotations(lay)
 		error: 
 			function(obj)
 			{
-			alert("Annotations could not be loaded");
+			//alert("Annotations could not be loaded");
 			}
 		});
 
