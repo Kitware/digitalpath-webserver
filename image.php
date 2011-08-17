@@ -20,11 +20,14 @@ try
 	# connect
 	$m = new Mongo($server, array('persist' => 'path'));
 	
-	# Perform the query to get chapter name
+	# Perform the query to get image name, and number of levels
+	$coll = $m->selectDB($database)->selectCollection("images"); 
   $oid = new MongoId($image_id);
-	
+	$query1 = array( "_id" => $oid);
+	$obj = $coll->findOne($query1);
+	$image_title = $obj['name'];
+
 	$collection = $m->selectDB($database)->selectCollection($image_id); 
-		
 	$query = array( "name" => "t.jpg");
 	$exclude = array( "file" => 0);
 
@@ -73,6 +76,10 @@ catch (Exception $e)
 <body> 
 		<!-- The large image page -->
 		<div data-role="page" id="mappage">
+			<div data-role="header">
+				<h1><?php echo($image_title); ?></h1>
+			</div>
+
 			<div data-role="content">
 				<div id="map"></div>
 			</div>

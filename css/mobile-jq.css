@@ -7,6 +7,10 @@ body {
 .ui-content {
     padding: 0;
 }
+.ui-header {
+    text-align: center;
+    padding: 5px 0;
+}
 .ui-footer {
     text-align: center;
     padding: 5px 0;

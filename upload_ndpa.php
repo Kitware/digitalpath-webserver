@@ -160,9 +160,9 @@ else
 		return;
 		}
 
-		#$headstring = 'location:image.php&id='. $image_id;
-		#header($headstring);
-		echo $image_id;
+		$headstring = 'location: image.php?id='. $image_id;
+		header($headstring);
+		#echo("<a href = \"image.php&id=" . $image_id . "\">");
 
 	# Now upload the annotations into some database already opened
 
