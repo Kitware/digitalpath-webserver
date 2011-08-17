@@ -168,7 +168,8 @@ function get_annotations(lay)
 				}
 			catch(err)
 				{
-				alert("error");
+				//TODO: give some indication on annotations 
+				//alert("error");
 				}
 			},
 		error: 
