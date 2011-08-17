@@ -16,8 +16,11 @@ try
 	
 	# Perform database initialization and get chapter name
 	
+	# Perform database initialization and get chapter name
+	require_once("config.php"); 
+
 	# connect
-	$m = new Mongo('amber11:27017', array('persist' => 'path'));
+	$m = new Mongo($server, array('persist' => 'path'));
 	
 	# select a collection (analogous to a relational database's table)
 	$collection = $m->selectDB("book")->selectCollection("chapters"); 

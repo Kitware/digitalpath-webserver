@@ -33,9 +33,10 @@
 								# Loop through the pages and load them
 								
 								#echo('<li><a href="./information.html">Information</a></li>');
+								require_once("config.php"); 
 
 								# connect
-								$m = new Mongo('amber11:27017', array('persist' => 'path'));
+								$m = new Mongo($server, array('persist' => 'path'));
 
 								# select a collection (analogous to a relational database's table)
 								$collection = $m->selectDB("book")->selectCollection("chapters"); 
