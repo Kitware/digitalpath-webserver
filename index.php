@@ -39,7 +39,7 @@
 								$m = new Mongo($server, array('persist' => 'path'));
 
 								# select a collection (analogous to a relational database's table)
-								$collection = $m->selectDB("book")->selectCollection("chapters"); 
+								$collection = $m->selectDB($database)->selectCollection("chapters"); 
 								
 								# find everything in the collection
 								$cursor = $collection->find();

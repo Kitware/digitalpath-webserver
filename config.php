@@ -1,7 +1,7 @@
 <?
 
 # define some variables
-$server = "ayodhya:27017";
-
+$server = "amber11:27017";
+$database = "book";
 
 ?>

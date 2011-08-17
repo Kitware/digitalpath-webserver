@@ -23,7 +23,7 @@ try
 	$m = new Mongo($server, array('persist' => 'path'));
 	
 	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB("book")->selectCollection("chapters"); 
+	$collection = $m->selectDB($database)->selectCollection("chapters"); 
 
 	# Perform the query to get chapter name
   $oid = new MongoId($chapter_id);
@@ -73,7 +73,7 @@ catch (Exception $e)
 	# Loop through the pages and load them
 	
 	# select a collection (analogous to a relational database's table)
-	$col_images = $m->selectDB("book")->selectCollection("images");
+	$col_images = $m->selectDB($database)->selectCollection("images");
 
 	$query = array( "title" => $oid);
 	# find everything in the collection

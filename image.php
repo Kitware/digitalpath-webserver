@@ -20,7 +20,7 @@ try
 	$m = new Mongo($server, array('persist' => 'path'));
 	
 	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB("book")->selectCollection("chapters"); 
+	$collection = $m->selectDB($database)->selectCollection("chapters"); 
 
 	# Perform the query to get chapter name
   $oid = new MongoId($chapter_id);

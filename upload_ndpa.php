@@ -138,7 +138,7 @@ else
 		$m = new Mongo($server, array('persist' => 'path'));
 		
 		# select a collection (analogous to a relational database's table)
-		$collection = $m->selectDB("book")->selectCollection("images"); 
+		$collection = $m->selectDB($database)->selectCollection("images"); 
 
 		# Perform the query to get chapter name
 		$oid = new MongoId($image_id);
