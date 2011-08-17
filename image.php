@@ -76,9 +76,9 @@ catch (Exception $e)
 <body> 
 		<!-- The large image page -->
 		<div data-role="page" id="mappage">
-			<div data-role="header">
+			<!-- <div data-role="header">
 				<h1><?php echo($image_title); ?></h1>
-			</div>
+			</div> -->
 
 			<div data-role="content">
 				<div id="map"></div>
