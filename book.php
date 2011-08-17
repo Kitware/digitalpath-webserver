@@ -55,8 +55,8 @@
             </ul>
         </div>
 				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-					<a href="index.php" data-role="button" data-icon="arrow-u">Up</a>
-					<a href="index.php" data-role="button" data-icon="arrow-d">Down</a>
+					<a href="" data-role="button" data-icon="arrow-u">Up</a>
+					<a href="" data-role="button" data-icon="arrow-d">Down</a>
 				</div>
     </div>
 	</body>
