@@ -4,12 +4,12 @@
 try
 	{
 	# Process command line parameters if any
-	@$ihapter_id =  $_GET['id'];
+	@$image_id =  $_GET['id'];
 	
 	# If parameters not available
-	if(!isset($chapter_id))
+	if(!isset($image_id))
 		{
-		$chapter_id = "4e25e244114d970935000051";
+		$image_id = "4e25e244114d970935000051";
 
 		}
 	
@@ -19,16 +19,17 @@ try
 	# connect
 	$m = new Mongo($server, array('persist' => 'path'));
 	
-	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB($database)->selectCollection("chapters"); 
-
 	# Perform the query to get chapter name
-  $oid = new MongoId($chapter_id);
+  $oid = new MongoId($image_id);
 	
-	$query = array( "_id" => $oid);
-	$cursor = $collection->findOne($query);
-	$chapter_title = $cursor['name'];
+	$collection = $m->selectDB($database)->selectCollection($image_id); 
+		
+	$query = array( "name" => "t.jpg");
+	$exclude = array( "file" => 0);
 
+	$cursor = $collection->findOne($query, $exclude);
+	#TODO: Error handling while getting level
+	$level = $cursor['level'];
 	}
 
 # Error handling	
@@ -54,10 +55,11 @@ catch (Exception $e)
 <?php
 	# Create javascript variables for large_images.js 
 	echo("var tileSize =  256;\n");
-	echo("var zoomLevels = 8;\n");
-	echo("var baseName = 'book';\n");
+	echo("var baseUrl = '" . $base_url . "';\n");
+	echo("var zoomLevels = ". $level .";\n");
+	echo("var baseName = '" . $database . "';\n");
 	echo("var imageName = '");
-	echo($chapter_id);
+	echo($image_id);
 	echo("';\n");
 ?>
 		</script>

@@ -56,7 +56,7 @@ function get_my_url (bounds)
         }
 			}
     }
-	var some = "http://paraviewweb.kitware.com:82/tile.py/" + baseName + "/" + imageName + "/" + tileName+".jpg";
+	var some =  baseUrl + "?image=" + imageName + "&name=" + tileName+".jpg";
 	return some
   }
 
