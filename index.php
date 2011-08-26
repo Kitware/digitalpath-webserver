@@ -11,14 +11,14 @@
 			if($book == "wustl" && $pass == "MI")
 				{
 				session_start();
-        $_SESSION['book'] = 'paulbook'; 
+        $_SESSION['book'] = 'paul2'; 
 				header("location:book.php");
 				}
 			
 			if($book == "hms" && $pass == "MA")
 				{
 				session_start();
-        $_SESSION['book'] = 'book'; 
+        $_SESSION['book'] = 'bev2'; 
 				header("location:book.php");
 				}
 			}

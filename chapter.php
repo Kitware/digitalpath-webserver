@@ -98,5 +98,48 @@ catch (Exception $e)
     </div>
 
 
+    <div id="chapterinfo" data-role="page">
+        
+				<div data-role="header" data-position='fixed' data-fullscreen='false'>
+            <h1> iAdmi<?php echo($chapter_title) ?> </h1>
+        </div>
+
+
+        <div data-role="content">
+            <div id="banner">
+							<h2> List of images in a chapter </h2>
+            </div>
+            <p> This text can be replaced by some generic information about the chapter. </p>
+            
+						<ul data-role="listview" data-ajax="false">
+<?php
+	# Loop through the pages and load them
+	
+	# select a collection (analogous to a relational database's table)
+	$col_images = $m->selectDB($database)->selectCollection("images");
+
+	$query = array( "title" => $oid);
+	# find everything in the collection
+	$cursor = $col_images->find($query);
+	foreach ($cursor as $val) 
+		{
+		$name = $val['name'];
+		#var_dump($val);
+		echo('<li><a rel="external" href="/image.php?id=');
+		echo($val['_id']);
+		echo('">' . $name . '</a></li>');
+		}	
+?>
+            </ul>
+
+
+        </div>
+				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
+					<a href="book.php" data-role="button" data-icon="arrow-u">Up</a>
+					<a href="book.php" data-role="button" data-icon="arrow-d">Down</a>
+				</div>
+    </div>
+
+
 </body>
 </html>
