@@ -86,7 +86,7 @@ catch (Exception $e)
 
 		</script>
 	
-		<script src="http://openlayers.org/dev/OpenLayers.mobile.js"> </script>
+		<script src="libs/OpenLayers.mobile.js"> </script>
 		<script src="libs/TMS.js"></script>
 		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/large_images.js"> </script>
