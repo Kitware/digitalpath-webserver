@@ -27,7 +27,7 @@
 			if($pass == "MA" || $pass == 'MAmanage')
 				{
 				session_start();
-				$_SESSION['book'] = 'bev2';
+				$_SESSION['book'] = 'bev1';
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MAmanage')
 					{

@@ -43,9 +43,18 @@
 								
 								# find everything in the collection
 								$cursor = $collection->find();
+								
 								foreach ($cursor as $val) 
 									{
-									$name = $val['name'];
+									if (array_key_exists('label', $val))
+										{
+										echo('Have it <br/>');
+										$name = $val['label'];
+										}
+									else
+										{
+										$name = $val['name'];	
+										}
 									#var_dump($val);
 									echo('<li><a data-ajax="false" rel="external" href="chapter.php?id=');
 									echo($val['_id']);

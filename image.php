@@ -65,7 +65,6 @@ catch (Exception $e)
 	echo("var imageName = '");
 	echo($image_id);
 	echo("';\n");
-	echo("var displayAnnotations = false;\n");
 ?>
 
 		$("input[name='checkbox-1']").live(
@@ -149,7 +148,33 @@ catch (Exception $e)
 				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
 				   </ul>
 				-->
-				No image info to display
+			<div data-role="header">
+				<h1>Settings</h1>
+			</div>
+			<div data-role="content">
+				<?php
+					if($_SESSION['auth'] == 'admin')
+						{
+				?>		
+			
+				<form rel="external" action="../rename.php" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="image_id" value="<? echo($image_id); ?>">
+					<input id="image_label" name="image_label" type="text" value = "<?echo($image_title);?>"/>  
+					<input type="submit" name="submit" value="Rename" />
+				</form>
+
+
+				<?php
+						}
+						else
+						{
+				?>		
+				
+				No settings are available for students currently
+				
+				<?php
+						}
+				?>		
 				
 			</div>
 		</div>

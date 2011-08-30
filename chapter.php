@@ -80,8 +80,15 @@ catch (Exception $e)
 	$cursor = $col_images->find($query);
 	foreach ($cursor as $val) 
 		{
-		$name = $val['name'];
-		#var_dump($val);
+		if (array_key_exists('label', $val))
+			{
+			#echo('Have it <br/>');
+			$name = $val['label'];
+			}
+		else
+			{
+			$name = $val['name'];	
+			}
 		echo('<li><a rel="external" href="/image.php?id=');
 		echo($val['_id']);
 		echo('">' . $name . '</a></li>');

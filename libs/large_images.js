@@ -240,12 +240,10 @@ function init()
 	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles});
 	
 	anno.events.register("featureselected", anno, displayAnnotation);
-	
-	map.addLayer(anno);
-	
 	get_annotations(anno);
-  
 	map.addLayer(anno);
+	anno.setVisibility(false);
+	
 	selControl = new OpenLayers.Control.SelectFeature(
 		anno,
 		{
