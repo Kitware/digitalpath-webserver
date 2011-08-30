@@ -65,7 +65,25 @@ catch (Exception $e)
 	echo("var imageName = '");
 	echo($image_id);
 	echo("';\n");
+	echo("var displayAnnotations = false;\n");
 ?>
+
+		$("input[name='checkbox-1']").live(
+			{
+			click: function(event, ui) 
+				{
+				alert('Toggling annotations');
+				}
+			});
+
+//		$('#checkbox-1').live({
+//			change: function(e) 
+//				{
+//				alert('Toggling annotations');
+//				e.stopPropagation();
+//				}
+//			});
+
 		</script>
 	
 		<script src="http://openlayers.org/dev/OpenLayers.mobile.js"> </script>
@@ -103,7 +121,15 @@ catch (Exception $e)
 				<h1>Annotations</h1>
 			</div>
 			<div data-role="content">
-
+				
+				<div id='display-annotations' data-role="fieldcontain">
+					<fieldset data-role="controlgroup">
+						<input type="checkbox" name="checkbox-1" id="checkbox-1" class="custom" />
+						<label for="checkbox-1">Display Annotations</label>
+						</fieldset>
+				</div>
+	
+		<!-- Display the annotation loader only if the user is admin -->
 		<?php
 			if($_SESSION['auth'] == 'admin')
 				{
