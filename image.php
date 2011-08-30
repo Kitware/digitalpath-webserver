@@ -72,17 +72,10 @@ catch (Exception $e)
 			{
 			click: function(event, ui) 
 				{
-				alert('Toggling annotations');
+				var checked = $('input[name="checkbox-1"]:checked').val() != undefined;
+				anno.setVisibility(checked);
 				}
 			});
-
-//		$('#checkbox-1').live({
-//			change: function(e) 
-//				{
-//				alert('Toggling annotations');
-//				e.stopPropagation();
-//				}
-//			});
 
 		</script>
 	
