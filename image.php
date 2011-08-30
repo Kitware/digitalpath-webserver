@@ -103,14 +103,22 @@ catch (Exception $e)
 				<h1>Annotations</h1>
 			</div>
 			<div data-role="content">
+
+		<?php
+			if($_SESSION['auth'] == 'admin')
+				{
+		?>		
 			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="image_id" value="<? echo($image_id); ?>">
 				<label for="file">Filename:</label>
 				<input type="file" name="file" id="file" />
 				<input type="submit" name="submit" value="Submit" />
 			</form>
-			
 			Note: Annotations will be overwrittern <br/>
+		<?php
+				}
+		?>		
+			
 
 				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
 				   </ul>

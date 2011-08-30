@@ -1,27 +1,42 @@
 <!doctype html>
 
 <?php
-
-		@$book = $_GET['book'];
-		@$pass = $_GET['pass'];
+	@$book = $_GET['book'];
+	@$pass = $_GET['pass'];
+	
+	if(isset($book) && isset($pass)) 
+		{
 		
-		if(isset($book) && isset($pass)) 
+		if($book == "wustl" )
 			{
-
-			if($book == "wustl" && $pass == "MI")
+			if($pass == "MI" || $pass == 'MImanage')
 				{
 				session_start();
-        $_SESSION['book'] = 'paul2'; 
-				header("location:book.php");
-				}
-			
-			if($book == "hms" && $pass == "MA")
-				{
-				session_start();
-        $_SESSION['book'] = 'bev2'; 
+				$_SESSION['book'] = 'paul2';
+				$_SESSION['auth'] = 'student';
+				if($pass == 'MImanage')
+					{
+					$_SESSION['auth'] = 'admin';
+					}
 				header("location:book.php");
 				}
 			}
+		
+		if($book == "hms")
+			{
+			if($pass == "MA" || $pass == 'MAmanage')
+				{
+				session_start();
+				$_SESSION['book'] = 'bev2';
+				$_SESSION['auth'] = 'student';
+				if($pass == 'MAmanage')
+					{
+					$_SESSION['auth'] = 'admin';
+					}
+				header("location:book.php");
+				}
+			}
+		}
 ?>
 
 
