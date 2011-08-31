@@ -18,14 +18,13 @@
 		<!-- Index pages -->
     <div data-role="page">
         <div data-role="header" data-position='fixed' data-fullscreen='false'>
-            <h1> Dermatopathology Atlas</h1>
+            <h1> Slide Atlas</h1>
         </div>
         
 				<div data-role="content">
             <div id="banner">
-							<h2> Chapter Index </h2>
+							<h2> Session Index </h2>
             </div>
-            <p> Web solution for dermatopathology atlas, hosts large pathoklogy images with tags. annotations and search capabilities </p>
             <p> This website is supported on multiple devices including iPad, iPhone and latest desktop browsers </p>
             
 						<ul data-role="listview" data-inset="true">

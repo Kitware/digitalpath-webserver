@@ -9,12 +9,12 @@
 		
 		if($book == "wustl" )
 			{
-			if($pass == "MI" || $pass == 'MImanage')
+			if($pass == "showme" || $pass == 'MOmanage')
 				{
 				session_start();
 				$_SESSION['book'] = 'paul2';
 				$_SESSION['auth'] = 'student';
-				if($pass == 'MImanage')
+				if($pass == 'MOmanage')
 					{
 					$_SESSION['auth'] = 'admin';
 					}
@@ -24,7 +24,7 @@
 		
 		if($book == "hms")
 			{
-			if($pass == "MA" || $pass == 'MAmanage')
+			if($pass == "letmein" || $pass == 'MAmanage')
 				{
 				session_start();
 				$_SESSION['book'] = 'bev';
@@ -42,7 +42,7 @@
 
 <html>
 	<head>
-		<title>dermatopathology atlas</title>
+		<title>Slide Atlas </title>
 		<meta charset='utf-8' />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -59,15 +59,11 @@
 		<!-- Index pages -->
     <div data-role="page">
         <div data-role="header" data-position='fixed' data-fullscreen='false'>
-            <h1> Dermatopathology Atlas</h1>
+            <h1> Slide Atlas </h1>
         </div>
         
 				<div data-role="content">
-            <div id="banner">
-							<h2> Digital Pathology Atlas </h2>
-            </div>
-            <p> Web solution for digital pathology atlas, hosts large images with tags, annotations and search capabilities </p>
-            <p> This website is supported on multiple devices including iPad, iPhone and latest desktop browsers </p>
+            <p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
 	
 		<form action="index.php" data-ajax="false" method="get"> 
 
@@ -75,10 +71,10 @@
 			    <fieldset data-role="controlgroup"> 
 			    	<legend>Please choose your affiliation:</legend> 
 			         	<input type="radio" name="book" id="radio-choice-1" value="wustl" checked="checked" /> 
-			         	<label for="radio-choice-1">Washington University at St. Louis</label> 
+			         	<label for="radio-choice-1">Washington University School of Medicine </label> 
  
 			         	<input type="radio" name="book" id="radio-choice-2" value="hms"  /> 
-			         	<label for="radio-choice-2">Harvard Medical School</label> 
+			         	<label for="radio-choice-2">Combined Harvard Dermatology Training Program </label> 
 			    </fieldset> 
 
 				<div data-role="fieldcontain">

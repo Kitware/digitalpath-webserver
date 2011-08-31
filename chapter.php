@@ -64,9 +64,8 @@ catch (Exception $e)
 
         <div data-role="content">
             <div id="banner">
-							<h2> List of images in a chapter </h2>
+							<h2> List of images in session </h2>
             </div>
-            <p> This text can be replaced by some generic information about the chapter. </p>
             
 						<ul data-role="listview" data-ajax="false">
 <?php
