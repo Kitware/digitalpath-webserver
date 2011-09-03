@@ -12,7 +12,7 @@
 			if($pass == "showme" || $pass == 'MOmanage')
 				{
 				session_start();
-				$_SESSION['book'] = 'paul2';
+				$_SESSION['book'] = 'paul3';
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MOmanage')
 					{
@@ -27,7 +27,7 @@
 			if($pass == "letmein" || $pass == 'MAmanage')
 				{
 				session_start();
-				$_SESSION['book'] = 'bev';
+				$_SESSION['book'] = 'bev1';
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MAmanage')
 					{
