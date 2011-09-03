@@ -74,7 +74,7 @@
 			         	<label for="radio-choice-1">Washington University School of Medicine </label> 
  
 			         	<input type="radio" name="book" id="radio-choice-2" value="hms"  /> 
-			         	<label for="radio-choice-2">Combined Harvard Dermatology Training Program </label> 
+			         	<label for="radio-choice-2">Harvard Combined Dermatology Residency Training Program </label> 
 			    </fieldset> 
 
 				<div data-role="fieldcontain">
