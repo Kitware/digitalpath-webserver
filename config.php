@@ -17,9 +17,9 @@ if (!isset($_SESSION['book']))
 else
 	{
 	# define some variables
-	$server = "ayodhya:27017";
+	$server = "127.0.0.1:27017";
 	$database = $_SESSION['book'];
-	$base_url = "http://ayodhya:82/tile.php";
+	$base_url = "tile.php";
 #	$server = "amber11:27017";
 #	$database = $_SESSION['book'];
 #	$base_url = "tile.php";
