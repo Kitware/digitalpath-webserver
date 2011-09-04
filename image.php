@@ -48,12 +48,16 @@ catch (Exception $e)
 <html>
     <head>
     <title>dermatopathology atlas</title>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
-    <script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
+
+		<!-- jQuery mobile -->
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" type="text/css">
+		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+		<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js" type="text/javascript"></script>
+		
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
+		<script src="libs/mobile-jq.js"></script>
 		<script>
 
 <?php
@@ -66,21 +70,11 @@ catch (Exception $e)
 	echo($image_id);
 	echo("';\n");
 ?>
-
-		$("input[name='checkbox-1']").live(
-			{
-			click: function(event, ui) 
-				{
-				var checked = $('input[name="checkbox-1"]:checked').val() != undefined;
-				anno.setVisibility(checked);
-				}
-			});
-
-		</script>
+	
+	</script>
 	
 		<script src="http://openlayers.org/dev/OpenLayers.mobile.js"> </script>
 		<script src="libs/TMS.js"></script>
-		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/large_images.js"> </script>
 </head>
 <body> 
@@ -113,11 +107,15 @@ catch (Exception $e)
 				<h1>Annotations</h1>
 			</div>
 			<div data-role="content">
-				
+
 				<div id='display-annotations' data-role="fieldcontain">
 					<fieldset data-role="controlgroup">
-						<input type="checkbox" name="checkbox-1" id="checkbox-1" class="custom" />
+						<input type="checkbox" name="checkbox-annotations"  id="checkbox-1"/>
 						<label for="checkbox-1">Display Annotations</label>
+					</fieldset>
+					<fieldset data-role="controlgroup">
+							<input type="checkbox" name="checkbox-labels" id="checkbox-2"/>
+							<label for="checkbox-2">Display Labels</label>
 						</fieldset>
 				</div>
 	

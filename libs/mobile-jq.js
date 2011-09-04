@@ -3,6 +3,13 @@
 
 var selectedFeature = null;
 
+$(document).bind("mobileinit", function()
+		{
+
+
+});
+
+
 $(document).ready(function() {
 
     // fix height of content
@@ -28,6 +35,7 @@ $(document).ready(function() {
             initLayerList();
         }
     }
+
     $(window).bind("orientationchange resize pageshow", fixContentHeight);
     document.body.onload = fixContentHeight;
 
@@ -92,11 +100,48 @@ $(document).ready(function() {
                 $.mobile.pageLoading(true);
             });
         });
-        // only listen to the first event triggered
-        $('#searchpage').die('pageshow', arguments.callee);
-    });
+		
+		// only listen to the first event triggered
+		$('#searchpage').die('pageshow', arguments.callee);
+		
+		//apply overrides here
+		});
 
-});
+		alert('Got executed ..');
+
+		$("#checkbox-1").change(function()
+			{
+			
+		
+			var checked = 	$(this).is(':checked'); 
+			//alert(JSON.stringify(checked));
+			if(checked == true)
+				{
+				$("#checkbox-2").checkboxradio('enable');
+				}
+			else
+				{
+				$("#checkbox-2").checkboxradio('disable');
+				}
+	
+			});
+
+
+		$("#checkbox-2").bind( "change", function(event, ui) {
+				var checked = $(this).is(':checked');
+				if(checked == true)
+					{
+					alert('Labels ON');
+					}
+				
+			});
+
+		//$("#checkbox-2").live();
+
+			$("#checkbox-2").checkboxradio();
+			$("#checkbox-2").checkboxradio('disable');
+
+		
 
 function initLayerList() {
     $('#layerspage').page();
@@ -150,3 +195,6 @@ function addLayerToList(layer) {
         }
     });
 }
+});
+
+
