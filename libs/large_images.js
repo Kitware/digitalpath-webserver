@@ -73,7 +73,7 @@ function get_annotations(lay)
 			spacing = data["spacing"];
 			origin = data["origin"];
 
-			try 	
+		//	try 	
 				{
 				for (var i = 0; i < data["bookmarks"].length ; i ++)
 					{		
@@ -111,6 +111,7 @@ function get_annotations(lay)
 							// Add two more line segments
 							lineList.push(new OpenLayers.Geometry.LineString(orig_pointlist));
 							// find out length and angle
+
 							var dx = pointList[1].x - pointList[0].x;
 							var dy = pointList[1].y - pointList[0].y;
 				
@@ -140,13 +141,26 @@ function get_annotations(lay)
 							
 							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
 							lineList.push(new OpenLayers.Geometry.LineString(line2_points));
-						
+					
+							var angle = awithx * -180 / 3.14159;
+							local_style.label = annot["title"] + " " + JSON.stringify(angle);
 							local_style.strokeColor = annot["annotation"]["color"];
+							local_style.graphic = true; 
+							local_style.externalGraphic = "img/yellow-arrow.png";
+							local_style.graphicWidth = 41; 
+							local_style.graphicOpacity = 1.;
+							//local_style.graphicXOffset = 21;
+							local_style.graphicYOffset = 25;
+							local_style.rotation = angle; 
+							
+							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
 	
-							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.MultiLineString(lineList),attrib, local_style );
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(pointList[0].x, -1 * pointList[0].y),attrib, local_style );
 							lay.addFeatures(feature);
 	
+						  var feature2 = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.MultiLineString(lineList), attrib, local_style );
+							// lay.addFeatures(feature2);
 							break;
 
 						default : 
@@ -180,11 +194,11 @@ function get_annotations(lay)
 						} // End switch
 					}	
 				}
-			catch(err)
-				{
+			//catch(err)
+				//{
 				//TODO: give some indication on annotations 
 				//alert("error");
-				}
+				//}
 			},
 		error: 
 			function(obj)
