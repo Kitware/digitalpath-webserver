@@ -92,11 +92,11 @@ function get_annotations(lay)
 							local_style.strokeColor = annot["annotation"]["color"];
 							local_style.label = annot["title"];
 							//local_style.labelAlign = "mt";
-							//local_style.fontColor = "black";
+							local_style.fontColor = annot["annotation"]["color"];
               local_style.fontSize = "18";
-							//local_style.fontWeight = "bold";
+							local_style.fontWeight = "bolder";
 							local_style.labelYOffset = 15;
-							local_style.fontStyle="italic"
+							//local_style.fontStyle="italic";
 	
 
 							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
