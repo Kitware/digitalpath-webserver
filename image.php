@@ -73,13 +73,13 @@ catch (Exception $e)
 	
 	</script>
 	
-		<script src="http://openlayers.org/dev/OpenLayers.mobile.js"> </script>
+		<script src="libs/OpenLayers.mobile.js"> </script>
 		<script src="libs/TMS.js"></script>
 		<script src="libs/large_images.js"> </script>
 </head>
 <body> 
 		<!-- The large image page -->
-		<div data-role="page" id="mappage">
+		<div data-role="page" id="mappage" data-add-back-btn="true" data-ajax='false'>
 			<!-- <div data-role="header">
 				<h1><?php echo($image_title); ?></h1>
 			</div> -->
@@ -102,8 +102,9 @@ catch (Exception $e)
 			</div>
 		</div>
 		
-		<div data-role="page" id="annotations">
+		<div data-role="page" id="annotations" data-ajax='false' data-add-back-btn="true">
 			<div data-role="header">
+				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
 				<h1>Annotations</h1>
 			</div>
 			<div data-role="content">
@@ -124,8 +125,10 @@ catch (Exception $e)
 			if($_SESSION['auth'] == 'admin')
 				{
 		?>		
-			<form rel="external" action="../upload_ndpa.php" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="image_id" value="<? echo($image_id); ?>">
+			<form rel="external" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="image_id" value="
+<?php echo($image_id); ?> 
+">
 				<label for="file">Filename:</label>
 				<input type="file" name="file" id="file" />
 				<input type="submit" name="submit" value="Submit" />
@@ -142,7 +145,7 @@ catch (Exception $e)
 			</div>
 		</div>
 
-		<div data-role="page" id="imageinfo">
+		<div data-role="page" id="imageinfo" data-ajax='false'  data-add-back-btn="true">
 				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
 				   </ul>
 				-->
@@ -156,8 +159,8 @@ catch (Exception $e)
 				?>		
 			
 				<form rel="external" action="../rename.php" method="post" enctype="multipart/form-data">
-					<input type="hidden" name="image_id" value="<? echo($image_id); ?>">
-					<input id="image_label" name="image_label" type="text" value = "<?echo($image_title);?>"/>  
+					<input type="hidden" name="image_id" value="<?php echo($image_id); ?>">
+					<input id="image_label" name="image_label" type="text" value = "<?php echo($image_title); ?>"/>  
 					<input type="submit" name="submit" value="Rename" />
 				</form>
 

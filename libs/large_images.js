@@ -90,7 +90,15 @@ function get_annotations(lay)
 
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
 							local_style.strokeColor = annot["annotation"]["color"];
-								
+							local_style.label = annot["title"];
+							//local_style.labelAlign = "mt";
+							//local_style.fontColor = "black";
+              local_style.fontSize = "18";
+							//local_style.fontWeight = "bold";
+							local_style.labelYOffset = 15;
+							local_style.fontStyle="italic"
+	
+
 							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
 								{
 								var p = annot["annotation"]["points"][j];
@@ -157,9 +165,15 @@ function get_annotations(lay)
 							pointList.push(pointList[0]);
 							// Blue style
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
+
 							local_style.strokeColor = annot["annotation"]["color"];
+							local_style.label = "Hurray"; //annot["title"];
+							
+							local_style.fontColor = annot["annotation"]["color"];
+              local_style.fontSize = "12px";
+              local_style.fontFamily = "Courier New, monospace";
+							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
- 
 							
 							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList), attrib, local_style );
 							lay.addFeatures(feature);
@@ -237,7 +251,7 @@ function init()
 
 	
 	// Uncomment for display Annotations 
-	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles});
+	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles, renderers: ["SVG"]});
 	
 	anno.events.register("featureselected", anno, displayAnnotation);
 	get_annotations(anno);

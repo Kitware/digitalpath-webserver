@@ -47,12 +47,6 @@ $(document).ready(function() {
         map.zoomOut();
     });
     $("#locate").click(function(){
-        var control = map.getControlsBy("id", "locate-control")[0];
-        if (control.active) {
-            control.getCurrentLocation();
-        } else {
-            control.activate();
-        }
     });
     
     $('#popup').live('pageshow',function(event, ui){
@@ -107,8 +101,6 @@ $(document).ready(function() {
 		//apply overrides here
 		});
 
-		alert('Got executed ..');
-
 		$("#checkbox-1").change(function()
 			{
 			
@@ -118,6 +110,7 @@ $(document).ready(function() {
 			if(checked == true)
 				{
 				$("#checkbox-2").checkboxradio('enable');
+				anno.setVisibility(true);
 				}
 			else
 				{

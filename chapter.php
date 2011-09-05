@@ -90,7 +90,7 @@ catch (Exception $e)
 			}
 		echo('<li><a rel="external" href="/image.php?id=');
 		echo($val['_id']);
-		echo('">' . $name . '</a></li>');
+		echo('#mappage">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
