@@ -112,11 +112,11 @@ function get_annotations(lay)
 							lineList.push(new OpenLayers.Geometry.LineString(orig_pointlist));
 							// find out length and angle
 
-							var dx = pointList[1].x - pointList[0].x;
-							var dy = pointList[1].y - pointList[0].y;
+							var dx = pointList[0].x - pointList[1].x;
+							var dy = pointList[0].y - pointList[1].y;
 				
 							var length = Math.sqrt(dx*dx + dy*dy);
-							var awithx = Math.asin(dy / length);
+							var awithx = Math.atan(dy / dx);
 	
 							//awithx = Math.abs(awithx);
 							// find one line 
@@ -142,16 +142,22 @@ function get_annotations(lay)
 							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
 							lineList.push(new OpenLayers.Geometry.LineString(line2_points));
 					
-							var angle = awithx * -180 / 3.14159;
+							var angle = awithx * 180 / 3.14159;
+							if (angle > 360)
+								{
+									angle = angle - 360;
+								}							
+
 							local_style.label = annot["title"] + " " + JSON.stringify(angle);
 							local_style.strokeColor = annot["annotation"]["color"];
 							local_style.graphic = true; 
-							local_style.externalGraphic = "img/yellow-arrow.png";
-							local_style.graphicWidth = 41; 
+							local_style.externalGraphic = "img/centered-yellow-arrow.png";
+							local_style.graphicWidth = 80; 
 							local_style.graphicOpacity = 1.;
+							local_style.zIndex = 0;
 							//local_style.graphicXOffset = 21;
-							local_style.graphicYOffset = 25;
-							local_style.rotation = angle; 
+							//local_style.graphicYOffset = 25;
+							local_style.rotation = - 1 * angle + 180; 
 							
 							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
