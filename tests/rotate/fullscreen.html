@@ -29,12 +29,12 @@
 	<script src="http://code.jquery.com/jquery-1.4.1.min.js"></script>
 	<script src="css-transform.js"></script>
 	<script src="css-rotate.js"></script>
-	<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+	<script src="OpenLayers.js"></script>
 	
 	<script>
 
 	// Default config parameters
-
+	var map;
 	var zoomLevels = 8;
 	var baseName = 'pathdemo';
 	var imageName = '939';
@@ -105,8 +105,6 @@ function initialize()
 	
 	mapdiv.css('width',hyp + "px");
 	mapdiv.css('height',hyp + "px");
-	alert(map_top_margin + 'px');
-	
 	mapdiv.css('cssText', 'margin-top :' + map_top_margin + 'px !important; margin-left :' + map_left_margin + 'px !important; height : ' + hyp + 'px !important; width : ' + hyp + 'px !important;');
 	//mapdiv.css('margin-left',map_left_margin + "px!important");
 
@@ -117,7 +115,8 @@ function initialize()
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
-			tileSize: new OpenLayers.Size(tileSize, tileSize)
+			tileSize: new OpenLayers.Size(tileSize, tileSize),
+			mapRotation:0.0
     }
   );
  
@@ -146,8 +145,18 @@ function initialize()
      }
      mapcontainer.keydown(function(event){
        switch(event.keyCode){
-         case 82: mapdiv.animate({rotate: '+=5deg'}, 0); break;
-         case 76: mapdiv.animate({rotate: '-=5deg'}, 0); break;
+         case 82: 
+					{
+						mapdiv.animate({rotate: '+=5deg'}, 0); 
+						map.mapRotation -= 5;
+						break;
+					}
+         case 76: 
+					{
+						mapdiv.animate({rotate: '-=5deg'}, 0); 
+						map.mapRotation += 5;
+						break;
+					}
          case 40: map.panDirection(0,-1); break;
          case 38: map.panDirection(0,1); break;
          case 39: map.panDirection(-1,0); break;
