@@ -13,23 +13,57 @@
 		    display:block;
 		    /*set the div in the top-left corner of the screen*/
 				position:absolute;
+				overflow:hidden!important;
 				top:0;
 				left:0;
     
 				/*set the width and height to 100% of the screen*/
 				width:100%;
 				height:100%;
-			}
+			}	
+			.button
+				{
+				z-index: 1000; 
+				background-color:'red';
+				margin-top:'-2.5em';
+				width:'8em';
+				position:absolute;
+				}
+			#plus
+				{
+				bottom: 400px;
+				left: 10px;
+				}
+			#minus
+				{
+				bottom: 300px;
+				left: 10px;
+				}
+			#rotater
+				{
+				bottom: 200px;
+				left: 10px;
+				}
+			#rotatel
+				{
+				bottom: 100px;
+				left: 10px;
+				}
 	</style>
 </head>
 
 <body onload="initialize();" >
-		<div id="mapcontainer"><div id="map"></div></div>
+		<div id="mapcontainer"><div id="map"></div>
+		<div id="plus" class='button' onclick="zoom2(1);">+ but</div>
+		<div id="minus" class='button' onclick="zoom2(-1);">- but</div>
+		<div id="rotatel" class='button' onclick="rotate(5);">R but</div>
+		<div id="rotater" class='button' onclick="rotate(-5);">L but</div>
+</div>
 	
 	<script src="http://code.jquery.com/jquery-1.4.1.min.js"></script>
 	<script src="css-transform.js"></script>
 	<script src="css-rotate.js"></script>
-	<script src="OpenLayers.js"></script>
+	<script src="OpenLayers.mobile.js"></script>
 	
 	<script>
 
@@ -90,8 +124,8 @@
 
 function initialize() 
 	{
-	var mapcontainer = $('#mapcontainer');
-	var mapdiv = $('#map');
+	mapcontainer = $('#mapcontainer');
+	mapdiv = $('#map');
 
 	var boundSize = tileSize *  Math.pow(2,zoomLevels-1); 
 	
@@ -108,10 +142,17 @@ function initialize()
 	mapdiv.css('cssText', 'margin-top :' + map_top_margin + 'px !important; margin-left :' + map_left_margin + 'px !important; height : ' + hyp + 'px !important; width : ' + hyp + 'px !important;');
 	//mapdiv.css('margin-left',map_left_margin + "px!important");
 
-
-  map = new OpenLayers.Map('map',
-    {
-    // Need to set proper extent using number of zoom levels
+  map = new OpenLayers.Map( {
+			div: 'map',
+			theme : null,
+			controls: [
+					new OpenLayers.Control.Attribution(),
+					new OpenLayers.Control.TouchNavigation({
+							dragPanOptions: {
+									enableKinetic: false
+							}
+					}),
+			],
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
@@ -119,7 +160,7 @@ function initialize()
 			mapRotation:0.0
     }
   );
- 
+
   //create custom tile manager
   var tms = new OpenLayers.Layer.TMS( "Biology TMS", "http://127.0.0.1/connectome",
     {
@@ -135,7 +176,6 @@ function initialize()
   map.zoomToMaxExtent();
 
 
-
 	//map.setCenter(new google.maps.LatLng(37.4419, -122.1419), 13);
 	setFocus();
   
@@ -146,17 +186,11 @@ function initialize()
      mapcontainer.keydown(function(event){
        switch(event.keyCode){
          case 82: 
-					{
-						mapdiv.animate({rotate: '+=5deg'}, 0); 
-						map.mapRotation -= 5;
+						rotate(5);
 						break;
-					}
          case 76: 
-					{
-						mapdiv.animate({rotate: '-=5deg'}, 0); 
-						map.mapRotation += 5;
+						rotate(-5);
 						break;
-					}
          case 40: map.panDirection(0,-1); break;
          case 38: map.panDirection(0,1); break;
          case 39: map.panDirection(-1,0); break;
@@ -167,6 +201,28 @@ function initialize()
        }
      });
    }
+	
+	function zoom2(num)
+		{
+			if(num > 0)
+				{
+				map.zoomIn();
+				}
+			else
+				{
+				map.zoomOut();
+				}
+		}
+
+	function rotate(num)
+		{
+			var stri = "+=" + num + 'deg';
+			if (num < 0)
+				var stri = "-=" + (-num) + 'deg';
+				
+			mapdiv.animate({rotate: stri}, 0); 
+			map.mapRotation -= num;
+		}
  </script>
  
 </body>
