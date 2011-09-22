@@ -56,54 +56,6 @@ catch (Exception $e)
 		-->
 </head>
 <body> 
-    <div data-role="page">
-        <div data-role="header" data-position='fixed' data-fullscreen='false'>
-            <h1> <?php echo($chapter_title) ?> </h1>
-        </div>
-
-
-        <div data-role="content">
-            <div id="banner">
-							<h2> List of images in session </h2>
-            </div>
-            
-						<ul data-role="listview" data-ajax="false">
-<?php
-	# Loop through the pages and load them
-	
-	# select a collection (analogous to a relational database's table)
-	$col_images = $m->selectDB($database)->selectCollection("images");
-
-	$query = array( "title" => $oid);
-	# find everything in the collection
-	$cursor = $col_images->find($query);
-	foreach ($cursor as $val) 
-		{
-		if (array_key_exists('label', $val))
-			{
-			#echo('Have it <br/>');
-			$name = $val['label'];
-			}
-		else
-			{
-			$name = $val['name'];	
-			}
-		echo('<li><a rel="external" href="/image.php?id=');
-		echo($val['_id']);
-		echo('#mappage">' . $name . '</a></li>');
-		}	
-?>
-            </ul>
-
-
-        </div>
-				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-					<a href="book.php" data-role="button" data-icon="arrow-u">Up</a>
-					<a href="book.php" data-role="button" data-icon="arrow-d">Down</a>
-				</div>
-    </div>
-
-
     <div id="chapterinfo" data-role="page">
         
 				<div data-role="header" data-position='fixed' data-fullscreen='false'>
@@ -131,9 +83,13 @@ catch (Exception $e)
 		{
 		$name = $val['name'];
 		#var_dump($val);
-		echo('<li><a rel="external" href="/image.php?id=');
+		echo('<li>');
+		echo('<a rel="external" href="/image.php?id=');
 		echo($val['_id']);
-		echo('">' . $name . '</a></li>');
+		echo('">');
+		echo('<img src="/tile.php?image=');
+		echo($val['_id']);
+		echo('&name=t.jpg">' . $name . '</a></li>');
 		}	
 ?>
             </ul>
