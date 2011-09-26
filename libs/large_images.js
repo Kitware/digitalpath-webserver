@@ -95,7 +95,7 @@ function get_annotations(lay)
 							local_style.fontColor = annot["annotation"]["color"];
 					                local_style.fontSize = "18";
 							local_style.fontWeight = "bolder";
-							local_style.labelYOffset = 15;
+							local_style.labelYOffset = 25;
 							//local_style.fontStyle="italic";
 	
 
@@ -131,7 +131,7 @@ function get_annotations(lay)
 								}
 											
 
-							local_style.label = annot["title"] + " " + JSON.stringify(angle);
+							local_style.label = annot["title"]
 							local_style.strokeColor = annot["annotation"]["color"];
 							local_style.graphic = true; 
 							local_style.externalGraphic = "img/centered-yellow-arrow.png";
@@ -140,7 +140,7 @@ function get_annotations(lay)
 							local_style.zIndex = 0;
 							//local_style.graphicXOffset = 21;
 							//local_style.graphicYOffset = 25;
-							local_style.rotation = 225; 
+							local_style.rotation = -angle; 
 							
 							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
