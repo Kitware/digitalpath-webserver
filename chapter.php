@@ -59,7 +59,7 @@ catch (Exception $e)
     <div id="chapterinfo" data-role="page">
         
 				<div data-role="header" data-position='fixed' data-fullscreen='false'>
-            <h1> iAdmi<?php echo($chapter_title) ?> </h1>
+            <h1> <?php echo($chapter_title) ?> </h1>
         </div>
 
 

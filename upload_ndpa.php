@@ -14,45 +14,24 @@
 require_once("config.php"); 
 
 @$cmd = $_FILES["file"];
-@$image_id = $_POST['image_id'];
+@$image_id = trim($_POST['image_id']);
+$ref = $_SERVER['HTTP_REFERER'];
 
-if(!isset($cmd))
+if(!isset($cmd) || !isset($image_id))
 {
-?>
-
-<html>
-<body>
-
-<form action="upload_ndpa.php" method="post"
-enctype="multipart/form-data">
-<label for="file">Filename:</label>
-<input type="file" name="file" id="file" />
-<br />
-<input type="submit" name="submit" value="Submit" />
-</form>
-
-</body>
-</html> 
-
-<?
-	exit();	
-	}
-
-
-if(!isset($image_id))
-{
-	echo("Destination image ID required for processing"); 
+	echo("File and Destination image ID required for processing"); 
 	return;
 }
 
 
 if ($_FILES["file"]["error"] > 0)
   {
+  echo("<!doctype html>");
   echo "Error: " . $_FILES["file"]["error"] . "<br />";
+  return;
   }
 else
   {
-
 	# echo "Upload: " . $_FILES["file"]["name"] . "<br />";
   # echo "Type: " . $_FILES["file"]["type"] . "<br />";
   # echo "Size: " . ($_FILES["file"]["size"] / 1024) . " Kb<br />";
@@ -143,12 +122,25 @@ else
 		
 		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
 		
+		$headstring =trim( 'location: image.php?id='. $image_id . "#mapppage");
+//		header( 'location:'.$ref);
+		header($headstring);
+//		echo("<a href =\"" . $headstring ."\" >");
+//		echo($headstring);
+//		echo("</a>");
+
+		# Now upload the annotations into some database already opened
+		
 		# Have the image object now in $cursor
-		#$obj = $collection->findOne(array( "_id" => $oid));
-		#echo $image_id . "<br/>";	
-		#echo "<pre> ";
-		#print_r($obj);
-		#echo "</pre>";
+		$obj = $collection->findOne(array( "_id" => $oid));
+		echo $image_id . "<br/>";	
+		echo "<pre> ";
+		print_r($obj);
+		echo "</pre>";
+		echo("<a href =\"image.php?id=" .$image_id ."#mappage\" >");
+		echo("Go back");
+		echo("</a>");
+		header( 'location:'.$ref);
 
 		# Output success
 		}
@@ -159,16 +151,5 @@ else
 		echo 'Message: ' .$e->getMessage();
 		return;
 		}
-
-		$headstring = 'location: image.php?id='. $image_id;
-		header($headstring);
-		#echo("<a href = \"image.php&id=" . $image_id . "\">");
-
-	# Now upload the annotations into some database already opened
-
   }
 ?>
-
-
-
-

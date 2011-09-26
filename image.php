@@ -125,7 +125,7 @@ catch (Exception $e)
 			if($_SESSION['auth'] == 'admin')
 				{
 		?>		
-			<form rel="external" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
+			<form rel="external" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="image_id" value="
 <?php echo($image_id); ?> 
 ">
