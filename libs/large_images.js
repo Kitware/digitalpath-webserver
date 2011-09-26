@@ -93,7 +93,7 @@ function get_annotations(lay)
 							local_style.label = annot["title"];
 							//local_style.labelAlign = "mt";
 							local_style.fontColor = annot["annotation"]["color"];
-              local_style.fontSize = "18";
+					                local_style.fontSize = "18";
 							local_style.fontWeight = "bolder";
 							local_style.labelYOffset = 15;
 							//local_style.fontStyle="italic";
@@ -105,6 +105,7 @@ function get_annotations(lay)
 
 								var x = (p[0]-origin[0]) / spacing[0];
 								var y = (p[1]-origin[1]) / spacing[1];
+								// Flipping for the first time to get correct location on screen
 								orig_pointlist.push(new OpenLayers.Geometry.Point(x, -1 * y));
 								pointList.push(new OpenLayers.Geometry.Point(x,y));
 								}
@@ -118,46 +119,28 @@ function get_annotations(lay)
 							var length = Math.sqrt(dx*dx + dy*dy);
 							var awithx = Math.atan(dy / dx);
 	
-							//awithx = Math.abs(awithx);
-							// find one line 
-							var line1_points = [];
-							line1_points.push(orig_pointlist[0]);
+							var angle = -awithx * 180 / 3.14159 + 180; 
 
-							var ang1 = awithx +  (Math.PI / 4.0);
-							line1_points.push(new OpenLayers.Geometry.Point(
-								pointList[0].x + length * ratio * Math.cos(ang1),
-								-1 * (pointList[0].y + length  * ratio * Math.sin(ang1))));
-							
-	
-							// find one line 
-							var line2_points = [];
-							line2_points.push(orig_pointlist[0]);
-
-							var ang2 = awithx - (Math.PI / 4.0);
-							line2_points.push(new OpenLayers.Geometry.Point(
-								pointList[0].x + length * ratio * Math.cos(ang2),
-								-1 * (pointList[0].y + length  * ratio * Math.sin(ang2))));
-
-							
-							lineList.push(new OpenLayers.Geometry.LineString(line1_points));
-							lineList.push(new OpenLayers.Geometry.LineString(line2_points));
-					
-							var angle = awithx * 180 / 3.14159;
 							if (angle > 360)
 								{
 									angle = angle - 360;
-								}							
+								}
+							if (angle < 0) 
+								{
+									angle = angle + 360;
+								}
+											
 
 							local_style.label = annot["title"] + " " + JSON.stringify(angle);
 							local_style.strokeColor = annot["annotation"]["color"];
 							local_style.graphic = true; 
 							local_style.externalGraphic = "img/centered-yellow-arrow.png";
-							local_style.graphicWidth = 80; 
+							local_style.graphicWidth = 60; 
 							local_style.graphicOpacity = 1.;
 							local_style.zIndex = 0;
 							//local_style.graphicXOffset = 21;
 							//local_style.graphicYOffset = 25;
-							local_style.rotation = - 1 * angle + 180; 
+							local_style.rotation = 225; 
 							
 							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
@@ -165,8 +148,6 @@ function get_annotations(lay)
 							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(pointList[0].x, -1 * pointList[0].y),attrib, local_style );
 							lay.addFeatures(feature);
 	
-						  var feature2 = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.MultiLineString(lineList), attrib, local_style );
-							// lay.addFeatures(feature2);
 							break;
 
 						default : 
