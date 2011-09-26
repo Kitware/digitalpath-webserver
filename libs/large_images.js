@@ -118,17 +118,21 @@ function get_annotations(lay)
 				
 							var length = Math.sqrt(dx*dx + dy*dy);
 							var awithx = Math.atan(dy / dx);
-	
-							var angle = -awithx * 180 / 3.14159 + 180; 
+							var angle = awithx * 180 / 3.14159;
 
-							if (angle > 360)
+							if (dx < 0)
 								{
-									angle = angle - 360;
-								}
-							if (angle < 0) 
-								{
-									angle = angle + 360;
-								}
+								angle = angle + 180;
+								}	 
+
+//							if (angle > 360)
+//								{
+//									angle = angle - 360;
+//								}
+//							if (angle < 0) 
+//								{
+//									angle = angle + 360;
+//								}
 											
 
 							local_style.label = annot["title"]
@@ -140,7 +144,7 @@ function get_annotations(lay)
 							local_style.zIndex = 0;
 							//local_style.graphicXOffset = 21;
 							//local_style.graphicYOffset = 25;
-							local_style.rotation = -angle; 
+							local_style.rotation = angle; 
 							
 							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
