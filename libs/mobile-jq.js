@@ -115,6 +115,7 @@ $(document).ready(function() {
 			else
 				{
 				$("#checkbox-2").checkboxradio('disable');
+				anno.setVisibility(false);
 				}
 	
 			});
