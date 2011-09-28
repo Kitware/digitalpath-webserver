@@ -56,18 +56,18 @@ catch (Exception $e)
 		-->
 </head>
 <body> 
-    <div id="chapterinfo" data-role="page">
+    <div id="chapterinfo" data-ajax="false" data-role="page" data-add-back-btn="true">
         
-				<div data-role="header" data-position='fixed' data-fullscreen='false'>
+	 			<div data-role="header" data-position='fixed' data-fullscreen='false'>
+						<a href="" data-rel="back" data-icon="arrow-l">Back</a>
             <h1> <?php echo($chapter_title) ?> </h1>
         </div>
 
 
         <div data-role="content">
             <div id="banner">
-							<h2> List of images in a chapter </h2>
+							<h2>List of images in session</h2>
             </div>
-            <p> This text can be replaced by some generic information about the chapter. </p>
             
 						<ul data-role="listview" data-ajax="false">
 <?php
@@ -94,11 +94,8 @@ catch (Exception $e)
 ?>
             </ul>
 
-
         </div>
 				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-					<a href="book.php" data-role="button" data-icon="arrow-u">Up</a>
-					<a href="book.php" data-role="button" data-icon="arrow-d">Down</a>
 				</div>
     </div>
 

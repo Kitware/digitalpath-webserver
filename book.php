@@ -16,8 +16,9 @@
 	</head>
 	<body> 
 		<!-- Index pages -->
-    <div data-role="page">
-        <div data-role="header" data-position='fixed' data-fullscreen='false'>
+    <div data-role="page" data-add-back-btn="true" >
+        <div data-role="header">
+						<a href="" data-rel="back" data-icon="arrow-l">Back</a>
             <h1> Slide Atlas</h1>
         </div>
         
@@ -63,8 +64,6 @@
             </ul>
         </div>
 				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-					<a href="" data-role="button" data-icon="arrow-u">Up</a>
-					<a href="" data-role="button" data-icon="arrow-d">Down</a>
 				</div>
     </div>
 	</body>
