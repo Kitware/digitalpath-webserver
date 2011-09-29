@@ -90,7 +90,16 @@ catch (Exception $e)
 						echo($chapter_id);
 						?>"  data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
 				<a data-role="button" id="show-anno">Annotations</a>
-			  <a href="#options" data-role="button" data-icon="gear" class='ui-btn-right'>Options</a>
+			  <a href="#options" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
+					if($_SESSION['auth'] == 'admin')
+						{
+						echo("b");
+						}
+					else
+						{
+						echo("a");
+						}
+				?>">Options</a>
 			</div>			
 
 
@@ -172,7 +181,7 @@ catch (Exception $e)
 						{
 				?>		
 			
-				<form rel="external" action="../rename.php" method="post" enctype="multipart/form-data">
+				<form rel="external" action="rename.php" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="image_id" value="<?php echo($image_id); ?>">
 					<input id="image_label" name="image_label" type="text" value = "<?php echo($image_title); ?>"/>  
 					<input type="submit" name="submit" value="Rename" />

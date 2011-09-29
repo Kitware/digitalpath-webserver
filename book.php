@@ -1,3 +1,8 @@
+<?php
+	# Perform database initialization and get chapter name
+	require_once("config.php"); 
+?>
+
 <!doctype html>
 <html>
 	<head>
@@ -20,7 +25,16 @@
         <div data-role="header">
 						<a data-rel="back" data-icon="arrow-l">Back</a>
             <h1> Slide Atlas</h1>
-						<a href="#options" data-role="button" data-icon="gear" class='ui-btn-right'>Options</a>
+						<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
+							if($_SESSION['auth'] == 'admin')
+								{
+								echo("b");
+								}
+							else
+								{
+								echo("a");
+								}
+						?>">Options</a>
         </div>
         
 				<div data-role="content">
