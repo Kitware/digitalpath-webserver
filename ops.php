@@ -31,7 +31,6 @@ require_once("config.php");
 $data = json_decode($data_str);
 //var_dump($data_str);
 //var_dump($data);
-//return;
 
 # Make sure the user has access rights 
 # Currently check that the login is admin
@@ -39,6 +38,7 @@ $data = json_decode($data_str);
 if($_SESSION['auth'] != 'admin')
 	{
 	echo('Admin access required');
+	return;
 	}
 
 # Parse the parameters and report the errors
@@ -99,9 +99,18 @@ try
 	{
 if($success == true)
 	{	
-	$headstring = 'Success, location: ' . $col . ".php?id=" . $id;
-	echo($headstring);
-	return;
+	switch($col)
+	{	
+		case "images":
+			$headstring = 'location: image.php?id=' . trim($id);
+			break;
+		case "chapters":
+			$headstring = 'location: chapter.php?id=' . trim($id);
+			break;
+	}
+  //	echo($headstring);
+	header($headstring);
+		return;
   }
 else
 	{
@@ -116,7 +125,3 @@ catch(Exception $e)
 	}
 
 ?>
-
-
-
-

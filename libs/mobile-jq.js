@@ -111,6 +111,7 @@ $(document).ready(function() {
 			});
 
 		//$("#checkbox-2").live();
+			init_operations();
 
 			$("#checkbox-2").checkboxradio();
 			$("#checkbox-2").checkboxradio('disable');

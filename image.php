@@ -58,6 +58,7 @@ catch (Exception $e)
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
+		<script src="libs/operations.js"></script>
 		<script src="libs/mobile-jq.js"></script>
 		<script>
 
@@ -69,6 +70,10 @@ catch (Exception $e)
 	echo("var baseName = '" . $database . "';\n");
 	echo("var imageName = '");
 	echo($image_id);
+	echo("';\n");
+
+	echo("var image_title = '");
+	echo(trim($image_title));
 	echo("';\n");
 ?>
 	
@@ -116,6 +121,7 @@ catch (Exception $e)
 
 
 			<div id="copyright"> <?php echo($_SESSION['copyright']);?> </div>
+
 			<div data-role="footer" class="ui-bar" data-position="fixed"> 
 			<div id="rotation" data-role="controlgroup" data-type="horizontal">
 				<a href="" data-role="button" data-icon="forward" id="rleft"
@@ -132,24 +138,27 @@ catch (Exception $e)
 				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
 				<h1>Options</h1>
 			</div>
-			<div data-role="content">
-
-				<div id='display-annotations' data-role="fieldcontain">
-					<fieldset data-role="controlgroup">
-						<input type="checkbox" name="checkbox-annotations"  id="checkbox-1"/>
-						<label for="checkbox-1">Display Annotations</label>
-					</fieldset>
-					<fieldset data-role="controlgroup">
-							<input type="checkbox" name="checkbox-labels" id="checkbox-2"/>
-							<label for="checkbox-2">Display Labels</label>
-						</fieldset>
-				</div>
 	
 		<!-- Display the annotation loader only if the user is admin -->
 		<?php
 			if($_SESSION['auth'] == 'admin')
 				{
 		?>		
+		<h2> Label </h2>
+					<input type="text" id="newname" value="<?php echo($image_title); ?>"/><br/>
+					<a id=renameimage data-role="button" data-inline="true">Rename </a> 
+		
+		<div data-role="collapsible" data-inline="true">
+		<h3>Delete</h3>
+		Please confirm the delete operation <br>
+		<a id="deleteimage" data-inline="true" data-role="button" data-icon="delete">Delete</a>
+		</div>
+
+		<h2> Startup </h2>
+		<a id="setdefault" data-inline="true" data-role="button">Set Default View</a> 	<br/>
+		<a id="deldefault" data-inline="true" data-icon="delete" data-role="button">Delete Default View</a>
+
+		<h2> Annotations </h2>
 			<form rel="external" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="image_id" value="
 <?php echo($image_id); ?> 
@@ -163,10 +172,6 @@ catch (Exception $e)
 				}
 		?>		
 			
-
-				<!-- <ul data-role="listview" data-inset="true" data-theme="d" data-dividertheme="c" id="layerslist">
-				   </ul>
-				-->
 			</div>
 		</div>
 
@@ -175,18 +180,20 @@ catch (Exception $e)
 				   </ul>
 				-->
 			<div data-role="header">
-				<h1>Settings</h1>
+				<h1>Options</h1>
 			</div>
 			<div data-role="content">
+				
+				<!--Admin content-->
 				<?php
 					if($_SESSION['auth'] == 'admin')
 						{
 				?>		
-			
+
 				<form rel="external" action="rename.php" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="image_id" value="<?php echo($image_id); ?>">
 					<input id="image_label" name="image_label" type="text" value = "<?php echo($image_title); ?>"/>  
-					<input type="submit" name="submit" value="Rename" />
+					<input type="submit" data-inline="true" name="submit" value="Rename" />
 				</form>
 
 
