@@ -13,17 +13,6 @@ $(document).bind("mobileinit", function()
 
 
 $(document).ready(function() {
-		if(window.map)
-		{
-		}
-		else
-		{	
-
-
-
-		init();
-		}
-
 
 	function rotate(num)
 		{
@@ -64,6 +53,7 @@ $(document).ready(function() {
 		mapdiv.css('width',hyp + "px");
 		mapdiv.css('height',hyp + "px");
 		mapdiv.css('cssText', 'margin-top :' + map_top_margin + 'px !important; margin-left :' + map_left_margin + 'px !important; height : ' + hyp + 'px !important; width : ' + hyp + 'px !important;');
+		init();
 			}
 
     $(window).bind("orientationchange resize pageshow", fixContentHeight);

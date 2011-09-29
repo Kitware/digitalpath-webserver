@@ -72,9 +72,9 @@ catch (Exception $e)
     <title>dermatopathology atlas</title>
 
 		<!-- jQuery mobile -->
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" type="text/css">
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js" type="text/javascript"></script>
+		<script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
 		
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
@@ -125,6 +125,8 @@ catch (Exception $e)
 <body> 
 		<!-- The large image page -->
 		<div data-ajax='false' data-role="page" id="mappage">
+
+			<!-- Header -->
 			<div data-role="header" data-position="fixed"> 
 				<a href="chapter.php?id=<?php
 						echo($chapter_id);
@@ -142,9 +144,11 @@ catch (Exception $e)
 				?>">Options</a>
 			</div>			
 
+			<!-- Image Content -->
 			<div data-role="content">
 				<div id="mapcontainer">
-					<div id="map"></div>
+					<div id="map">
+					</div>
 				</div>
 			</div>
 
@@ -159,6 +163,7 @@ catch (Exception $e)
 				<?php echo($_SESSION['copyright']);?> 
 			</div>
 
+			<!-- Footer content -->
 			<div data-role="footer" class="ui-bar" data-fullscreen ="false" data-position="fixed"> 
 				<div id="rotation" data-role="controlgroup" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft"

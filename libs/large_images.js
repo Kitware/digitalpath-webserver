@@ -4,7 +4,7 @@
 var map;
 var anno;
 var labels;
-
+var tms;
 var origin;
 var spacing;
 var vector_styles;
@@ -227,7 +227,7 @@ function init()
   );
  
   //create custom tile manager
-  var tms = new OpenLayers.Layer.TMS( 
+  tms = new OpenLayers.Layer.TMS( 
 					"Large Image Viewer",  // Name in the layer switcher
 					"http://127.0.0.1/",
     {
@@ -269,6 +269,7 @@ function init()
 	// Layer for text labels
 	labels = new OpenLayers.Layer.Vector("TextLabels", {style: vector_styles, renderers: ["SVG"]});
 	map.addLayer(labels);
+
 	anno.setVisibility(true);
 	labels.setVisibility(true);
 

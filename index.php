@@ -51,9 +51,10 @@ Faulkner-Jones and Su-jean Seo";
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<meta name = "viewport" content = "width = device-width">
     <link rel="apple-touch-icon" href="favicon.ico" />
-		<link href="http://code.jquery.com/mobile/latest/jquery.mobile.min.css" rel="stylesheet" type="text/css" />
+
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/latest/jquery.mobile.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
