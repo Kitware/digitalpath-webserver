@@ -44,23 +44,46 @@ function init_operations()
 			);
 		});
 
-	$("#imageoptions").bind( "vclick", function(event, ui) {
-$("#newname").val(image_label);
-});
+	$("#imageoptions").bind( "vclick", function(event, ui) 
+		{
+		$("#newname").val(image_label);
+		});
 
-
-	$("#resetrename").bind( "vclick", function(event, ui) {
+	$("#deleteimage").bind( "vclick", function(event, ui) 
+		{
 		// alert($("#newname").val());
 	
-	$.post("ops.php", {
-			col:"images",
-			op:"del",
-			param:"label",
-			id:imageName
-	},function(data){ image_label = image_name;
-		alert("Done!");}
-    $("#newname").val(image_label);
-);
+		$.post("ops.php", 
+				{
+					col:"images",
+					op:"change",
+					param:"hide",
+					id:imageName
+				},
+			function(data)
+				{ 
+				alert("The image is removed from chapter index.");
+				}
+			);
+		});
 
-	});
-}
+	$("#resetrename").bind( "vclick", function(event, ui) 
+		{
+		// alert($("#newname").val());
+	
+		$.post("ops.php", 
+				{
+					col:"images",
+					op:"del",
+					param:"label",
+					id:imageName
+				},
+			function(data)
+				{ 
+				image_label = image_name;
+				alert("Done!");
+				$("#newname").val(image_label);
+				}
+			);
+		});
+	}

@@ -91,14 +91,18 @@ catch (Exception $e)
 	$cursor = $col_images->find($query);
 	foreach ($cursor as $val) 
 		{
+		if(array_key_exists('hide', $val))
+			{
+			continue;
+			}
 		if(array_key_exists('label', $val))
-		{
+			{
 			$name = $val['label'];
-		}
+			}
 		else
-		{
+			{
 			$name = $val['name'];
-		}
+			}
 		#var_dump($val);
 		echo('<li>');
 		echo('<a data-ajax="false" rel="external" href="image.php?id=');
