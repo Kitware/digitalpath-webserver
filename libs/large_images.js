@@ -73,6 +73,7 @@ function get_annotations(lay)
 			spacing = data["spacing"];
 			origin = data["origin"];
 
+			if(data["bookmarks"] !== null)
 		//	try 	
 				{
 				for (var i = 0; i < data["bookmarks"].length ; i ++)

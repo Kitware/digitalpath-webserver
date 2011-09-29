@@ -18,8 +18,9 @@
 		<!-- Index pages -->
     <div data-role="page" data-add-back-btn="true" >
         <div data-role="header">
-						<a href="" data-rel="back" data-icon="arrow-l">Back</a>
+						<a data-rel="back" data-icon="arrow-l">Back</a>
             <h1> Slide Atlas</h1>
+						<a href="#options" data-role="button" data-icon="gear" class='ui-btn-right'>Options</a>
         </div>
         
 				<div data-role="content">
@@ -63,8 +64,6 @@
 							?>
             </ul>
         </div>
-				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-				</div>
     </div>
 	</body>
 </html>

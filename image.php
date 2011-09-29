@@ -26,6 +26,7 @@ try
 	$query1 = array( "_id" => $oid);
 	$obj = $coll->findOne($query1);
 	$image_title = $obj['name'];
+	$chapter_id = $obj['title'];
 
 	$collection = $m->selectDB($database)->selectCollection($image_id); 
 	$query = array( "name" => "t.jpg");
@@ -79,33 +80,46 @@ catch (Exception $e)
 </head>
 <body> 
 		<!-- The large image page -->
-		<div data-role="page" id="mappage" data-add-back-btn="true" data-ajax='false'>
+		<div data-ajax='false' data-role="page" id="mappage" data-add-back-btn="true" >
 			<!-- <div data-role="header">
 				<h1><?php echo($image_title); ?></h1>
 			</div> -->
+
+			<div data-role="header" data-position="fixed"> 
+				<a href="chapter.php?id=<?php
+						echo($chapter_id);
+						?>"  data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
+				<a data-role="button" id="show-anno">Annotations</a>
+			  <a href="#options" data-role="button" data-icon="gear" class='ui-btn-right'>Options</a>
+			</div>			
+
 
 			<div data-role="content">
 				<div id="map"></div>
 			</div>
 
-			<div data-role="footer">
-				<a href="#searchpage" data-icon="search" data-role="button">Search</a>
-				<a href="#imageinfo" id="locate" data-icon="locate" data-role="button">Info</a>
-				<a href="#annotations" data-icon="annotations" data-role="button">Annotations</a>
-			</div>
-			
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
 				<a href="" data-role="button" data-icon="plus" id="plus"
 					 data-iconpos="notext"></a>
 				<a href="" data-role="button" data-icon="minus" id="minus"
 					 data-iconpos="notext"></a>
 			</div>
+
+			<div data-role="footer" class="ui-bar" data-position="fixed"> 
+			<div id="rotation" data-role="controlgroup" data-type="horizontal">
+				<a href="" data-role="button" data-icon="forward" id="rleft"
+					 >L</a>
+				<a href="" data-role="button" data-icon="back" id="rright"
+					 >R</a>
+			</div>
+			</div> 
+
 		</div>
 		
-		<div data-role="page" id="annotations" data-ajax='false' data-add-back-btn="true">
+		<div data-role="page" id="options" data-ajax='false' data-add-back-btn="true">
 			<div data-role="header">
 				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
-				<h1>Annotations</h1>
+				<h1>Options</h1>
 			</div>
 			<div data-role="content">
 

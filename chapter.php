@@ -56,11 +56,12 @@ catch (Exception $e)
 		-->
 </head>
 <body> 
-    <div id="chapterinfo" data-ajax="false" data-role="page" data-add-back-btn="true">
+    <div data-role="page" data-add-back-btn="true">
         
-	 			<div data-role="header" data-position='fixed' data-fullscreen='false'>
+	 			<div data-role="header" data-position="fixed" data-fullscreen="false">
 						<a href="" data-rel="back" data-icon="arrow-l">Back</a>
             <h1> <?php echo($chapter_title) ?> </h1>
+						<a data-role="button" data-icon="gear" class='ui-btn-right'>Options</a>
         </div>
 
 
@@ -84,7 +85,7 @@ catch (Exception $e)
 		$name = $val['name'];
 		#var_dump($val);
 		echo('<li>');
-		echo('<a rel="external" href="/image.php?id=');
+		echo('<a data-ajax="false" rel="external" href="image.php?id=');
 		echo($val['_id']);
 		echo('">');
 		echo('<img src="/tile.php?image=');
@@ -95,8 +96,6 @@ catch (Exception $e)
             </ul>
 
         </div>
-				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-				</div>
     </div>
 
 
