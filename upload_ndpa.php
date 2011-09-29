@@ -122,13 +122,13 @@ else
 		
 		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
 		
-		$headstring =trim( 'location: image.php?id='. $image_id . "#mapppage");
-		//header( 'location:'.$ref);
+		$headstring =trim( 'location: image.php?id='. $image_id . "#mappage");
+		// header( 'location:'.$ref);
 		header($headstring);
-//		echo("<a href =\"" . $headstring ."\" >");
+		//echo("Done !");
+		return;
 //		echo($headstring);
 //		echo("</a>");
-
 		# Now upload the annotations into some database already opened
 		
 		# Have the image object now in $cursor
@@ -140,7 +140,6 @@ else
 		echo("<a href =\"image.php?id=" .$image_id ."#mappage\" >");
 		echo("Go back");
 		echo("</a>");
-		header( 'location:'.$ref);
 		return;
 		# Output success
 		}

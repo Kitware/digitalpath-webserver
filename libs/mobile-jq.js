@@ -6,13 +6,19 @@ var showAnno = 0;
 
 $(document).bind("mobileinit", function()
 		{
-
+	
+	$.mobile.ajaxFormsEnabled = false;
 
 });
 
 
 $(document).ready(function() {
-		init();
+		if(window.map)
+		{
+		}
+		else
+		{		init();
+		}
 
     // fix height of content
     function fixContentHeight() {
