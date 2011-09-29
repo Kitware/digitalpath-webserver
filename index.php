@@ -13,7 +13,7 @@
 				{
 				session_start();
 				$_SESSION['book'] = 'paul3';
-				$_SESSION['copyright'] = "Copyright 2011 (c), Paul Bridgman";
+				$_SESSION['copyright'] = "Copyright 2011 &copy Paul Bridgman";
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MOmanage')
 					{
@@ -29,7 +29,7 @@
 				{
 				session_start();
 				$_SESSION['book'] = 'bev1';
-				$_SESSION['copyright'] = "Copyright 2011 (C) Charles Palmer, Beverly
+				$_SESSION['copyright'] = "Copyright 2011 &copy Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo";
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MAmanage')

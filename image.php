@@ -79,7 +79,6 @@ catch (Exception $e)
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
-		<script src="libs/mobile-jq.js"></script>
 		<script>
 
 <?php
@@ -119,7 +118,7 @@ catch (Exception $e)
 		<script src="libs/css-rotate.js"></script>
 -->
 		<script src="libs/OpenLayers.mobile.js"> </script>
-		<script src="libs/large_images.js"> </script>
+		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/operations.js"></script>
 </head>
 <body> 
