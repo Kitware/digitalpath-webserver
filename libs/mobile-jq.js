@@ -2,6 +2,7 @@
 //window.location.replace(window.location.href.split("#")[0] + "#mappage");
 
 var selectedFeature = null;
+var showAnno = 0;
 
 $(document).bind("mobileinit", function()
 		{
@@ -75,6 +76,22 @@ $(document).ready(function() {
 					alert('Labels ON');
 					}
 				
+			});
+
+		$("#show-anno").bind( "vclick", function(event, ui) {
+			var themes = ["a","b","e"];
+			var oldtheme = themes[showAnno];
+			showAnno = showAnno + 1;
+			if(showAnno === 3)
+				{
+				showAnno = 0;
+				}					
+			var newtheme = themes[showAnno];
+
+			//alert("Changing theme from " + oldtheme + " to " + newtheme);
+
+			$('#show-anno').attr("data-theme", newtheme).removeClass("ui-btn-up-"+oldtheme).removeClass("ui-btn-hover-"+oldtheme).addClass("ui-btn-up-"+newtheme).trigger("create");
+
 			});
 
 		//$("#checkbox-2").live();
