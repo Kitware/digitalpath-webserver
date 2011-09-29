@@ -1,8 +1,8 @@
 <!doctype html>
 
 <?php
-	@$book = $_GET['book'];
-	@$pass = $_GET['pass'];
+	@$book = $_REQUEST['book'];
+	@$pass = $_REQUEST['pass'];
 	
 	if(isset($book) && isset($pass)) 
 		{
@@ -68,7 +68,7 @@ Faulkner-Jones and Su-jean Seo";
 				<div data-role="content">
             <p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
 	
-		<form action="index.php" data-ajax="false" method="get"> 
+		<form action="index.php" data-ajax="false" method="post"> 
 
 			<div data-role="fieldcontain"> 
 			    <fieldset data-role="controlgroup"> 
@@ -85,14 +85,8 @@ Faulkner-Jones and Su-jean Seo";
 						<input type="password" name="pass" id="password" value="" />
 				</div>	
 
-	
 					<div><button type="submit" data-theme="a">Submit</button></div> 
- 
 
-				<div data-role="footer" class="ui-bar" data-position='fixed' data-fullscreen='false'>
-					<a href="" data-role="button" data-icon="arrow-u">Up</a>
-					<a href="" data-role="button" data-icon="arrow-d">Down</a>
-				</div>
     </div>
 		</form>
 	</body>

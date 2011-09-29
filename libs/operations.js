@@ -27,13 +27,14 @@ function init_operations()
 	$("#renameimage").bind( "vclick", function(event, ui) {
 		// alert($("#newname").val());
 	
-	$.doGet("ops.php", {
+	$.post("ops.php", {
 			col:"images",
 			op:"change",
 			param:"label",
 			data: "\"" + $("#newname").val() + "\"",
 			id:imageName
-	});
+	},function(data){ alert("Loaded");}
+);
 
 	});
 }

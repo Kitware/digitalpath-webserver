@@ -85,7 +85,7 @@ catch (Exception $e)
 </head>
 <body> 
 		<!-- The large image page -->
-		<div data-ajax='false' data-role="page" id="mappage" data-add-back-btn="true" >
+		<div data-ajax='false' data-role="page" id="mappage">
 			<!-- <div data-role="header">
 				<h1><?php echo($image_title); ?></h1>
 			</div> -->
@@ -93,9 +93,9 @@ catch (Exception $e)
 			<div data-role="header" data-position="fixed"> 
 				<a href="chapter.php?id=<?php
 						echo($chapter_id);
-						?>"  data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
+						?>" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
 				<a data-role="button" id="show-anno">Annotations</a>
-			  <a href="#options" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
+			  <a href="#options" data-direction="reverse" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
 					if($_SESSION['auth'] == 'admin')
 						{
 						echo("b");
@@ -133,8 +133,9 @@ catch (Exception $e)
 
 		</div>
 		
-		<div data-role="page" id="options" data-ajax='false' data-add-back-btn="true">
+		<div data-role="page" id="options" data-ajax='false'>
 			<div data-role="header">
+				<a href="#mappage" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
 				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
 				<h1>Options</h1>
 			</div>

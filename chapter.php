@@ -91,12 +91,19 @@ catch (Exception $e)
 	$cursor = $col_images->find($query);
 	foreach ($cursor as $val) 
 		{
-		$name = $val['name'];
+		if(array_key_exists('label', $val))
+		{
+			$name = $val['label'];
+		}
+		else
+		{
+			$name = $val['name'];
+		}
 		#var_dump($val);
 		echo('<li>');
 		echo('<a data-ajax="false" rel="external" href="image.php?id=');
 		echo($val['_id']);
-		echo('">');
+		echo('#mappage">');
 		echo('<img src="/tile.php?image=');
 		echo($val['_id']);
 		echo('&name=t.jpg">' . $name . '</a></li>');
