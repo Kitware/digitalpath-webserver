@@ -94,8 +94,9 @@ function init_operations()
 		startup_view["zoom"] = map.getZoom();
 		var lonlat =  map.getCenter();
 		startup_view["center"] = [lonlat.lon, lonlat.lat];
+		startup_view['rotation'] = map.mapRotation;
 
-		//alert(JSON.stringify(startup_view));
+		alert(JSON.stringify(startup_view));
 	 
 		$.post("ops.php", 
 				{

@@ -1,6 +1,19 @@
 // Start with the map page
 //window.location.replace(window.location.href.split("#")[0] + "#mappage");
 
+
+var map;
+var mapdiv;
+var mapcontainer;
+var anno;
+var labels;
+var tms;
+
+var origin;
+var spacing;
+var vector_styles;
+var selControl;
+
 var selectedFeature = null;
 var showAnno = 0;
 
@@ -11,30 +24,16 @@ $(document).bind("mobileinit", function()
 
 });
 
+function rotate(num)
+{
+	var stri = "+=" + num + 'deg';
+	if (num < 0)
+		var stri = "-=" + (-num) + 'deg';
+	mapdiv.animate({rotate: stri}, 0); 
+	map.mapRotation -= num;
+}
 
 $(document).ready(function() {
-		if(window.map)
-		{
-		}
-		else
-		{	
-
-
-
-		init();
-		}
-
-
-	function rotate(num)
-		{
-			var stri = "+=" + num + 'deg';
-			if (num < 0)
-				var stri = "-=" + (-num) + 'deg';
-				
-			mapdiv.animate({rotate: stri}, 0); 
-			map.mapRotation -= num;
-		}
-
 
     // fix height of content
     function fixContentHeight() {
@@ -67,7 +66,29 @@ $(document).ready(function() {
 			}
 
     $(window).bind("orientationchange resize pageshow", fixContentHeight);
-    document.body.onload = fixContentHeight;
+    document.body.onload = init;
+
+		fixContentHeight();
+
+		function applyStartupView(mapp)
+		{
+			if(hasStartupView == 1)
+			{
+			var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
+
+			//	alert(JSON.stringify(startup_view));
+			//alert(JSON.stringify(lonlat));
+			rotate(mapp, startup_view['rotation']);
+			mapp.setCenter(lonlat, startup_view["zoom"], true, true);
+		
+
+			}
+			else
+			{
+			map.zoomToMaxExtent();
+			}
+
+		}
 
     // Map zoom  
     $("#plus").click(function(){
@@ -118,10 +139,7 @@ $(document).ready(function() {
 
 		//$("#checkbox-2").live();
 			init_operations();
-
-			$("#checkbox-2").checkboxradio();
-			$("#checkbox-2").checkboxradio('disable');
-
+			applyStartupView(map);
 });
 
 

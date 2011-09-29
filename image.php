@@ -40,6 +40,7 @@ try
 		$has_startup_view = 1;
 		$zoom = $obj['startup_view']["zoom"];
 		$center = $obj['startup_view']["center"];
+		$rotation = $obj['startup_view']['rotation'];
 		}
 	else
 		{
@@ -79,7 +80,6 @@ catch (Exception $e)
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
-		<script src="libs/mobile-jq.js"></script>
 		<script>
 
 <?php
@@ -103,7 +103,7 @@ catch (Exception $e)
 	if($has_startup_view == 1)
 		{
 		echo("var hasStartupView = 1;\n");
-		echo("var startup_view = { \"zoom\" : " .	$zoom . ", \"center\" : [" . $center[0] . "," . $center[1] . "] };\n");
+		echo("var startup_view = { \"zoom\" : " .	$zoom . ", \"center\" : [" . $center[0] . "," . $center[1] . "], \"rotation\":". $rotation . " };\n");
 		}
 	else
 		{
@@ -121,6 +121,7 @@ catch (Exception $e)
 		<script src="libs/OpenLayers.mobile.js"> </script>
 		<script src="libs/large_images.js"> </script>
 		<script src="libs/operations.js"></script>
+		<script src="libs/mobile-jq.js"></script>
 </head>
 <body> 
 		<!-- The large image page -->

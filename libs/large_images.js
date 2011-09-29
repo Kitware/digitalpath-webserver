@@ -1,14 +1,4 @@
-
 // Large image view related scripts 
-
-var map;
-var anno;
-var labels;
-
-var origin;
-var spacing;
-var vector_styles;
-var selControl;
 
 //baseName = 'pathdemo';
 //imageName = '939';
@@ -227,7 +217,7 @@ function init()
   );
  
   //create custom tile manager
-  var tms = new OpenLayers.Layer.TMS( 
+  tms = new OpenLayers.Layer.TMS( 
 					"Large Image Viewer",  // Name in the layer switcher
 					"http://127.0.0.1/",
     {
@@ -278,16 +268,6 @@ function init()
 	anno.setVisibility(false);
 	labels.setVisibility(false);
 
-	if(hasStartupView == 1)
-	{
-	var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
-	//alert(JSON.stringify(lonlat));
-	this.map.setCenter(lonlat, startup_view["zoom"], true, true);
-	}
-	else
-	{
-	this.map.zoomToMaxExtent();
-	}
   // Uncomment to display zoom information 
 	//$(".slider_info").text(
   //  "slice: (" + currentSlice + " / " + maximumSlice + "), , zoom: (" + zoom +
