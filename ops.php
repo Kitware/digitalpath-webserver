@@ -108,7 +108,9 @@ if($success == true)
 			$headstring = 'location: chapter.php?id=' . trim($id);
 			break;
 	}
-  //	echo($headstring);
+	# Append the submit button
+	//header("Content-type: text/plain");
+	//echo json_encode($contents);
 	header($headstring);
 		return;
   }

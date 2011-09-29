@@ -25,7 +25,18 @@ try
   $oid = new MongoId($image_id);
 	$query1 = array( "_id" => $oid);
 	$obj = $coll->findOne($query1);
-	$image_title = $obj['name'];
+
+	if(array_key_exists('label',$obj))
+		{
+		$image_label = $obj['label'];
+		}
+		else
+		{
+		$image_label = $obj['name'];
+		}
+
+	$image_name = $obj['name'];
+
 	$chapter_id = $obj['title'];
 
 	$collection = $m->selectDB($database)->selectCollection($image_id); 
@@ -72,8 +83,11 @@ catch (Exception $e)
 	echo($image_id);
 	echo("';\n");
 
-	echo("var image_title = '");
-	echo(trim($image_title));
+	echo("var image_name = '");
+	echo(trim($image_name));
+	echo("';\n");
+	echo("var image_label = '");
+	echo(trim($image_label));
 	echo("';\n");
 ?>
 	
@@ -87,7 +101,7 @@ catch (Exception $e)
 		<!-- The large image page -->
 		<div data-ajax='false' data-role="page" id="mappage">
 			<!-- <div data-role="header">
-				<h1><?php echo($image_title); ?></h1>
+				<h1><?php echo($image_label); ?></h1>
 			</div> -->
 
 			<div data-role="header" data-position="fixed"> 
@@ -95,7 +109,7 @@ catch (Exception $e)
 						echo($chapter_id);
 						?>" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
 				<a data-role="button" id="show-anno">Annotations</a>
-			  <a href="#options" data-direction="reverse" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
+			  <a id="imageoptions" href="#options" data-direction="reverse" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
 					if($_SESSION['auth'] == 'admin')
 						{
 						echo("b");
@@ -146,8 +160,9 @@ catch (Exception $e)
 				{
 		?>		
 		<h2> Label </h2>
-					<input type="text" id="newname" value="<?php echo($image_title); ?>"/><br/>
-					<a id=renameimage data-role="button" data-inline="true">Rename </a> 
+					<input type="text" id="newname" value="<?php echo($image_label); ?>"/><br/>
+					<a id=renameimage data-role="button" data-inline="true">Rename</a> 
+					<a id=resetrename data-role="button" data-inline="true">Reset</a> 
 		
 		<div data-role="collapsible" data-inline="true">
 		<h3>Delete</h3>
@@ -193,7 +208,7 @@ catch (Exception $e)
 
 				<form rel="external" action="rename.php" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="image_id" value="<?php echo($image_id); ?>">
-					<input id="image_label" name="image_label" type="text" value = "<?php echo($image_title); ?>"/>  
+					<input id="image_label" name="image_label" type="text" value = image_label/>  
 					<input type="submit" data-inline="true" name="submit" value="Rename" />
 				</form>
 

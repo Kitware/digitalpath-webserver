@@ -24,16 +24,42 @@
 function init_operations()
 	{
 
-	$("#renameimage").bind( "vclick", function(event, ui) {
+	$("#renameimage").bind( "vclick", function(event, ui)
+		{
+		// alert($("#newname").val());
+	
+		$.post("ops.php", 
+				{
+					col:"images",
+					op:"change",
+					param:"label",
+					data: "\"" + $("#newname").val() + "\"",
+					id:imageName
+				},
+			function(data)
+				{ 
+				image_label = $("#newname").val();
+				alert("Done!");
+				}
+			);
+		});
+
+	$("#imageoptions").bind( "vclick", function(event, ui) {
+$("#newname").val(image_label);
+});
+
+
+	$("#resetrename").bind( "vclick", function(event, ui) {
 		// alert($("#newname").val());
 	
 	$.post("ops.php", {
 			col:"images",
-			op:"change",
+			op:"del",
 			param:"label",
-			data: "\"" + $("#newname").val() + "\"",
 			id:imageName
-	},function(data){ alert("Loaded");}
+	},function(data){ image_label = image_name;
+		alert("Done!");}
+    $("#newname").val(image_label);
 );
 
 	});
