@@ -3,6 +3,8 @@
 
 var map;
 var anno;
+var labels;
+
 var origin;
 var spacing;
 var vector_styles;
@@ -60,7 +62,7 @@ function get_my_url (bounds)
 	return some
   }
 
-function get_annotations(lay)
+function get_annotations()
 	{
 	// Get the json full of bookmarks of current image
 	$.ajax({
@@ -90,15 +92,7 @@ function get_annotations(lay)
 							var orig_pointlist = [];
 
 							var local_style = OpenLayers.Util.extend({}, vector_styles);
-							local_style.strokeColor = annot["annotation"]["color"];
-							local_style.label = annot["title"];
-							//local_style.labelAlign = "mt";
-							local_style.fontColor = annot["annotation"]["color"];
-					                local_style.fontSize = "18";
-							local_style.fontWeight = "bolder";
-							local_style.labelYOffset = 25;
-							//local_style.fontStyle="italic";
-	
+							var local_style2 = OpenLayers.Util.extend({}, vector_styles);
 
 							for(var j = 0; j < annot["annotation"]["points"].length ; j ++)
 								{
@@ -135,23 +129,28 @@ function get_annotations(lay)
 //									angle = angle + 360;
 //								}
 											
-
-							local_style.label = annot["title"]
-							local_style.strokeColor = annot["annotation"]["color"];
 							local_style.graphic = true; 
 							local_style.externalGraphic = "img/centered-yellow-arrow.png";
 							local_style.graphicWidth = 60; 
 							local_style.graphicOpacity = 1.;
-							local_style.zIndex = 0;
-							//local_style.graphicXOffset = 21;
-							//local_style.graphicYOffset = 25;
+							local_style.zIndex = 55; // Some large number
 							local_style.rotation = angle; 
-							
-							
+							local_style.graphicTitle = annot["title"];
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
-	
 							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(pointList[0].x, -1 * pointList[0].y),attrib, local_style );
-							lay.addFeatures(feature);
+							anno.addFeatures(feature);
+						
+							// Create label features
+							local_style2.zIndex = 56; // Some large number
+							local_style2.graphic = false; 
+							local_style2.fontColor = annot["annotation"]["color"];
+							local_style2.fontSize = "18";
+							local_style2.fontWeight = "bolder";
+							local_style2.labelYOffset = 25;
+							local_style2.label = annot["title"]
+							var feature2 = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(pointList[0].x, -1 * pointList[0].y),attrib, local_style2 );
+							labels.addFeatures(feature2);
+
 	
 							break;
 
@@ -248,7 +247,6 @@ function init()
   map.addLayer(tms);
   map.zoomToMaxExtent();
 		  
-	
   // we want opaque external graphics and non-opaque internal graphics
 	vector_styles = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
 	vector_styles.fillOpacity = 0.2
@@ -260,21 +258,30 @@ function init()
 	anno = new OpenLayers.Layer.Vector("Annotations", {style: vector_styles, renderers: ["SVG"]});
 	
 	anno.events.register("featureselected", anno, displayAnnotation);
-	get_annotations(anno);
 	map.addLayer(anno);
 	anno.setVisibility(false);
-	
+
+	// Create control for clicking pointers	
 	selControl = new OpenLayers.Control.SelectFeature(
 		anno,
 		{
 		multiple: false, hover: false,
 		});
- 
 
 	map.addControl(selControl);
 	selControl.activate();
+ 
+	// Layer for text labels
+	labels = new OpenLayers.Layer.Vector("TextLabels", {style: vector_styles, renderers: ["SVG"]});
+	map.addLayer(labels);
+	anno.setVisibility(true);
+	labels.setVisibility(true);
 
   var zoom = this.map.getZoom();
+	get_annotations();
+
+	anno.setVisibility(false);
+	labels.setVisibility(false);
   // Uncomment to display zoom information 
 	//$(".slider_info").text(
   //  "slice: (" + currentSlice + " / " + maximumSlice + "), , zoom: (" + zoom +

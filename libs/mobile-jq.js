@@ -91,7 +91,23 @@ $(document).ready(function() {
 			//alert("Changing theme from " + oldtheme + " to " + newtheme);
 
 			$('#show-anno').attr("data-theme", newtheme).removeClass("ui-btn-up-"+oldtheme).removeClass("ui-btn-hover-"+oldtheme).addClass("ui-btn-up-"+newtheme).trigger("create");
-
+			switch(showAnno)
+				{
+				case 0:
+					anno.setVisibility(false);
+					labels.setVisibility(false);
+					break;
+				case 1:
+					anno.setVisibility(true);
+					labels.setVisibility(false);
+					break;
+				case 2:
+					anno.setVisibility(true);
+					labels.setVisibility(true);
+					break;
+				default:
+					break;
+				}
 			});
 
 		//$("#checkbox-2").live();
