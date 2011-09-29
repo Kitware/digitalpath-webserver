@@ -243,7 +243,7 @@ function init()
   //add the tiles to the map
 
   map.addLayer(tms);
-  map.zoomToMaxExtent();
+  //map.zoomToMaxExtent();
 		  
   // we want opaque external graphics and non-opaque internal graphics
 	vector_styles = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
@@ -280,6 +280,17 @@ function init()
 
 	anno.setVisibility(false);
 	labels.setVisibility(false);
+
+	if(hasStartupView == 1)
+	{
+	var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
+	//alert(JSON.stringify(lonlat));
+	this.map.setCenter(lonlat, startup_view["zoom"], true, true);
+	}
+	else
+	{
+	this.map.zoomToMaxExtent();
+	}
   // Uncomment to display zoom information 
 	//$(".slider_info").text(
   //  "slice: (" + currentSlice + " / " + maximumSlice + "), , zoom: (" + zoom +

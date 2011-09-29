@@ -35,6 +35,16 @@ try
 		$image_label = $obj['name'];
 		}
 
+	if(array_key_exists('startup_view',$obj))
+		{
+		$has_startup_view = 1;
+		$zoom = $obj['startup_view']["zoom"];
+		$center = $obj['startup_view']["center"];
+		}
+	else
+		{
+		$has_startup_view = 0;
+		}
 	$image_name = $obj['name'];
 
 	$chapter_id = $obj['title'];
@@ -89,6 +99,18 @@ catch (Exception $e)
 	echo("var image_label = '");
 	echo(trim($image_label));
 	echo("';\n");
+
+	# for startup view
+	if($has_startup_view == 1)
+		{
+		echo("var hasStartupView = 1;\n");
+		echo("var startup_view = { \"zoom\" : " .	$zoom . ", \"center\" : [" . $center[0] . "," . $center[1] . "] };\n");
+		}
+	else
+		{
+		echo("var hasStartupView = 0;\n");
+		echo("var startup_view = {};\n");
+		}
 ?>
 	
 	</script>

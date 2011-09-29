@@ -86,4 +86,48 @@ function init_operations()
 				}
 			);
 		});
+
+	$("#setdefault").bind( "vclick", function(event, ui) 
+		{
+		// alert($("#newname").val());
+
+		startup_view["zoom"] = map.getZoom();
+		var lonlat =  map.getCenter();
+		startup_view["center"] = [lonlat.lon, lonlat.lat];
+
+		//alert(JSON.stringify(startup_view));
+	 
+		$.post("ops.php", 
+				{
+					col:"images",
+					op:"change",
+					param:"startup_view",
+					id:imageName,
+					data:JSON.stringify(startup_view)
+				},
+			function(data)
+				{ 
+				alert("Done!");
+				}
+			);
+		});
+
+
+	$("#deldefault").bind( "vclick", function(event, ui) 
+		{
+		// alert($("#newname").val());
+		$.post("ops.php", 
+				{
+					col:"images",
+					op:"del",
+					param:"startup_view",
+					id:imageName,
+				},
+			function(data)
+				{ 
+				alert("Startup view is now reset");
+				}
+			);
+		});
+
 	}
