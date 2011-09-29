@@ -113,19 +113,18 @@ catch (Exception $e)
 ?>
 	
 	</script>
-	
+	<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
+	<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
+<!--		<script src="libs/css-transform.js"></script>
+		<script src="libs/css-rotate.js"></script>
+-->
 		<script src="libs/OpenLayers.mobile.js"> </script>
-		<script src="libs/TMS.js"></script>
 		<script src="libs/large_images.js"> </script>
 		<script src="libs/operations.js"></script>
 </head>
 <body> 
 		<!-- The large image page -->
 		<div data-ajax='false' data-role="page" id="mappage">
-			<!-- <div data-role="header">
-				<h1><?php echo($image_label); ?></h1>
-			</div> -->
-
 			<div data-role="header" data-position="fixed"> 
 				<a href="chapter.php?id=<?php
 						echo($chapter_id);
@@ -143,9 +142,10 @@ catch (Exception $e)
 				?>">Options</a>
 			</div>			
 
-
 			<div data-role="content">
-				<div id="map"></div>
+				<div id="mapcontainer">
+					<div id="map"></div>
+				</div>
 			</div>
 
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
@@ -155,65 +155,65 @@ catch (Exception $e)
 					 data-iconpos="notext"></a>
 			</div>
 
-
-			<div id="copyright"> <?php echo($_SESSION['copyright']);?> </div>
-
-			<div data-role="footer" class="ui-bar" data-position="fixed"> 
-			<div id="rotation" data-role="controlgroup" data-type="horizontal">
-				<a href="" data-role="button" data-icon="forward" id="rleft"
-					 >L</a>
-				<a href="" data-role="button" data-icon="back" id="rright"
-					 >R</a>
+			<div id="copyright"> 
+				<?php echo($_SESSION['copyright']);?> 
 			</div>
-			</div> 
+
+			<div data-role="footer" class="ui-bar" data-fullscreen ="false" data-position="fixed"> 
+				<div id="rotation" data-role="controlgroup" data-type="horizontal">
+					<a href="" data-role="button" data-icon="forward" id="rleft"
+					 >L</a>
+					<a href="" data-role="button" data-icon="back" id="rright"
+					 >R</a>
+				</div>
+			</div>
 
 		</div>
-		
+
+
 		<div data-role="page" id="options" data-ajax='false'>
+		
 			<div data-role="header">
 				<a href="#mappage" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
 				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
 				<h1>Options</h1>
 			</div>
 	
+			<div data-role="content">
 		<!-- Display the annotation loader only if the user is admin -->
 		<?php
 			if($_SESSION['auth'] == 'admin')
 				{
 		?>		
-		<h2> Label </h2>
+				<h2> Label </h2>
 					<input type="text" id="newname" value="<?php echo($image_label); ?>"/><br/>
 					<a id=renameimage data-role="button" data-inline="true">Rename</a> 
 					<a id=resetrename data-role="button" data-inline="true">Reset</a> 
 		
-		<div data-role="collapsible" data-inline="true">
-		<h3>Delete</h3>
-		Please confirm the delete operation <br>
-		<a id="deleteimage" data-inline="true" data-role="button" data-icon="delete">Delete</a>
-		</div>
+			<div data-role="collapsible" data-inline="true">
+				<h3>Delete</h3>
+					Please confirm the delete operation <br>
+					<a id="deleteimage" data-inline="true" data-role="button" data-icon="delete">Delete</a>
+			</div>
 
-		<h2> Startup </h2>
-		<a id="setdefault" data-inline="true" data-role="button">Set Default View</a> 	<br/>
-		<a id="deldefault" data-inline="true" data-icon="delete" data-role="button">Delete Default View</a>
+			<h2> Startup </h2>
+				<a id="setdefault" data-inline="true" data-role="button">Set Default View</a> 	<br/>
+				<a id="deldefault" data-inline="true" data-icon="delete" data-role="button">Delete Default View</a>
 
-		<h2> Annotations </h2>
-			<form rel="external" data-direction="reverse" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
-				<input type="hidden" name="image_id" value="
-<?php echo($image_id); ?> 
-">
-				<label for="file">Filename:</label>
-				<input type="file" name="file" id="file" />
-				<input type="submit" name="submit" value="Submit" />
-			</form>
-			Note: Annotations will be overwrittern <br/>
+			<h2> Annotations </h2>
+				<form rel="external" data-direction="reverse" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="image_id" value="<?php echo($image_id); ?>">
+					<label for="file">Filename:</label>
+					<input type="file" name="file" id="file" />
+					<input type="submit" name="submit" value="Submit" />
+				</form>
+			</div>
+				Note: Annotations will be overwrittern <br/>
 		<?php
 				}
 		?>		
-			
-			</div>
 		</div>
-
-
+		
 </body>
 </html>
  

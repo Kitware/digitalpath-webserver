@@ -2,7 +2,9 @@ html ,
 body {
     margin: 0;
     padding: 0;
+		width:100%;
     height: 100%;
+		padding:'1'!important;
 }
 .ui-content {
     padding: 0;
@@ -21,6 +23,16 @@ body {
 /*.portrait, .portrait .ui-page{*/
     /*min-height: 0;*/
 /*}*/
+#mapcontainer{
+	display:block;
+	/*set the div in the top-left corner of the screen*/
+	position:absolute;
+	overflow:hidden!important;
+	/*set the width and height to 100% of the screen*/
+	width:100%;
+	height:100%;
+}	
+
 #mappage, #mappage .ui-content, #map {
     width: 100%;
     height: 100%;
@@ -57,12 +69,7 @@ body {
 .checked .ui-icon-check {
     opacity: 1;
 }
-.ui-icon-locate {
-    background-image: url(../img/locate.png);
-}
-.ui-icon-layers {
-    background-image: url(../img/openlayers.png);
-}
+
 .ui-content .ui-listview-inset, #search_results {
     margin: 1em;
 }

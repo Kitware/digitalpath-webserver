@@ -221,7 +221,8 @@ function init()
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
-			tileSize: new OpenLayers.Size(tileSize, tileSize)
+			tileSize: new OpenLayers.Size(tileSize, tileSize),
+			mapRotation:0.0
     }
   );
  
