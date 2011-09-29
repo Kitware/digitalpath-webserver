@@ -150,8 +150,6 @@ function get_annotations()
 							local_style2.label = annot["title"]
 							var feature2 = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.Point(pointList[0].x, -1 * pointList[0].y),attrib, local_style2 );
 							labels.addFeatures(feature2);
-
-	
 							break;
 
 						default : 

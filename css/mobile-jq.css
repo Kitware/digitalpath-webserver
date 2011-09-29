@@ -41,6 +41,13 @@ body {
     display: block;
     padding: 7px 6px 7px 8px;
 }
+#copyright {
+    position: absolute;
+    bottom: 45px;
+    right: 10px;
+    z-index: 1001;
+		font-size:11px;
+}
 #title, #tags, #shortdesc {
     display: none;
 }

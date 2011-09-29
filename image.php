@@ -114,6 +114,8 @@ catch (Exception $e)
 					 data-iconpos="notext"></a>
 			</div>
 
+
+			<div id="copyright"> <?php echo($_SESSION['copyright']);?> </div>
 			<div data-role="footer" class="ui-bar" data-position="fixed"> 
 			<div id="rotation" data-role="controlgroup" data-type="horizontal">
 				<a href="" data-role="button" data-icon="forward" id="rleft"
