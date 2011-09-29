@@ -79,7 +79,6 @@ catch (Exception $e)
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
-		<script src="libs/operations.js"></script>
 		<script src="libs/mobile-jq.js"></script>
 		<script>
 
@@ -118,6 +117,7 @@ catch (Exception $e)
 		<script src="libs/OpenLayers.mobile.js"> </script>
 		<script src="libs/TMS.js"></script>
 		<script src="libs/large_images.js"> </script>
+		<script src="libs/operations.js"></script>
 </head>
 <body> 
 		<!-- The large image page -->
@@ -197,7 +197,7 @@ catch (Exception $e)
 		<a id="deldefault" data-inline="true" data-icon="delete" data-role="button">Delete Default View</a>
 
 		<h2> Annotations </h2>
-			<form rel="external" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
+			<form data-rel="external" data-ajax="false" action="upload_ndpa.php" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="image_id" value="
 <?php echo($image_id); ?> 
 ">

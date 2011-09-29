@@ -167,19 +167,15 @@ function get_annotations()
 						
 							pointList.push(pointList[0]);
 							// Blue style
-							var local_style = OpenLayers.Util.extend({}, vector_styles);
+							var local_style4 = OpenLayers.Util.extend({}, vector_styles);
 
-							local_style.strokeColor = annot["annotation"]["color"];
-							local_style.label = "Hurray"; //annot["title"];
+							local_style4.strokeColor = annot["annotation"]["color"];
 							
-							local_style.fontColor = annot["annotation"]["color"];
-              local_style.fontSize = "12px";
-              local_style.fontFamily = "Courier New, monospace";
 							
 							var attrib = { "title" :  annot["title"], "text" : annot["details"]};
 							
-							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList), attrib, local_style );
-							lay.addFeatures(feature);
+							var feature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList), attrib, local_style4 );
+							anno.addFeatures(feature);
 						} // End switch
 					}	
 				}

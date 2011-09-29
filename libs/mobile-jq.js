@@ -12,6 +12,7 @@ $(document).bind("mobileinit", function()
 
 
 $(document).ready(function() {
+		init();
 
     // fix height of content
     function fixContentHeight() {
@@ -24,16 +25,6 @@ $(document).ready(function() {
         if ((content.outerHeight() +footer.outerHeight()+ header.outerHeight()) !== viewHeight) {
             contentHeight -= (content.outerHeight() - content.height() + 1);
             content.height(contentHeight);
-        }
-
-        if (window.map) {
-        //    map.updateSize();
-        } else {
-            // initialize map
-            init(function(feature) { 
-                selectedFeature = feature; 
-                $.mobile.changePage("#popup", "pop"); 
-            });
         }
     }
 

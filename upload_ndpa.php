@@ -123,7 +123,7 @@ else
 		$collection->update( array( "_id" => $oid), array('$set' => array("bookmarks" => $bookmarks)));
 		
 		$headstring =trim( 'location: image.php?id='. $image_id . "#mapppage");
-//		header( 'location:'.$ref);
+		//header( 'location:'.$ref);
 		header($headstring);
 //		echo("<a href =\"" . $headstring ."\" >");
 //		echo($headstring);
@@ -141,7 +141,7 @@ else
 		echo("Go back");
 		echo("</a>");
 		header( 'location:'.$ref);
-
+		return;
 		# Output success
 		}
 	//catch exception
