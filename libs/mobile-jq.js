@@ -356,7 +356,6 @@ function init()
 		fixContentHeight();
 
 		init();
-		alert('end of init');
     // Map zoom  
     $("#plus").click(function(){
         map.zoomIn();
@@ -382,7 +381,6 @@ function init()
 				showAnno = 0;
 				}					
 			var newtheme = themes[showAnno];
-			alert("Changing theme from " + oldtheme + " to " + newtheme);
 			$('#show-anno').attr("data-theme", newtheme).removeClass("ui-btn-up-"+oldtheme).removeClass("ui-btn-hover-"+oldtheme).addClass("ui-btn-up-"+newtheme);
 			switch(showAnno)
 				{
@@ -403,9 +401,10 @@ function init()
 				}
 			});
 
-		//$("#checkbox-2").live();
+			//$("#checkbox-2").live();
 			init_operations();
-
+			tms.redraw(true);
+			map.zoomToMaxExtent();
 
 });
 
