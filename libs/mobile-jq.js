@@ -218,7 +218,7 @@ function displayAnnotation(evt)
 	
 function init()
   {
-	var boundSize = tileSize *  Math.pow(2,zoomLevels-1); 
+	var boundSize = tileSize *  Math.pow(2.0,zoomLevels-1); 
   //create the map  
   map = new OpenLayers.Map( {
 			div: 'map',
@@ -227,7 +227,7 @@ function init()
 					new OpenLayers.Control.Attribution(),
 					new OpenLayers.Control.TouchNavigation({
 							dragPanOptions: {
-									enableKinetic: false
+									enableKinetic: true
 							}
 					}),
 			],
@@ -246,6 +246,7 @@ function init()
     {
     'type':'jpg',
     'getURL':get_my_url,
+		 tileOrigin: new OpenLayers.LonLat(0, 0)   
     }
   );
 
@@ -283,7 +284,7 @@ function init()
 	labels = new OpenLayers.Layer.Vector("TextLabels", {style: vector_styles, renderers: ["SVG"]});
 	map.addLayer(labels);
 
-	anno.setVisibility(true);
+	//anno.setVisibility(true);
 	labels.setVisibility(true);
 
   var zoom = this.map.getZoom();
@@ -351,7 +352,8 @@ function init()
 		mapdiv.css('width',hyp + "px");
 		mapdiv.css('height',hyp + "px");
 		mapdiv.css('cssText', 'margin-top :' + map_top_margin + 'px !important; margin-left :' + map_left_margin + 'px !important; height : ' + hyp + 'px !important; width : ' + hyp + 'px !important;');
-			}
+			} // Fix content ends
+
 
     $(window).bind("orientationchange resize pageshow", fixContentHeight);
 		fixContentHeight();

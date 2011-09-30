@@ -69,6 +69,10 @@ catch (Exception $e)
 
 <html>
     <head>
+
+		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+
     <title>dermatopathology atlas</title>
 
 		<!-- jQuery mobile -->
@@ -118,6 +122,7 @@ catch (Exception $e)
 		<script src="libs/css-rotate.js"></script>
 -->
 		<script src="libs/OpenLayers.mobile.js"> </script>
+		<script src="libs/TMS.js"> </script>
 		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/operations.js"></script>
 </head>
