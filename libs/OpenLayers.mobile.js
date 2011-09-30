@@ -660,7 +660,7 @@ if(resolution==null){resolution=this.getResolution();}
 if((center!=null)&&(resolution!=null)){var size=this.getSize();var w_deg=size.w*resolution;var h_deg=size.h*resolution;extent=new OpenLayers.Bounds(center.lon-w_deg/2,center.lat-h_deg/2,center.lon+w_deg/2,center.lat+h_deg/2);}
 return extent;},getCenter:function(){var center=null;var cachedCenter=this.getCachedCenter();if(cachedCenter){center=cachedCenter.clone();}
 return center;},getCachedCenter:function(){if(!this.center&&this.size){this.center=this.getLonLatFromViewPortPx(new OpenLayers.Pixel(this.size.w/2,this.size.h/2));}
-return this.center;},getZoom:function(){return this.zoom;},pan:function(dx,dy,options){var olddx=dx;var olddy=dy;console.log(options.dragging);dx=olddx*Math.cos(this.mapRotation*Math.PI/180.0)
+return this.center;},getZoom:function(){return this.zoom;},pan:function(dx,dy,options){var olddx=dx;var olddy=dy;dx=olddx*Math.cos(this.mapRotation*Math.PI/180.0)
 -olddy*Math.sin(this.mapRotation*Math.PI/180.0);dy=olddx*Math.sin(this.mapRotation*Math.PI/180.0)
 +olddy*Math.cos(this.mapRotation*Math.PI/180.0);options=OpenLayers.Util.applyDefaults(options,{animate:true,dragging:false});if(options.dragging){if(dx!=0||dy!=0){this.moveByPx(dx,dy);}}else{var centerPx=this.getViewPortPxFromLonLat(this.getCenter());var newCenterPx=centerPx.add(dx,dy);if(this.dragging||!newCenterPx.equals(centerPx)){var newCenterLonLat=this.getLonLatFromViewPortPx(newCenterPx);}}},panTo:function(lonlat){if(this.panMethod&&this.getExtent().scale(this.panRatio).containsLonLat(lonlat)){if(!this.panTween){this.panTween=new OpenLayers.Tween(this.panMethod);}
 var center=this.getCachedCenter();if(lonlat.equals(center)){return;}
