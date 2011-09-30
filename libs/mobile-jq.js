@@ -337,6 +337,7 @@ function init()
 
 			mapcontainer = $('#mapcontainer');
 			mapdiv = $('#map');
+			mapcontainer.height(contentHeight);
 
 			var boundSize = tileSize *  Math.pow(2,zoomLevels-1); 
 			
@@ -403,9 +404,6 @@ function init()
 
 			//$("#checkbox-2").live();
 			init_operations();
-			tms.redraw(true);
-			map.zoomToMaxExtent();
-
 });
 
 
