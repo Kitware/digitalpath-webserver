@@ -31,6 +31,7 @@ try
 				session_start();
         $_SESSION['name'] = $arr['contact/email']; 
         $_SESSION['start'] = time(); 
+        $_SESSION['last_activity'] = time(); 
 				
         header('Location:protected.php');  // PUT YOUR PAGE/URL HERE.... I THINK THIS SHOULD DO THE TRICK !!! 
 			}
