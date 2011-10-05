@@ -1,9 +1,44 @@
-<!doctype html>
-
 <?php
+	# Logging in with Google $accounts requires setting special identity, so this example shows how to do it.
+	require 'protected/openid.php';
+
 	@$book = $_REQUEST['book'];
 	@$pass = $_REQUEST['pass'];
-	
+	$openid = new LightOpenID('ayodhya:82');
+
+	# First see if OpenID login is called 
+	if(!$openid->mode) 
+		{
+		if(isset($_REQUEST['login']))
+			{
+			$openid->identity = 'https://www.google.com/accounts/o8/id';
+			$openid->required = array('namePerson/friendly', 'contact/email'); $openid->optional = array('namePerson/first');
+			header('Location: ' . $openid->authUrl());
+			// Send the user to authorizing application
+			return;
+			}
+		}
+	elseif($openid->mode != 'cancel') 
+		{
+		$arr = $openid->getAttributes();
+		if($openid->validate())
+			{
+				session_start();
+				$_SESSION['name'] = $arr['contact/email']; 
+				$_SESSION['start'] = time(); 
+				$_SESSION['last_activity'] = time(); 
+				$_SESSION['book'] = 'bev1';
+				$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
+Faulkner-Jones and Su-jean Seo. All rights reserved";
+				$_SESSION['auth'] = 'student';
+				$_SESSION['auth'] = 'admin';
+				header("location:book.php");
+				return;
+			}
+		}
+
+
+	# Check for categorical logins
 	if(isset($book) && isset($pass)) 
 		{
 		
@@ -20,6 +55,7 @@
 					$_SESSION['auth'] = 'admin';
 					}
 				header("location:book.php");
+				return;
 				}
 			}
 		
@@ -37,12 +73,13 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					$_SESSION['auth'] = 'admin';
 					}
 				header("location:book.php");
+				return;
 				}
 			}
 		}
 ?>
 
-
+<!doctype html>
 <html>
 	<head>
 		<title>Slide Atlas </title>
@@ -55,40 +92,50 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
-		<!-- large image specific additions  -->
-		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
-		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
 	</head>
 	<body> 
 		<!-- Index pages -->
     <div data-role="page">
-        <div data-role="header" data-position='fixed' data-fullscreen='false'>
-            <h1> Slide Atlas </h1>
-        </div>
+			<!-- Header -->
+			<div data-role="header" data-position='fixed' data-fullscreen='false'>
+					<h1> Slide Atlas </h1>
+			</div>
         
-				<div data-role="content">
-            <p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
-	
-		<form action="index.php" data-ajax="false" method="post"> 
+			<!-- Content -->
+			<div data-role="content">
+				<p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
 
-			<div data-role="fieldcontain"> 
-			    <fieldset data-role="controlgroup"> 
-			    	<legend>Please choose your affiliation:</legend> 
-			         	<input type="radio" name="book" id="radio-choice-1" value="wustl" checked="checked" /> 
-			         	<label for="radio-choice-1">Washington University School of Medicine </label> 
- 
-			         	<input type="radio" name="book" id="radio-choice-2" value="hms"  /> 
-			         	<label for="radio-choice-2">Harvard Combined Dermatology Residency Training Program </label> 
-			    </fieldset> 
+				<form action="index.php" data-ajax="false" method="post"> 
+					<div data-role="fieldcontain"> 
+						<fieldset data-role="controlgroup"> 
+							<legend>Please choose your affiliation:</legend> 
+							<input type="radio" name="book" id="radio-choice-1" value="wustl" checked="checked" /> 
+							<label for="radio-choice-1">Washington University School of Medicine </label> 
 
-				<div data-role="fieldcontain">
-						<label for="password">Password:</label>
-						<input type="password" name="pass" id="password" value="" />
-				</div>	
+							<input type="radio" name="book" id="radio-choice-2" value="hms"  /> 
+							<label for="radio-choice-2">Harvard Combined Dermatology Residency Training Program </label> 
+						</fieldset> 
 
-					<div><button type="submit" data-theme="a">Submit</button></div> 
-
-    </div>
-		</form>
+						<div data-role="fieldcontain">
+							<label for="password">Password:</label>
+							<input type="password" name="pass" id="password" value="" />
+						</div>	
+						<center>
+							<div>
+								<button type="submit"  data-inline='true' data-theme="a">Submit</button>
+							</div> 
+						</center>
+					</div>
+				</form>
+				
+				<!-- login -->
+					Or authenticate using :
+				<form action="?login" method="post" data-ajax="false">
+					<center>
+					<button data-theme="a" data-inline="true" data-ajax="false">Google</button>
+					</center>
+				</form>
+			</div>
+		</div>
 	</body>
 </html>
