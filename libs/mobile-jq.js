@@ -246,7 +246,6 @@ function init()
     {
     'type':'jpg',
     'getURL':get_my_url,
-		 tileOrigin: new OpenLayers.LonLat(0, 0)   
     }
   );
 
@@ -284,7 +283,7 @@ function init()
 	labels = new OpenLayers.Layer.Vector("TextLabels", {style: vector_styles, renderers: ["SVG"]});
 	map.addLayer(labels);
 
-	//anno.setVisibility(true);
+	anno.setVisibility(true);
 	labels.setVisibility(true);
 
   var zoom = this.map.getZoom();
@@ -292,12 +291,13 @@ function init()
 
 	anno.setVisibility(false);
 	labels.setVisibility(false);
+	this.map.zoomToMaxExtent();
 
 	if(hasStartupView == 1)
 	{
 	var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
-	//alert(JSON.stringify(lonlat));
-	this.map.setCenter(lonlat, startup_view["zoom"], true, true);
+	this.map.zoomTo(startup_view["zoom"]);
+	this.map.panTo(lonlat);
 	}
 	else
 	{
@@ -406,6 +406,7 @@ function init()
 
 			//$("#checkbox-2").live();
 			init_operations();
+			tms.redraw(true);
 });
 
 
