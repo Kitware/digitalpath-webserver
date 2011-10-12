@@ -13,6 +13,12 @@ var vector_styles;
 var selControl;
 
 
+// variables for leading 
+var isLeading = false;
+var curcenx;
+var curceny;
+var curzoom;
+
 // variables for following 
 var timersec;
 var seccount = 0;
@@ -228,6 +234,24 @@ function displayAnnotation(evt)
   // selControl.unselect(evt.feature);
   }
 
+function mapEvent(event)
+	{
+	if(isLeading === true)
+		{
+		curzoom = map.getZoom();
+		curlatlon = map.getCenter();
+		$.ajax({
+			url: "lead.php?zoom="+curzoom+'&cenx='+curlatlon.lon+'&ceny='+curlatlon.lat,
+			dataType: 'json',
+			success:  
+				function(data, textStatus, jqXHR)
+				{
+				// obj is the javascript object
+				}
+			});
+		}
+	}
+
 	
 function init()
   {
@@ -236,14 +260,21 @@ function init()
   map = new OpenLayers.Map( {
 			div: 'map',
 			theme : null,
+			eventListeners: 
+				{
+				"moveend": mapEvent,
+				"zoomend": mapEvent
+				},
 			controls: [
-					new OpenLayers.Control.Attribution(),
-					new OpenLayers.Control.TouchNavigation({
-							dragPanOptions: {
-									enableKinetic: true
-							}
-					}),
-			],
+				new OpenLayers.Control.Attribution(),
+				new OpenLayers.Control.TouchNavigation(
+							{
+							dragPanOptions: 
+								{
+								enableKinetic: false
+								}
+							}),
+				],
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
@@ -259,7 +290,11 @@ function init()
     {
     'type':'jpg',
     'getURL':get_my_url,
-    }
+			'eventListeners': 
+				{
+				"dragend": mapEvent
+				}
+}
   );
 
   tms.transitionEffect = 'resize';
@@ -408,14 +443,39 @@ function init()
 						dataType: 'json',
 						success:function(data, textStatus, jqXHR)
 							{
-							isWaiting = false;
 							// change the variables 
-							alert(JSON.stringify(data));
-							// if required 
+							if("zoom" in data)
+								{
+								var curzoom = map.getZoom();
+								if(curzoom != data["zoom"])
+									{	
+									map.zoomTo(data["zoom"]);	
+									}
+								}
+
+							if("cenx" in data && "ceny" in data)
+								{
+								var curlatlon = map.getCenter();
+								if(curlatlon.lon != data["cenx"] || curlatlon.lat != data["ceny"])
+									{
+									var lonlat = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
+									map.panTo(lonlat);
+									}
+								}
+
+							if("image" in data)
+								{
+								if(imageName != data["image"])
+									{	
+									imageName = data["image"];
+									tms.redraw(true);
+									}
+								}
+
 								// panTo
-								// zoomTo	
 								// change imageName
 								// refresh the layer
+							isWaiting = false;
 							},
 						error:function(jqXHR, textStatus, errorThrown)
 							{
@@ -431,9 +491,34 @@ function init()
 
 		$("#follow").bind("vclick", function(event, ui){
 			// start a timer and 
-			isFollowing = true;
+			if(isFollowing === true)
+				{
+				isFollowing = false
+				}
+			else
+				{
+				isFollowing = true;
+				}
+
 			timersec.toggle();
 		});
+
+		$("#lead").bind("vclick", function(event, ui){
+			// start a timer and 
+			if(isLeading === true)
+				{
+				isLeading = false
+				}
+			else
+				{
+				isLeading = true;
+				// Register for the events 
+
+				}
+			
+
+		});
+
 
 		$("#show-anno").bind( "vclick", function(event, ui) {
 			var themes = ["a","b","e"];

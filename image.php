@@ -177,8 +177,12 @@ catch (Exception $e)
 					<a href="" data-role="button" data-icon="back" id="rright"
 					 >R</a>
 
-					<a href="" data-role="button" data-icon="back" id="follow"
+					<a href="" data-role="button" id="follow"
 					 >follow</a>
+
+
+					<a href="" data-role="button" id="lead"
+					 >lead</a>
 
 				</div>
 			</div>
