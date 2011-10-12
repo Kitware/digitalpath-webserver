@@ -1,6 +1,9 @@
 <?php
 header('Content-Type: text/javascript; charset=utf8');
 
+# sample data will be 
+# db['users'].insert({'name':'dhandeo@gmail.com', 'zoom':2, 'cenx':100, 'ceny':100, 'image':'4e537737e982f508a8000001'})
+
 try
 	{
 	# Process command line parameters if any
@@ -30,7 +33,8 @@ try
 	if($obj != null)
 		{
 		echo json_encode(array("image" => $obj["image"], 
-					"zoom" => $obj["zoom"], "center" => $obj["center"]));
+					"zoom" => $obj["zoom"], "cenx" => $obj["cenx"], 
+					"ceny" => $obj["ceny"]));
 		}
 	else
 		{

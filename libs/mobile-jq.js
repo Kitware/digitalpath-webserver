@@ -17,6 +17,7 @@ var selControl;
 var timersec;
 var seccount = 0;
 var isFollowing = false;
+var isWaiting = false;
 var whomToFollow = '';
 
 
@@ -389,26 +390,40 @@ function init()
 
 
 		// Most follow functionality is here 
-		timersec = $.timer(function(){
+		timersec = $.timer(function()
+			{
 			seccount++;
 
 			// If following
-
-
-			// if not already waiting 
-
-			// Send an ajax query to server to get new image parameters 
+			if(isFollowing == true)
+				{
+				// if not already waiting 
+				if(isWaiting == false)		
+					{
+					isWaiting = true;
+					// Send an ajax query to server to get new image parameters 
 		
-
-			// On successful return 
-			// change the variables 
-
-			// if required 
-				// panTo
-				// zoomTo	
-	
-				// change imageName
-				// refresh the layer
+					$.ajax({
+						url: "follow.php?username=dhandeo@gmail.com",
+						dataType: 'json',
+						success:function(data, textStatus, jqXHR)
+							{
+							isWaiting = false;
+							// change the variables 
+							alert(JSON.stringify(data));
+							// if required 
+								// panTo
+								// zoomTo	
+								// change imageName
+								// refresh the layer
+							},
+						error:function(jqXHR, textStatus, errorThrown)
+							{
+							isWaiting = false;
+							}
+						})
+					}
+				}
 
 			});
 
@@ -416,6 +431,7 @@ function init()
 
 		$("#follow").bind("vclick", function(event, ui){
 			// start a timer and 
+			isFollowing = true;
 			timersec.toggle();
 		});
 
