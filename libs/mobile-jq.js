@@ -12,6 +12,18 @@ var spacing;
 var vector_styles;
 var selControl;
 
+
+// variables for following 
+var timersec;
+var seccount = 0;
+var isFollowing = false;
+var whomToFollow = '';
+
+
+// Some variables come directly from the php and will 
+// get modified if the server modifies them
+
+
 $(document).bind("mobileinit", function()
 		{
 	
@@ -373,6 +385,38 @@ function init()
 
 		$("#rleft").bind( "vclick", function(event, ui) {
 			rotate(5);
+		});
+
+
+		// Most follow functionality is here 
+		timersec = $.timer(function(){
+			seccount++;
+
+			// If following
+
+
+			// if not already waiting 
+
+			// Send an ajax query to server to get new image parameters 
+		
+
+			// On successful return 
+			// change the variables 
+
+			// if required 
+				// panTo
+				// zoomTo	
+	
+				// change imageName
+				// refresh the layer
+
+			});
+
+		timersec.set({ time : 1000});	
+
+		$("#follow").bind("vclick", function(event, ui){
+			// start a timer and 
+			timersec.toggle();
 		});
 
 		$("#show-anno").bind( "vclick", function(event, ui) {

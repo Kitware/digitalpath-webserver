@@ -116,6 +116,8 @@ catch (Exception $e)
 ?>
 	
 	</script>
+
+	<script src="libs/jquery.timer.js" type="text/javascript"></script>
 	<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
 	<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
 <!--		<script src="libs/css-transform.js"></script>
@@ -174,6 +176,10 @@ catch (Exception $e)
 					 >L</a>
 					<a href="" data-role="button" data-icon="back" id="rright"
 					 >R</a>
+
+					<a href="" data-role="button" data-icon="back" id="follow"
+					 >follow</a>
+
 				</div>
 			</div>
 
