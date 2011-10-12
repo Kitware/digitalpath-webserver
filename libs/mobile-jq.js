@@ -426,16 +426,24 @@ function init()
     $("#plus").click(function(){
         map.zoomIn();
     });
+
     $("#minus").click(function(){
         map.zoomOut();
     });
 
 		$("#rright").bind( "vclick", function(event, ui) {
-			rotate(-5);
+			map.mapRotation -= 5;
+			rotate(map.mapRotation);
+		});
+
+		$("#rreset").bind( "vclick", function(event, ui) {
+			map.mapRotation = 0;
+			rotate(map.mapRotation);
 		});
 
 		$("#rleft").bind( "vclick", function(event, ui) {
-			rotate(5);
+			map.mapRotation += 5;
+			rotate(map.mapRotation);
 		});
 
 		// Most follow functionality is here 

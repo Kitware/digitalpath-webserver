@@ -179,19 +179,19 @@ catch (Exception $e)
 
 			<!-- Footer content -->
 			<div data-role="footer" class="ui-bar" data-fullscreen ="false" data-position="fixed"> 
-				<div id="rotation" data-role="controlgroup" data-type="horizontal">
+				<div id="rotation" data-role="controlgroup" data-inline="true" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft"
-					 >L</a>
-					<a href="" data-role="button" data-icon="back" id="rright"
 					 >R</a>
-
+					<a href="" data-role="button" id="rreset"
+					 > reset </a>
+					<a href="" data-role="button" data-icon="back" id="rright"
+					 >L</a>
+				</div>
+				<div id="sync" data-role="controlgroup" data-inline="true" data-type="horizontal">
 					<a href="" data-role="button" id="follow"
 					 >follow</a>
-
-
 					<a href="" data-role="button" id="lead"
 					 >lead</a>
-
 				</div>
 			</div>
 
