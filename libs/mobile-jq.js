@@ -242,7 +242,7 @@ function mapEvent(event)
 		curzoom = map.getZoom();
 		curlatlon = map.getCenter();
 		currotation = map.mapRotation;
-		$.post(
+		$.get(
 			"lead.php",
 				{
 				zoom :curzoom,
@@ -359,12 +359,8 @@ function init()
 
 	function rotate(num)
 		{
-			var stri = "+=" + num + 'deg';
-			if (num < 0)
-				var stri = "-=" + (-num) + 'deg';
-				
+			var stri = num + 'deg';
 			mapdiv.animate({rotate: stri}, 0); 
-			map.mapRotation -= num;
 		} // rotate end
 
 	function set_startup_view()
@@ -375,12 +371,14 @@ function init()
 			var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
 			map.moveTo(lonlat);
 			map.zoomTo(startup_view["zoom"]);
-			tms.redraw(true);
 			if("rotation" in startup_view)
 				{
-				rotate(-1*parseInt(startup_view["rotation"]));
+				map.mapRotation = startup_view["rotation"];
+				rotate(map.mapRotation);
 				}
 			}
+			tms.redraw(true);
+			map.pan(1,1);
 
 		} // set startup view end
 
@@ -415,7 +413,14 @@ function init()
 		mapdiv.css('width',hyp + "px");
 		mapdiv.css('height',hyp + "px");
 		mapdiv.css('cssText', 'margin-top :' + map_top_margin + 'px !important; margin-left :' + map_left_margin + 'px !important; height : ' + hyp + 'px !important; width : ' + hyp + 'px !important;');
-			} // Fix content ends
+		if(map != undefined)
+			{
+			if(map.mapRotation != undefined)
+				{
+				rotate(map.mapRotation);
+				}
+			}
+		} // Fix content ends
 
 
     $(window).bind("orientationchange resize pageshow", fixContentHeight);
@@ -434,16 +439,22 @@ function init()
 		$("#rright").bind( "vclick", function(event, ui) {
 			map.mapRotation -= 5;
 			rotate(map.mapRotation);
+			//trigger event if leading
+			mapEvent(1);
+
+
 		});
 
 		$("#rreset").bind( "vclick", function(event, ui) {
 			map.mapRotation = 0;
 			rotate(map.mapRotation);
+			mapEvent(1);
 		});
 
 		$("#rleft").bind( "vclick", function(event, ui) {
 			map.mapRotation += 5;
 			rotate(map.mapRotation);
+			mapEvent(1);
 		});
 
 		// Most follow functionality is here 
@@ -465,6 +476,25 @@ function init()
 						dataType: 'json',
 						success:function(data, textStatus, jqXHR)
 							{
+							if("image" in data)
+								{
+								if(imageName != data["image"])
+									{	
+									imageName = data["image"];
+									tms.redraw(true);
+									}
+								}
+
+							if("cenx" in data && "ceny" in data)
+								{
+								var curlatlon = map.getCenter();
+								if(curlatlon.lon != data["cenx"] || curlatlon.lat != data["ceny"])
+									{
+									var lonlat = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
+									map.moveTo(lonlat);
+									}
+								}
+
 							// change the variables 
 							if("zoom" in data)
 								{
@@ -475,36 +505,18 @@ function init()
 									}
 								}
 
-							if("cenx" in data && "ceny" in data)
-								{
-								var curlatlon = map.getCenter();
-								if(curlatlon.lon != data["cenx"] || curlatlon.lat != data["ceny"])
-									{
-									var lonlat = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
-									map.panTo(lonlat);
-									}
-								}
-
-							if("image" in data)
-								{
-								if(imageName != data["image"])
-									{	
-									imageName = data["image"];
-									tms.redraw(true);
-									}
-								}
-
 							if("rotation" in data)
 								{
-								if(map.rotation != data["rotation"])
+								if(map.mapRotation != data["rotation"])
 									{	
 									// find the difference
-									rotate(-1*parseInt(map.mapRotation - data["rotation"]));
+									map.mapRotation = data["rotation"];
+									rotate(map.mapRotation);
+									// delay
 									}
 								}
-								// panTo
-								// change imageName
 								// refresh the layer
+							map.pan(1,1);
 							isWaiting = false;
 							},
 						error:function(jqXHR, textStatus, errorThrown)
@@ -517,7 +529,7 @@ function init()
 
 			});
 
-		timersec.set({ time : 1000});	
+		timersec.set({ time : 300});	
 
 		$("#follow").bind("vclick", function(event, ui){
 			// start a timer and 
