@@ -11,6 +11,7 @@ try
 	@$cenx = $_REQUEST['cenx'];
 	@$ceny = $_REQUEST['ceny'];
 	@$zoom = $_REQUEST['zoom'];
+	@$rotation = $_REQUEST['rotation'];
 	@$image = $_REQUEST['image'];
 	
 	# If parameters not available
@@ -46,6 +47,14 @@ try
 		if(isset($ceny))
 			{
 			$collection->update($query,array('$set' => array("ceny" => $ceny)));
+			}
+		if(isset($rotation))
+			{
+			$collection->update($query,array('$set' => array("rotation" => $rotation)));
+			}
+		if(isset($image))
+			{
+			$collection->update($query,array('$set' => array("image" => $image)));
 			}
 		}
 	else

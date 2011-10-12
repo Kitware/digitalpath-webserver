@@ -241,15 +241,21 @@ function mapEvent(event)
 		{
 		curzoom = map.getZoom();
 		curlatlon = map.getCenter();
-		$.ajax({
-			url: "lead.php?zoom="+curzoom+'&cenx='+curlatlon.lon+'&ceny='+curlatlon.lat,
-			dataType: 'json',
-			success:  
+		currotation = map.mapRotation;
+		$.post(
+			"lead.php",
+				{
+				zoom :curzoom,
+				cenx : curlatlon.lon,
+				ceny : curlatlon.lat,
+				rotation : currotation,
+				image : imageName
+				},
 				function(data, textStatus, jqXHR)
 				{
 				// obj is the javascript object
 				}
-			});
+			);
 		}
 	}
 
@@ -372,7 +378,6 @@ function init()
 			tms.redraw(true);
 			if("rotation" in startup_view)
 				{
-				alert(startup_view["rotation"]);
 				rotate(-1*parseInt(startup_view["rotation"]));
 				}
 			}
@@ -433,7 +438,6 @@ function init()
 			rotate(5);
 		});
 
-
 		// Most follow functionality is here 
 		timersec = $.timer(function()
 			{
@@ -482,6 +486,14 @@ function init()
 									}
 								}
 
+							if("rotation" in data)
+								{
+								if(map.rotation != data["rotation"])
+									{	
+									// find the difference
+									rotate(-1*parseInt(map.mapRotation - data["rotation"]));
+									}
+								}
 								// panTo
 								// change imageName
 								// refresh the layer
@@ -568,7 +580,7 @@ function init()
 					set_startup_view();
 					});
 
-        timer2.once(100);
+        timer2.once(300);
 });
 
 
