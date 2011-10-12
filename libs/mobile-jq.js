@@ -18,6 +18,7 @@ var isLeading = false;
 var curcenx;
 var curceny;
 var curzoom;
+var currotation;
 
 // variables for following 
 var timersec;
@@ -271,7 +272,7 @@ function init()
 							{
 							dragPanOptions: 
 								{
-								enableKinetic: false
+								enableKinetic: true
 								}
 							}),
 				],
@@ -290,6 +291,7 @@ function init()
     {
     'type':'jpg',
     'getURL':get_my_url,
+		'isBaseLayer':true,
 			'eventListeners': 
 				{
 				"dragend": mapEvent
@@ -339,25 +341,15 @@ function init()
 
 	anno.setVisibility(false);
 	labels.setVisibility(false);
-	this.map.zoomToMaxExtent();
+	map.zoomToMaxExtent();
 
-	if(hasStartupView == 1)
-	{
-	var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
-	this.map.zoomTo(startup_view["zoom"]);
-	this.map.panTo(lonlat);
-	}
-	else
-	{
-	this.map.zoomToMaxExtent();
-	}
   // Uncomment to display zoom information 
 	//$(".slider_info").text(
   //  "slice: (" + currentSlice + " / " + maximumSlice + "), , zoom: (" + zoom +
   //  " / " + this.map.getNumZoomLevels() + ")");
-} 
 
-
+		// Call the set startup view
+	}
 
 	function rotate(num)
 		{
@@ -367,7 +359,25 @@ function init()
 				
 			mapdiv.animate({rotate: stri}, 0); 
 			map.mapRotation -= num;
-		}
+		} // rotate end
+
+	function set_startup_view()
+		{
+
+		if(hasStartupView == 1)
+			{
+			var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
+			map.moveTo(lonlat);
+			map.zoomTo(startup_view["zoom"]);
+			tms.redraw(true);
+			if("rotation" in startup_view)
+				{
+				alert(startup_view["rotation"]);
+				rotate(-1*parseInt(startup_view["rotation"]));
+				}
+			}
+
+		} // set startup view end
 
 
     // fix height of content
@@ -552,6 +562,13 @@ function init()
 			//$("#checkbox-2").live();
 			init_operations();
 			tms.redraw(true);
+
+			var timer2 = $.timer(function() 
+					{
+					set_startup_view();
+					});
+
+        timer2.once(100);
 });
 
 

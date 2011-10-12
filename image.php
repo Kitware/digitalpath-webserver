@@ -40,6 +40,14 @@ try
 		$has_startup_view = 1;
 		$zoom = $obj['startup_view']["zoom"];
 		$center = $obj['startup_view']["center"];
+		if(array_key_exists("rotation", $obj['startup_view']))
+			{
+			$rotation = $obj['startup_view']["rotation"];
+			}
+		else
+			{
+			$rotation = 0;
+			}
 		}
 	else
 		{
@@ -106,7 +114,7 @@ catch (Exception $e)
 	if($has_startup_view == 1)
 		{
 		echo("var hasStartupView = 1;\n");
-		echo("var startup_view = { \"zoom\" : " .	$zoom . ", \"center\" : [" . $center[0] . "," . $center[1] . "] };\n");
+		echo("var startup_view = { \"zoom\" : " .	$zoom . ", \"center\" : [" . $center[0] . "," . $center[1] . "], \"rotation\" : " . $rotation ." };\n");
 		}
 	else
 		{
