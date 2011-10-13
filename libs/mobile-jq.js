@@ -242,6 +242,7 @@ function mapEvent(event)
 		curzoom = map.getZoom();
 		curlatlon = map.getCenter();
 		currotation = map.mapRotation;
+		
 		$.get(
 			"lead.php",
 				{
@@ -249,7 +250,8 @@ function mapEvent(event)
 				cenx : curlatlon.lon,
 				ceny : curlatlon.lat,
 				rotation : currotation,
-				image : imageName
+				image : imageName,
+				anno : showAnno 
 				},
 				function(data, textStatus, jqXHR)
 				{
@@ -515,8 +517,15 @@ function init()
 									// delay
 									}
 								}
+
+							if("anno" in data)
+								{
+								if(showAnno != data["anno"])
+									{	
+									change_annotation_mode(data["anno"]);		
+									}
+								}
 								// refresh the layer
-							map.pan(1,1);
 							isWaiting = false;
 							},
 						error:function(jqXHR, textStatus, errorThrown)
@@ -570,10 +579,19 @@ function init()
 		});
 
 
-		$("#show-anno").bind( "vclick", function(event, ui) {
+		function change_annotation_mode(evemt, ui, num)
+			{
 			var themes = ["a","b","e"];
 			var oldtheme = themes[showAnno];
-			showAnno = showAnno + 1;
+			if (num != undefined)
+				{
+				showAnno = parseInt(num);
+				}
+			else
+				{
+				showAnno = showAnno + 1;
+				}
+
 			if(showAnno === 3)
 				{
 				showAnno = 0;
@@ -597,7 +615,11 @@ function init()
 				default:
 					break;
 				}
-			});
+			mapEvent();
+			}
+
+
+		$("#show-anno").bind( "vclick", change_annotation_mode );
 
 			//$("#checkbox-2").live();
 			init_operations();

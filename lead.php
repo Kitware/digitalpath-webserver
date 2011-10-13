@@ -13,6 +13,7 @@ try
 	@$zoom = $_REQUEST['zoom'];
 	@$rotation = $_REQUEST['rotation'];
 	@$image = $_REQUEST['image'];
+	@$anno = $_REQUEST['anno'];
 	
 	# If parameters not available
 	if(!isset($username))
@@ -55,6 +56,10 @@ try
 		if(isset($image))
 			{
 			$collection->update($query,array('$set' => array("image" => $image)));
+			}
+		if(isset($anno))
+			{
+			$collection->update($query,array('$set' => array("anno" => $anno)));
 			}
 		}
 	else

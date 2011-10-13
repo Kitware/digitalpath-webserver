@@ -32,11 +32,13 @@ try
 	
 	if($obj != null)
 		{
-		echo json_encode(array("image" => $obj["image"], 
+		echo json_encode(array(
+					"image" => $obj["image"], 
 					"zoom" => $obj["zoom"],
 					"cenx" => $obj["cenx"], 
 					"ceny" => $obj["ceny"],
-					"rotation" => $obj["rotation"]));
+					"rotation" => $obj["rotation"],
+					"anno" => $obj["anno"]));
 		}
 	else
 		{
