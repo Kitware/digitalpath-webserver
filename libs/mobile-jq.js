@@ -272,42 +272,6 @@ function mapEvent(event)
 		}
 	}
 
-	// Hover control for transferring cursor
-	OpenLayers.Control.Hover = OpenLayers.Class(OpenLayers.Control, {                
-			defaultHandlerOptions: {
-					'delay': 200,
-					'pixelTolerance': null,
-					'stopMove': false
-			},
-
-			initialize: function(options) {
-					this.handlerOptions = OpenLayers.Util.extend(
-							{}, this.defaultHandlerOptions
-					);
-
-					OpenLayers.Control.prototype.initialize.apply(
-							this, arguments
-					); 
-
-					this.handler = new OpenLayers.Handler.Hover(
-							this,
-							{'pause': this.onPause, 'move': this.onMove},
-							this.handlerOptions
-					);
-			}, 
-
-			onPause: function(evt) {
-					 curxy = evt.xy;
-					 mapEvent();
-			},
-
-			onMove: function(evt) {
-					// if this control sent an Ajax request (e.g. GetFeatureInfo) when
-					// the mouse pauses the onMove callback could be used to abort that
-					// request.
-			}
-	});
-	
 function init()
   {
 	var boundSize = tileSize *  Math.pow(2.0,zoomLevels-1); 
@@ -374,11 +338,10 @@ function init()
 	map.addLayer(anno);
 	anno.setVisibility(false);
 	
-	var markers = new OpenLayers.Layer.Markers( "Markers" );
+	markers = new OpenLayers.Layer.Markers( "Markers" );
 	map.addLayer(markers);
 	 icon = new OpenLayers.Icon(
-						'http://www.openlayers.org/dev/img/marker.png',
-						size, null, calculateOffset);
+						'http://www.openlayers.org/dev/img/marker.png');
 
 	// Create control for clicking pointers	
 	selControl = new OpenLayers.Control.SelectFeature(
@@ -413,7 +376,8 @@ function init()
                     );
                 }, 
 
-                trigger: function(e) {
+				trigger: function(e) {
+										console.log('Here');
                     curxy = map.getLonLatFromViewPortPx(e.xy);
 										mapEvent();
 										display_marker();
@@ -557,12 +521,12 @@ function init()
 		if(amarker != undefined)
 			{
 			markers.removeMarker(amarker);
-			amarker.destroy();
-			amarker = undefined;
+			//amarker.destroy();
+			//amarker = undefined;
 			}	
-			amarker =  new OpenLayers.Marker(new OpenLayers.LonLat(-71,40), icon);
+			console.log(curxy.lon + ", " + curxy.lat);
+			amarker =  new OpenLayers.Marker(curxy , icon);
 			markers.addMarker(amarker);
-
 		}
 
 
@@ -606,11 +570,8 @@ function init()
 
 							if("curx" in data && "cury" in data)
 								{
-								if(curxy.lon != data["curx"] || curxy.lat != data["cury"])
-									{
-									curxy = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
+									curxy = new OpenLayers.LonLat(data["curx"], data["cury"]);
 									display_marker();
-									}
 								}
 
 							// change the variables 

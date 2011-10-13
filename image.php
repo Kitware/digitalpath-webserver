@@ -142,6 +142,9 @@ catch (Exception $e)
 -->
 		<script src="libs/OpenLayers.mobile.js"> </script>
 		<script src="libs/TMS.js"> </script>
+		<script src="libs/Icon.js"> </script>
+		<script src="libs/Marker.js"> </script>
+		<script src="libs/Markers.js"> </script>
 		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/operations.js"></script>
 </head>
