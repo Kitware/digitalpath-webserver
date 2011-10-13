@@ -1,6 +1,8 @@
 // Start with the map page
 //window.location.replace(window.location.href.split("#")[0] + "#mappage");
 
+OpenLayers.IMAGE_RELOAD_ATTEMPTS = 3;
+
 var selectedFeature = null;
 var showAnno = 0;
 var map;
@@ -21,9 +23,9 @@ var curzoom;
 var currotation;
 
 // variables for following 
+var isFollowing=false;
 var timersec;
 var seccount = 0;
-var isFollowing = false;
 var isWaiting = false;
 var whomToFollow = '';
 
@@ -371,16 +373,21 @@ function init()
 		if(hasStartupView == 1)
 			{
 			var lonlat = new OpenLayers.LonLat(startup_view["center"][0], startup_view["center"][1]);
-			map.moveTo(lonlat);
 			map.zoomTo(startup_view["zoom"]);
+			map.moveTo(lonlat);
 			if("rotation" in startup_view)
 				{
 				map.mapRotation = startup_view["rotation"];
 				rotate(map.mapRotation);
 				}
-			}
 			tms.redraw(true);
 			map.pan(1,1);
+			}
+			else
+			{
+				map.zoomTo(0);
+				map.pan(1,1);
+			}
 
 		} // set startup view end
 
@@ -483,7 +490,7 @@ function init()
 								if(imageName != data["image"])
 									{	
 									imageName = data["image"];
-									tms.redraw(true);
+									window.location = "image.php?id="+imageName+'&follow=1#mappage';
 									}
 								}
 
@@ -540,7 +547,8 @@ function init()
 
 		timersec.set({ time : 300});	
 
-		$("#follow").bind("vclick", function(event, ui){
+		 function start_following(event, ui)
+			{
 			// start a timer and 
 			if(isFollowing === true)
 				{
@@ -556,7 +564,7 @@ function init()
 				// if leading is true then stop leading
 				if(isLeading === true)
 					{
-					isLeading = false
+					isLeading = false;
 					// Change the theme back to black
 					$('#follow').attr("data-theme", 'a').removeClass("ui-btn-up-"+'b').removeClass("ui-btn-hover-"+'b').addClass("ui-btn-up-"+'a');
 					$('#follow .ui-btn-text').text('Join Session');
@@ -568,12 +576,12 @@ function init()
 						$('#follow').attr("data-theme", 'e').removeClass("ui-btn-up-"+'a').removeClass("ui-btn-hover-"+'a').addClass("ui-btn-up-"+'e');
 						$('#follow .ui-btn-text').text('Stop Following');
 						// Change theme 
+						timersec.toggle();
 					}
-				
 				}
+			}
 
-			timersec.toggle();
-		});
+		$("#follow").bind("vclick",start_following);
 
 		$("#lead").bind("vclick", function(event, ui)
 			{
@@ -582,7 +590,7 @@ function init()
 				// Register for the events 
 
 				$('#follow').attr("data-theme", 'b').removeClass("ui-btn-up-"+'a').removeClass("ui-btn-hover-"+'a').addClass("ui-btn-up-"+'b');
-				$('#follow .ui-btn-text').text('Stop Session');
+				$('#follow .ui-btn-text').text('Stop Leading');
 			
 			
 
@@ -638,9 +646,14 @@ function init()
 			var timer2 = $.timer(function() 
 					{
 					set_startup_view();
+					if(toFollow)
+						{
+						start_following();
+						}
 					});
 
         timer2.once(300);
+
 });
 
 

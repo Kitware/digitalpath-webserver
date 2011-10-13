@@ -6,12 +6,12 @@ try
 	# Process command line parameters if any
 	session_start();
 	@$image_id =  $_GET['id'];
+	@$follow =  $_GET['follow'];
 	
 	# If parameters not available
 	if(!isset($image_id))
 		{
 		$image_id = "4e25e244114d970935000051";
-
 		}
 	
 	# Perform database initialization and get chapter name
@@ -95,6 +95,15 @@ catch (Exception $e)
 
 <?php
 	# Create javascript variables for large_images.js 
+
+	if(isset($follow))
+		{
+		echo("var toFollow=true;\n");
+		}	
+	else
+		{
+		echo("var toFollow=false;\n");
+		}
 	echo("var tileSize =  256;\n");
 	echo("var baseUrl = '" . $base_url . "';\n");
 	echo("var zoomLevels = ". $level .";\n");
