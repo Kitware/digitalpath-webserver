@@ -21,9 +21,8 @@
 	</head>
 	<body> 
 		<!-- Index pages -->
-    <div data-role="page" data-add-back-btn="true" >
+    <div data-role="page">
         <div data-role="header">
-						<a data-rel="back" data-icon="arrow-l">Back</a>
             <h1> Slide Atlas</h1>
 						<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
 							if($_SESSION['auth'] == 'admin')

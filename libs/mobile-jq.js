@@ -536,10 +536,18 @@ function init()
 			if(isFollowing === true)
 				{
 				isFollowing = false
+				// Change the theme back to black
+				$('#follow').attr("data-theme", 'a').removeClass("ui-btn-up-"+'e').removeClass("ui-btn-hover-"+'e').addClass("ui-btn-up-"+'a');
+				$('#follow .ui-btn-text').text('Join Session');
+					
 				}
 			else
 				{
 				isFollowing = true;
+				$('#follow').attr("data-theme", 'e').removeClass("ui-btn-up-"+'a').removeClass("ui-btn-hover-"+'a').addClass("ui-btn-up-"+'e');
+				$('#follow .ui-btn-text').text('Stop Session');
+				// Change theme 
+			
 				}
 
 			timersec.toggle();

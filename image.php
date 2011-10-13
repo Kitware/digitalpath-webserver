@@ -141,12 +141,12 @@ catch (Exception $e)
 		<div data-ajax='false' data-role="page" id="mappage">
 
 			<!-- Header -->
-			<div data-role="header" data-position="fixed"> 
-				<a href="chapter.php?id=<?php
-						echo($chapter_id);
-						?>" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
+			<div id="somerandom" data-role="header" data-fullscreen="false" data-position="fixed"> 
 				<a data-role="button" id="show-anno">Annotations</a>
-			  <a id="imageoptions" href="#options" data-direction="reverse" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
+				<h1>  <?php echo($image_label);  ?> </h1>
+				<div id="rotation" data-role="controlgroup" class='ui-btn-right' data-inline="true" data-type="horizontal">
+				<a href="" data-inline="true" data-role="button" id="follow"> Join session </a>
+			  <a id="imageoptions" data-inline="true" href="#options" data-direction="reverse" data-role="button" data-icon="gear"  data-theme="<?php
 					if($_SESSION['auth'] == 'admin')
 						{
 						echo("b");
@@ -156,6 +156,7 @@ catch (Exception $e)
 						echo("a");
 						}
 				?>">Options</a>
+				</div>
 			</div>			
 
 			<!-- Image Content -->
@@ -178,7 +179,7 @@ catch (Exception $e)
 			</div>
 
 			<!-- Footer content -->
-			<div data-role="footer" class="ui-bar" data-fullscreen ="false" data-position="fixed"> 
+			<div data-role="footer" class="ui-bar"> 
 				<div id="rotation" data-role="controlgroup" data-inline="true" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft"
 					 >R</a>
@@ -186,12 +187,6 @@ catch (Exception $e)
 					 > reset </a>
 					<a href="" data-role="button" data-icon="back" id="rright"
 					 >L</a>
-				</div>
-				<div id="sync" data-role="controlgroup" data-inline="true" data-type="horizontal">
-					<a href="" data-role="button" id="follow"
-					 >follow</a>
-					<a href="" data-role="button" id="lead"
-					 >lead</a>
 				</div>
 			</div>
 
@@ -201,17 +196,18 @@ catch (Exception $e)
 		<div data-role="page" id="options" data-ajax='false'>
 		
 			<div data-role="header">
-				<a href="#mappage" data-rel="back" data-ajax="false" data-icon="arrow-l" class="ui-btn-left">Back</a>
-				<!-- <a href="#mappage" data-ajax="false">Back</a> -->
 				<h1>Options</h1>
 			</div>
 	
 			<div data-role="content">
+				<h2> Manage collaborative view </h2>	
 		<!-- Display the annotation loader only if the user is admin -->
 		<?php
 			if($_SESSION['auth'] == 'admin')
 				{
-		?>		
+		?>	
+					<a href="" data-inline="true" data-role="button" id="lead"> Lead a collaborative session </a>
+
 				<h2> Label </h2>
 					<input type="text" id="newname" value="<?php echo($image_label); ?>"/><br/>
 					<a id=renameimage data-role="button" data-inline="true">Rename</a> 
