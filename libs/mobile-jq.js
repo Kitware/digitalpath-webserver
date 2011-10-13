@@ -377,7 +377,6 @@ function init()
                 }, 
 
 				trigger: function(e) {
-										console.log('Here');
                     curxy = map.getLonLatFromViewPortPx(e.xy);
 										mapEvent();
 										display_marker();
@@ -524,7 +523,6 @@ function init()
 			//amarker.destroy();
 			//amarker = undefined;
 			}	
-			console.log(curxy.lon + ", " + curxy.lat);
 			amarker =  new OpenLayers.Marker(curxy , icon);
 			markers.addMarker(amarker);
 		}
