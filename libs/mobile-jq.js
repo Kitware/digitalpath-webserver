@@ -566,7 +566,7 @@ function init()
 					{
 						isFollowing = true;
 						$('#follow').attr("data-theme", 'e').removeClass("ui-btn-up-"+'a').removeClass("ui-btn-hover-"+'a').addClass("ui-btn-up-"+'e');
-						$('#follow .ui-btn-text').text('Stop Leading');
+						$('#follow .ui-btn-text').text('Stop Following');
 						// Change theme 
 					}
 				
