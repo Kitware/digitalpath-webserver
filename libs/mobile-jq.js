@@ -13,7 +13,9 @@ var origin;
 var spacing;
 var vector_styles;
 var selControl;
-
+var markers;
+var amarker;
+var icon;
 
 // variables for leading 
 var isLeading = false;
@@ -21,6 +23,7 @@ var curcenx;
 var curceny;
 var curzoom;
 var currotation;
+var curxy;
 
 // variables for following 
 var isFollowing=false;
@@ -244,7 +247,11 @@ function mapEvent(event)
 		curzoom = map.getZoom();
 		curlatlon = map.getCenter();
 		currotation = map.mapRotation;
-		
+
+		if(curxy === undefined)
+			{
+			curxy = {'lat':0, 'lon':0};
+			}	
 		$.get(
 			"lead.php",
 				{
@@ -253,7 +260,9 @@ function mapEvent(event)
 				ceny : curlatlon.lat,
 				rotation : currotation,
 				image : imageName,
-				anno : showAnno 
+				anno : showAnno,
+				curx : curxy.lon,
+				cury : curxy.lat 
 				},
 				function(data, textStatus, jqXHR)
 				{
@@ -263,6 +272,41 @@ function mapEvent(event)
 		}
 	}
 
+	// Hover control for transferring cursor
+	OpenLayers.Control.Hover = OpenLayers.Class(OpenLayers.Control, {                
+			defaultHandlerOptions: {
+					'delay': 200,
+					'pixelTolerance': null,
+					'stopMove': false
+			},
+
+			initialize: function(options) {
+					this.handlerOptions = OpenLayers.Util.extend(
+							{}, this.defaultHandlerOptions
+					);
+
+					OpenLayers.Control.prototype.initialize.apply(
+							this, arguments
+					); 
+
+					this.handler = new OpenLayers.Handler.Hover(
+							this,
+							{'pause': this.onPause, 'move': this.onMove},
+							this.handlerOptions
+					);
+			}, 
+
+			onPause: function(evt) {
+					 curxy = evt.xy;
+					 mapEvent();
+			},
+
+			onMove: function(evt) {
+					// if this control sent an Ajax request (e.g. GetFeatureInfo) when
+					// the mouse pauses the onMove callback could be used to abort that
+					// request.
+			}
+	});
 	
 function init()
   {
@@ -274,7 +318,8 @@ function init()
 			eventListeners: 
 				{
 				"moveend": mapEvent,
-				"zoomend": mapEvent
+				"zoomend": mapEvent,
+				"touchstart":mapEvent
 				},
 			controls: [
 				new OpenLayers.Control.Attribution(),
@@ -328,6 +373,12 @@ function init()
 	anno.events.register("featureselected", anno, displayAnnotation);
 	map.addLayer(anno);
 	anno.setVisibility(false);
+	
+	var markers = new OpenLayers.Layer.Markers( "Markers" );
+	map.addLayer(markers);
+	 icon = new OpenLayers.Icon(
+						'http://www.openlayers.org/dev/img/marker.png',
+						size, null, calculateOffset);
 
 	// Create control for clicking pointers	
 	selControl = new OpenLayers.Control.SelectFeature(
@@ -338,7 +389,41 @@ function init()
 
 	map.addControl(selControl);
 	selControl.activate();
- 
+
+     OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {                
+                defaultHandlerOptions: {
+                    'single': true,
+                    'double': false,
+                    'pixelTolerance': 0,
+                    'stopSingle': false,
+                    'stopDouble': false
+                },
+
+                initialize: function(options) {
+                    this.handlerOptions = OpenLayers.Util.extend(
+                        {}, this.defaultHandlerOptions
+                    );
+                    OpenLayers.Control.prototype.initialize.apply(
+                        this, arguments
+                    ); 
+                    this.handler = new OpenLayers.Handler.Click(
+                        this, {
+                            'click': this.trigger
+                        }, this.handlerOptions
+                    );
+                }, 
+
+                trigger: function(e) {
+                    curxy = map.getLonLatFromViewPortPx(e.xy);
+										mapEvent();
+										display_marker();
+                }
+
+            });
+				var click = new OpenLayers.Control.Click();
+				map.addControl(click);
+				click.activate();
+
 	// Layer for text labels
 	labels = new OpenLayers.Layer.Vector("TextLabels", {style: vector_styles, renderers: ["SVG"]});
 	map.addLayer(labels);
@@ -466,6 +551,21 @@ function init()
 			mapEvent(1);
 		});
 
+	function display_marker()
+		{
+
+		if(amarker != undefined)
+			{
+			markers.removeMarker(amarker);
+			amarker.destroy();
+			amarker = undefined;
+			}	
+			amarker =  new OpenLayers.Marker(new OpenLayers.LonLat(-71,40), icon);
+			markers.addMarker(amarker);
+
+		}
+
+
 		// Most follow functionality is here 
 		timersec = $.timer(function()
 			{
@@ -501,6 +601,15 @@ function init()
 									{
 									var lonlat = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
 									map.moveTo(lonlat);
+									}
+								}
+
+							if("curx" in data && "cury" in data)
+								{
+								if(curxy.lon != data["curx"] || curxy.lat != data["cury"])
+									{
+									curxy = new OpenLayers.LonLat(data["cenx"], data["ceny"]);
+									display_marker();
 									}
 								}
 

@@ -39,6 +39,8 @@ try
 					"ceny" => $obj["ceny"],
 					"rotation" => $obj["rotation"],
 					"anno" => $obj["anno"]));
+					"curx" => $obj["curx"], 
+					"cury" => $obj["cury"],
 		}
 	else
 		{

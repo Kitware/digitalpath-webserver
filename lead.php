@@ -14,6 +14,8 @@ try
 	@$rotation = $_REQUEST['rotation'];
 	@$image = $_REQUEST['image'];
 	@$anno = $_REQUEST['anno'];
+	@$curx = $_REQUEST['curx'];
+	@$cury = $_REQUEST['cury'];
 	
 	# If parameters not available
 	if(!isset($username))
@@ -60,6 +62,14 @@ try
 		if(isset($anno))
 			{
 			$collection->update($query,array('$set' => array("anno" => $anno)));
+			}
+		if(isset($curx))
+			{
+			$collection->update($query,array('$set' => array("curx" => $curx)));
+			}
+		if(isset($cury))
+			{
+			$collection->update($query,array('$set' => array("cury" => $cury)));
 			}
 		}
 	else
