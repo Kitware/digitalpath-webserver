@@ -242,6 +242,7 @@ function displayAnnotation(evt)
 
 function mapEvent(event)
 	{
+	map.setOptions({'cenPx': map.getViewPortPxFromLonLat(map.getCenter()) }); 
 	if(isLeading === true)
 		{
 		curzoom = map.getZoom();
@@ -299,7 +300,8 @@ function init()
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
 			tileSize: new OpenLayers.Size(tileSize, tileSize),
-			mapRotation:0.0
+			mapRotation:0.0,
+			cenPx: new OpenLayers.Pixel(0,0)
     }
   );
  
