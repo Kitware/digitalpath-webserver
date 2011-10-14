@@ -592,7 +592,7 @@ function init()
 				$('#follow').attr("data-theme", 'b').removeClass("ui-btn-up-"+'a').removeClass("ui-btn-hover-"+'a').addClass("ui-btn-up-"+'b');
 				$('#follow .ui-btn-text').text('Stop Leading');
 			
-			
+				mapEvent();	
 
 			});
 
