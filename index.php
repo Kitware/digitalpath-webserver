@@ -137,6 +137,14 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 				</form>
 
 				-->
+				
+				<!-- login -->
+					Or authenticate using :
+				<form action="?login" method="post" data-ajax="false">
+					<center>
+					<button data-theme="a" data-inline="true" data-ajax="false">Facebook</button>
+					</center>
+				</form>
 
 			</div>
 		</div>
