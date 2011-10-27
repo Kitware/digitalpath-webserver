@@ -30,7 +30,6 @@
 				$_SESSION['book'] = 'bev1';
 				$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo. All rights reserved";
-				$_SESSION['auth'] = 'student';
 				$_SESSION['auth'] = 'admin';
 				header("location:book.php");
 				return;
@@ -47,7 +46,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 			if($pass == "showme" || $pass == 'MOmanage')
 				{
 				session_start();
-				$_SESSION['book'] = 'paul2';
+				$_SESSION['book'] = 'paul3';
 				$_SESSION['copyright'] = "Copyright &copy 2011, Paul Bridgman. All rights reserved";
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MOmanage')
