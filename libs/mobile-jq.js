@@ -299,7 +299,8 @@ function init()
 	    maxResolution: boundSize / tileSize, 
 	    numZoomLevels: zoomLevels, 
 			tileSize: new OpenLayers.Size(tileSize, tileSize),
-			mapRotation:0.0
+			mapRotation:0.0,
+			cenPx: new OpenLayers.Pixel(0,0)
     }
   );
  
@@ -340,6 +341,8 @@ function init()
 	
 	markers = new OpenLayers.Layer.Markers( "Markers" );
 	map.addLayer(markers);
+	markers.setVisibility(false);
+
 	 icon = new OpenLayers.Icon(
 						'http://www.openlayers.org/dev/img/marker.png');
 
