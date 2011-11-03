@@ -11,7 +11,8 @@ header('content-type: image/jpeg');
 function grey_out()
 	{
 	#header('content-type: image/jpeg');
-	$im = file_get_contents('img/256-grey.jpg');
+	#$im = file_get_contents('img/256-grey.jpg');
+	$im = file_get_contents('img/blank.gif');
 	echo $im; 
 	}
 
