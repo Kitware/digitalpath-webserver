@@ -70,7 +70,7 @@
 										$name = $val['name'];	
 										}
 									#var_dump($val);
-									echo('<li><a data-ajax="false" rel="external" href="chapter.php?id=');
+									echo('<li><a data-ajax="false" rel="external" href="session.php?id=');
 									echo($val['_id']);
 									echo('">' . $name . '</a></li>');
 									}	

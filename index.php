@@ -31,7 +31,7 @@
 				$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo. All rights reserved";
 				$_SESSION['auth'] = 'admin';
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 			}
 		}
@@ -53,7 +53,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					{
 					$_SESSION['auth'] = 'admin';
 					}
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 				}
 			}
@@ -71,7 +71,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					{
 					$_SESSION['auth'] = 'admin';
 					}
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 				}
 			}
