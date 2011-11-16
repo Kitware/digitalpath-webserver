@@ -1,6 +1,6 @@
 [submodule "webgl"]
 	path = webgl
-	url = git://github.com/dhandeo/webgl-viewer.git
+	url = git://kwsource.kitwarein.com/digitalpath/webgl-submodule.git
 [submodule "facebook"]
 	path = facebook
-	url = sturney@slide-atlas.org:facebook-submodule.git
+	url = git://kwsource.kitwarein.com/digitalpath/facebook-submodule.git
