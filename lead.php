@@ -27,7 +27,7 @@ try
 	require_once("config.php"); 
 
 	# connect
-	$m = new Mongo($server, array('persist' => 'pathfollow'));
+	$m = new Mongo($server);
 	
 	# select a collection (analogous to a relational database's table)
 	$collection = $m->selectDB($database)->selectCollection("users"); 

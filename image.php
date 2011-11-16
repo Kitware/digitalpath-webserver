@@ -18,7 +18,7 @@ try
 	require_once("config.php"); 
 
 	# connect
-	$m = new Mongo($server, array('persist' => 'path'));
+	$m = new Mongo($server);
 	
 	# Perform the query to get image name, and number of levels
 	$coll = $m->selectDB($database)->selectCollection("images"); 
