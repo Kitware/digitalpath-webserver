@@ -1,5 +1,5 @@
 <?php
-	# Perform database initialization and get chapter name
+	# Perform database initialization
 	require_once("config.php"); 
 ?>
 
@@ -53,7 +53,7 @@
 								$m = new Mongo($server);
 
 								# select a collection (analogous to a relational database's table)
-								$collection = $m->selectDB($database)->selectCollection("chapters"); 
+								$collection = $m->selectDB($database)->selectCollection("sessions"); 
 								
 								# find everything in the collection
 								$cursor = $collection->find();
@@ -62,7 +62,6 @@
 									{
 									if (array_key_exists('label', $val))
 										{
-										echo('Have it <br/>');
 										$name = $val['label'];
 										}
 									else

@@ -5,32 +5,35 @@
 try
 	{
 	# Process command line parameters if any
-	@$chapter_id =  $_GET['id'];
+	@$sess_id =  $_GET['id'];
 	
 	# If parameters not available
-	if(!isset($chapter_id))
+	if(!isset($sess_id))
 		{
 		header('content-type: text/html');
 		return;
 		}
 	
-	# Perform database initialization and get chapter name
-	
-	# Perform database initialization and get chapter name
+	# Perform database initialization
 	require_once("config.php"); 
 
 	# connect
 	$m = new Mongo($server);
 	
 	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB($database)->selectCollection("chapters"); 
+	$col_sess = $m->selectDB($database)->selectCollection("sessions"); 
 
-	# Perform the query to get chapter name
-  $oid = new MongoId($chapter_id);
-	
-	$query = array( "_id" => $oid);
-	$cursor = $collection->findOne($query);
-	$chapter_title = $cursor['name'];
+	# Perform the query to get session name	
+	$sess_doc = $col_sess->findOne( array("_id" => new MongoId($sess_id)) );
+
+	if (array_key_exists('label', $sess_doc))
+		{
+		$sess_title = $sess_doc['label'];
+		}
+	else
+		{
+		$sess_title = $sess_doc['name'];	
+		}
 
 	}
 
@@ -54,7 +57,7 @@ catch (Exception $e)
     <div data-role="page" data-add-back-btn="true">
         
 	 			<div data-role="header" data-position="fixed" data-fullscreen="false">
-            <h1> <?php echo($chapter_title) ?> </h1>
+            <h1> <?php echo($sess_title) ?> </h1>
 						<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
 							if($_SESSION['auth'] == 'admin')
 								{
@@ -80,31 +83,29 @@ catch (Exception $e)
 	# select a collection (analogous to a relational database's table)
 	$col_images = $m->selectDB($database)->selectCollection("images");
 
-	$query = array( "title" => $oid);
-	# find everything in the collection
-	$cursor = $col_images->find($query);
-	foreach ($cursor as $val) 
+	foreach ($sess_doc['images'] as $img_id) 
 		{
-		if(array_key_exists('hide', $val))
+		$img_doc = $col_images->findOne( array("_id" => $img_id) );		
+		if(array_key_exists('hide', $img_doc))
 			{
 			continue;
 			}
-		if(array_key_exists('label', $val))
+		if(array_key_exists('label', $img_doc))
 			{
-			$name = $val['label'];
+			$img_name = $img_doc['label'];
 			}
 		else
 			{
-			$name = $val['name'];
+			$img_name = $img_doc['name'];
 			}
-		#var_dump($val);
+
 		echo('<li>');
 		echo('<a data-ajax="false" rel="external" href="image.php?id=');
-		echo($val['_id']);
+		echo($img_doc['_id']);
 		echo('#mappage">');
 		echo('<img src="/tile.php?image=');
-		echo($val['_id']);
-		echo('&name=t.jpg">' . $name . '</a></li>');
+		echo($img_doc['_id']);
+		echo('&name=t.jpg">' . $img_name . '</a></li>');
 		}	
 ?>
             </ul>
