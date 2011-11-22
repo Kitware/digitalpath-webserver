@@ -190,6 +190,11 @@ catch (Exception $e)
 				<?php echo($_SESSION['copyright']);?> 
 			</div>
 
+			<div id="logo">
+				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
+			</div>
+
+
 			<!-- Footer content -->
 			<div data-role="footer" class="ui-bar"> 
 				<div id="rotation" data-role="controlgroup" data-inline="true" data-type="horizontal">

@@ -53,9 +53,18 @@ body {
     display: block;
     padding: 7px 6px 7px 8px;
 }
+
+#logo {
+    position: absolute;
+    bottom: 70px;
+    right: 10px;
+    z-index: 1001;
+		font-size:11px;
+}
+
 #copyright {
     position: absolute;
-    bottom: 45px;
+    bottom: 52px;
     right: 10px;
     z-index: 1001;
 		font-size:11px;
@@ -78,4 +87,8 @@ body {
 }
 #details-list li{
 	padding:15px 10px;
+}
+
+.ui-icon-myapp-email {
+	background-image: url("../img/k-logo-64.png");
 }
