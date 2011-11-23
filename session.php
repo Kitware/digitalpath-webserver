@@ -85,7 +85,7 @@ catch (Exception $e)
 
 	# build a PHP-style sorted array from 'images' array
 	$sess_imgs = array();
-	foreach ($sess_doc['images_new'] as $img_data_obj)
+	foreach ($sess_doc['images'] as $img_data_obj)
 		{
 		$sess_imgs[$img_data_obj['pos']] = $img_data_obj['img'];
 		}
