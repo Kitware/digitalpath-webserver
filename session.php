@@ -87,7 +87,7 @@ catch (Exception $e)
 	$sess_imgs = array();
 	foreach ($sess_doc['images'] as $img_data_obj)
 		{
-		$sess_imgs[$img_data_obj['pos']] = $img_data_obj['img'];
+		$sess_imgs[$img_data_obj['pos']] = $img_data_obj['ref'];
 		}
 	ksort($sess_imgs);
 
