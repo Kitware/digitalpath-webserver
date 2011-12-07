@@ -99,13 +99,23 @@ catch (Exception $e)
 			$img_name = $img_doc['name'];
 			}
 
+		$thumb_doc = $m->selectDB($database)->selectCollection(strval($img_id))->findOne( array("name" => "thumb.jpg"),  array("file") );
+		if(!is_null($thumb_doc))
+			{
+			$thumb_file = 'thumb.jpg';
+			}
+		else
+			{
+			$thumb_file = 't.jpg';
+			}
+
 		echo('<li>');
 		echo('<a data-ajax="false" rel="external" href="image.php?id=');
 		echo($img_doc['_id']);
 		echo('#mappage">');
 		echo('<img src="/tile.php?image=');
 		echo($img_doc['_id']);
-		echo('&name=t.jpg">' . $img_name . '</a></li>');
+		echo('&name=' . $thumb_file .'">' . $img_name . '</a></li>');
 		}	
 ?>
             </ul>
