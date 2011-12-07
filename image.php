@@ -147,6 +147,9 @@ catch (Exception $e)
 		<script src="libs/Markers.js"> </script>
 		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/operations.js"></script>
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
+		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+
 </head>
 <body> 
 		<!-- The large image page -->
