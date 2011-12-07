@@ -83,7 +83,15 @@ catch (Exception $e)
 	# select a collection (analogous to a relational database's table)
 	$col_images = $m->selectDB($database)->selectCollection("images");
 
-	foreach ($sess_doc['images'] as $img_id) 
+	# build a PHP-style sorted array from 'images' array
+	$sess_imgs = array();
+	foreach ($sess_doc['images'] as $img_data_obj)
+		{
+		$sess_imgs[$img_data_obj['pos']] = $img_data_obj['ref'];
+		}
+	ksort($sess_imgs);
+
+	foreach ($sess_imgs as $img_id) 
 		{
 		$img_doc = $col_images->findOne( array("_id" => $img_id) );		
 		if(array_key_exists('hide', $img_doc))
