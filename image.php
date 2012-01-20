@@ -185,6 +185,7 @@ if(isset($sessIdStr))
 		<!-- The large image page -->
 		<div id="mappage" data-role="page">
 
+			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- Header -->
 			<div data-role="header" data-position="fixed">
 				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
