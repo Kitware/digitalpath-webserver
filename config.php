@@ -19,6 +19,6 @@ else
 	# define some variables
 	$database = $_SESSION['book'];
 	$base_url = "tile.php";
-	$server = "ayodhya:27017";
+	$server = $_SESSION['host'];
 	}
 ?>

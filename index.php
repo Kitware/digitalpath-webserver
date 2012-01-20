@@ -1,9 +1,13 @@
 <?php
+# Move these to index.php config file?
+$loginConnName = 'ayodhya:27017';
+$loginDBName = 'slideatlas';
+
 # Logging in with Google $accounts requires setting special identity, so this example shows how to do it.
 require 'protected/openid.php';
 
-@$book = $_REQUEST['book'];
-@$pass = $_REQUEST['pass'];
+@$databaseId = $_REQUEST['database'];
+@$passwd = $_REQUEST['passwd'];
 $openid = new LightOpenID('ayodhya:82');
 
 # First see if OpenID login is called 
@@ -38,56 +42,24 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 
 
 # Check for categorical logins
-if(isset($book) && isset($pass)) 
+if(isset($databaseId) && isset($passwd)) 
 	{
-	
-	if($book == "demo" )
+	$loginConn = new Mongo('mongodb://' . $loginConnName);
+	$loginDBColl = $loginConn->selectDB($loginDBName)->selectCollection('databases');
+	$loginDBDoc = $loginDBColl->findOne(array('_id' => new MongoId($databaseId)));
+	if(!is_null($loginDBDoc))
 		{
-			session_start();
-			$_SESSION['book'] = 'demo';
-			$_SESSION['copyright'] = "Copyright &copy 2011, All rights reserved";
-			$_SESSION['auth'] = 'admin';
-			header("location:session-index.php");
-			return;
-		}
-	
-
-	if($book == "wustl" )
-		{
-		if($pass == "showme" || $pass == 'MOmanage')
+		if($passwd == $loginDBDoc['studentpasswd'] || $passwd == $loginDBDoc['adminpasswd'])
 			{
 			session_start();
-			$_SESSION['book'] = 'paul2';
-			$_SESSION['copyright'] = "Copyright &copy 2011, Paul Bridgman. All rights reserved";
-			$_SESSION['auth'] = 'student';
-			if($pass == 'MOmanage')
-				{
-				$_SESSION['auth'] = 'admin';
-				}
+			$_SESSION['host'] = $loginDBDoc['host'];
+			$_SESSION['book'] = $loginDBDoc['dbname'];
+			$_SESSION['copyright'] = $loginDBDoc['copyright'];
+			$_SESSION['auth'] = ($passwd == $loginDBDoc['adminpasswd']) ? 'admin' : 'student';
 			header("location:session-index.php");
-			return;
-			}
-		}
-	
-	if($book == "hms")
-		{
-		if($pass == "letmein" || $pass == 'MAmanage')
-			{
-			session_start();
-			$_SESSION['book'] = 'bev1';
-			$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
-Faulkner-Jones and Su-jean Seo. All rights reserved";
-			$_SESSION['auth'] = 'student';
-			if($pass == 'MAmanage')
-				{
-				$_SESSION['auth'] = 'admin';
-				}
-			header("location:session-index.php");
-			return;
 			}
 		}
 	}
-}
 ?>
 
 <!DOCTYPE html>
@@ -120,18 +92,21 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					<div data-role="fieldcontain">
 						<fieldset data-role="controlgroup">
 							<legend>Please choose your affiliation:</legend>
-							<input type="radio" name="book" id="radio-choice-1" value="wustl" checked="checked" />
-							<label for="radio-choice-1">Washington University School of Medicine </label>
+							<?php
+							$loginConn = new Mongo('mongodb://' . $loginConnName);
+							$loginDBColl = $loginConn->selectDB($loginDBName)->selectCollection('databases');
 
-							<input type="radio" name="book" id="radio-choice-2" value="hms"  />
-							<label for="radio-choice-2">Harvard Combined Dermatology Residency Training Program </label>
-							<input type="radio" name="book" id="radio-choice-3" value="demo"  />
-							<label for="radio-choice-3">Atlas Demonstration (no password)</label>
+							foreach ($loginDBColl->find() as $loginDBDoc)
+								{
+								echo '<input type="radio" name="database" id="' , $loginDBDoc['_id'], '" value="' , $loginDBDoc['_id'] , '" /> ', "\n";
+								echo '<label for="' , $loginDBDoc['_id'] , '">' , $loginDBDoc['label'] , '</label> ', "\n";
+								}
+							?>
 						</fieldset>
 
 						<div data-role="fieldcontain">
 							<label for="password">Password:</label>
-							<input type="password" name="pass" id="password" value="" />
+							<input type="password" name="passwd" id="password" value="" />
 						</div>
 						<center>
 							<div>
