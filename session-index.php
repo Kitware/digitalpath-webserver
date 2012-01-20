@@ -24,16 +24,7 @@ require_once("config.php");
 		<div data-role="page">
 			<div data-role="header">
 				<h1>Slide Atlas</h1>
-				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
-					if($_SESSION['auth'] == 'admin')
-						{
-						echo("b");
-						}
-					else
-						{
-						echo("a");
-						}
-				?>">Options</a>
+				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div><!-- /header -->
 
 			<div data-role="content">
@@ -43,37 +34,24 @@ require_once("config.php");
 				<p>This website is supported on multiple devices including iPad, iPhone and latest desktop browsers</p>
 
 				<ul data-role="listview" data-inset="true">
-					<?php
-					# Loop through the pages and load them
+				<?php
+				# Loop through sessions
+				$conn = new Mongo('mongodb://' . $server);
+				$sessColl = $conn->selectDB($database)->selectCollection('sessions');
 
-					#echo('<li><a href="./information.html">Information</a></li>');
-					require_once("config.php"); 
-
-					# connect
-					$m = new Mongo($server);
-
-					# select a collection (analogous to a relational database's table)
-					$collection = $m->selectDB($database)->selectCollection("sessions"); 
-				
-					# find everything in the collection
-					$cursor = $collection->find();
-				
-					foreach ($cursor as $val) 
+				foreach ($sessColl->find()->sort(array('name' => 1)) as $sessDoc)
+					{
+					if (array_key_exists('label', $sessDoc))
 						{
-						if (array_key_exists('label', $val))
-							{
-							$name = $val['label'];
-							}
-						else
-							{
-							$name = $val['name'];
-							}
-						#var_dump($val);
-						echo('<li><a data-ajax="false" rel="external" href="session.php?id=');
-						echo($val['_id']);
-						echo('">' . $name . '</a></li>');
+						$sessTitle = $sessDoc['label'];
 						}
-					?>
+					else
+						{
+						$sessTitle = $sessDoc['name'];
+						}
+					echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $sessDoc['_id'] , '">' , $sessTitle , '</a></li>' , "\n";
+					}
+				?>
 				</ul>
 			</div><!-- /content -->
 		</div><!-- /page -->
