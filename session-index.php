@@ -6,7 +6,7 @@ require_once("config.php");
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>dermatopathology atlas</title>
+		<title>Slide Atlas</title>
 		<meta charset='utf-8' />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />

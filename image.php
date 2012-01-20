@@ -78,7 +78,7 @@ catch (Exception $e)
 -->
 		<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
 
-		<title>dermatopathology atlas</title>
+		<title>Slide Atlas</title>
 
 		<!-- jQuery mobile -->
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
