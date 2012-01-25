@@ -15,6 +15,9 @@ try
 		return;
 		}
 
+	@$sessIdStr =  $_GET['sess'];
+	// if(!isset($sessIdStr)) then we just can't have forward/back buttons
+
 	@$follow =  $_GET['follow'];
 
 	session_start();
@@ -68,6 +71,32 @@ catch (Exception $e)
 	header('content-type: text/plain');
 	echo 'Caught exception: ',  $e->getMessage(), "\n";
 	return;
+	}
+
+# Find previous / next images in session
+$prevImg_href = NULL;
+$nextImg_href = NULL;
+if(isset($sessIdStr))
+	{
+	$sessDoc = $conn->selectDB($database)->selectCollection("sessions")->findOne( array( "_id" => new MongoId($sessIdStr)) );
+
+	# build a PHP-style sorted array from 'images' array
+	$sessImgsSorted = array();
+	foreach ($sessDoc['images'] as $refListElem)
+		{
+		$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+		}
+	ksort($sessImgsSorted);
+
+	$thisImgPos = array_search($imgId, $sessImgsSorted);
+	if(array_key_exists($thisImgPos-1, $sessImgsSorted))
+		{
+		$prevImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos-1] . '#mappage';
+		}
+	if(array_key_exists($thisImgPos+1, $sessImgsSorted))
+		{
+		$nextImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos+1] . '#mappage';
+		}
 	}
 ?>
 
@@ -188,6 +217,7 @@ catch (Exception $e)
 			<!-- Footer content -->
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
+					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
 				</div>
 				<div id="rotation" class="ui-block-b" data-role="controlgroup" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft">R</a>
@@ -195,6 +225,7 @@ catch (Exception $e)
 					<a href="" data-role="button" data-icon="back" id="rright">L</a>
 				</div>
 				<div class="ui-block-c" data-role="controlgroup" data-type="horizontal">
+					<?php if(!is_null($nextImg_href)) echo '<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="' , $nextImg_href , '">Next</a>', "\n"; ?>
 				</div>
 			</div><!-- /footer -->
 
