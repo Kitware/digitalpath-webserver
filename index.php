@@ -128,7 +128,7 @@ if(isset($databaseId) && isset($passwd))
 				<!-- login -->
 					Or authenticate using :
 					<center>
-					<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook/protected.php">Facebook</a>
+					<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook_module.php">Facebook</a>
 					</center>
 				<!-- login -->
 				</form>
