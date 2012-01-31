@@ -1,8 +1,25 @@
 <?php
 	# To be called from facebook or google submodule
-	session_start();
-	#print_r($_SESSION);
-	#return;
+	require_once("config.php"); 
+
+	# Create global mongo collection
+	#$conn = new Mongo('mongodb://' . $server);
+
+#				$sessColl = $conn->selectDB($database)->selectCollection('sessions');
+#
+#				foreach ($sessColl->find()->sort(array('name' => 1)) as $sessDoc)
+#					{
+#					if (array_key_exists('label', $sessDoc))
+#						{
+#						$sessTitle = $sessDoc['label'];
+#						}
+#					else
+#						{
+#						$sessTitle = $sessDoc['name'];
+#						}
+#					echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $sessDoc['_id'] , '">' , $sessTitle , '</a></li>' , "\n";
+#					}
+
 
 	function display_user_information()
 		{
@@ -18,6 +35,15 @@
 			echo $key . " " . $val['name'] . "</br>";
 			} 
 		}
+
+	function display_available_groups()
+		{
+				#$access_groups = $conn->selectDB($database)->selectCollection('groups');
+
+
+
+		}
+
 
 	#display_user_information();
 
@@ -43,7 +69,7 @@
 	</head>
 	<body> 
 		<!-- Index pages -->
-		<div data-role="page">
+		<div id="list" data-role="page">
 			<div data-role="header">
 				<h1>Slide Atlas</h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
@@ -56,7 +82,12 @@
 				<p>This website is supported on multiple devices including iPad, iPhone and latest desktop browsers</p>
 
 
-				<?php  display_user_information();  ?>
+				<?php  
+					
+					#display_user_information();
+					display_available_groups();
+
+				 ?>
 
 				<ul data-role="listview" data-inset="true">
 				<?php

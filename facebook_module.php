@@ -51,7 +51,7 @@ else
 Faulkner-Jones and Su-jean Seo. All rights reserved";
 		$_SESSION['auth'] = 'student';
 
-	  header("location:access-groups.php#");
+	  header("location:access-groups.php#list");
 }
 ?>
 
