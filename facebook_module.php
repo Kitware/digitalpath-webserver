@@ -1,5 +1,6 @@
  <?php 
   session_start();
+	echo "Communicating with facebook ...";
 
 	$app_id = "212057308863490";
 	$app_secret = "c46dd118cc71d9007a9062f7f9fa6b9c";

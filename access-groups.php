@@ -1,25 +1,57 @@
 <?php
 	# To be called from facebook or google submodule
 	require_once("config.php"); 
-
 	# Create global mongo collection
-	#$conn = new Mongo('mongodb://' . $server);
 
-#				$sessColl = $conn->selectDB($database)->selectCollection('sessions');
-#
-#				foreach ($sessColl->find()->sort(array('name' => 1)) as $sessDoc)
-#					{
-#					if (array_key_exists('label', $sessDoc))
-#						{
-#						$sessTitle = $sessDoc['label'];
-#						}
-#					else
-#						{
-#						$sessTitle = $sessDoc['name'];
-#						}
-#					echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $sessDoc['_id'] , '">' , $sessTitle , '</a></li>' , "\n";
-#					}
+	#$conn = new Mongo('mongodb://' . $_SESSION['loginConnName']);
+	#$sessGroups = $conn->selectDB($_SESSION['loginDBName'])->selectCollection('groups');
 
+	function get_memberships()
+		{
+		# Connects to the database and finds the groups that have been
+		
+		$conn = new Mongo();
+		$colGroups = $conn->selectDB('slideatlas')->selectCollection('groups');
+		$groups_list = array();
+
+		foreach ($colGroups->find() as $sessDoc)
+			{
+			$in = 0;
+			$match = "";
+			$count = 0;
+
+			foreach($_SESSION['groups'] as $key => $facebook_group)
+				{
+					#echo $facebook_group['name'] .  $facebook_group['id'] . " vs " . $sessDoc["facebook_id"] . " </br>";
+					if($sessDoc['facebook_id'] == $facebook_group['id'])
+					{
+						$in = 1;
+						$match = $facebook_group;
+						break;
+					}
+				} 
+			if($in == 1)
+				{
+				echo "<h3>" . $match["name"] . " </h3>";
+
+				# Found a match
+				$count = $count + 1;
+					
+				#Query the mentioned database and get the sessions names
+				$colSessions = $conn->selectDB($sessDoc["db"])->selectCollection("sessions");
+					
+				foreach($sessDoc["can_see"] as $asession_id)
+					{
+						# Give a clickable list
+						$asession_obj = $colSessions->findOne(array("_id" => $asession_id));
+						echo $asession_obj["name"] . " </br>";
+					}
+				print_r("</br>");
+				}
+			}
+		}
+		
+		# Trim the irrelevant facebook groups and the fetched permissions 
 
 	function display_user_information()
 		{
@@ -77,15 +109,15 @@
 
 			<div data-role="content">
 				<div id="banner">
-					<h2>Session Index</h2>
+					<h2>Session Index for <?php  echo $_SESSION['facebook']['name'] ?> </h2>
 				</div>
 				<p>This website is supported on multiple devices including iPad, iPhone and latest desktop browsers</p>
-
 
 				<?php  
 					
 					#display_user_information();
-					display_available_groups();
+					#display_available_groups();
+					get_memberships();
 
 				 ?>
 

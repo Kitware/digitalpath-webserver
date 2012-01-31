@@ -8,6 +8,10 @@ if (!isset ($_cookie[ini_get('session.name')]))
 	session_start();
 	}
 
+# The location of the configuration dialog
+$_SESSION['loginConnName'] = 'ayodhya:27017';
+$_SESSION['loginDBName'] = 'slideatlas';
+
 // initialize a session
 if (!isset($_SESSION['book'])) 
 	{
