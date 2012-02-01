@@ -40,11 +40,14 @@
 				#Query the mentioned database and get the sessions names
 				$colSessions = $conn->selectDB($sessDoc["db"])->selectCollection("sessions");
 					
+				echo '<ul data-role="listview" data-inset="true">';
+
 				foreach($sessDoc["can_see"] as $asession_id)
 					{
 						# Give a clickable list
 						$asession_obj = $colSessions->findOne(array("_id" => $asession_id));
-						echo $asession_obj["name"] . " </br>";
+						echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $sessDoc['_id'] , '">' , $asession_obj['name'], '</a></li>' , "\n";
+#						echo $asession_obj["name"] . " </br>";
 					}
 				print_r("</br>");
 				}
