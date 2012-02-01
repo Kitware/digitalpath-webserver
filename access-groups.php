@@ -6,6 +6,7 @@
 	#$conn = new Mongo('mongodb://' . $_SESSION['loginConnName']);
 	#$sessGroups = $conn->selectDB($_SESSION['loginDBName'])->selectCollection('groups');
 
+
 	function get_memberships()
 		{
 		# Connects to the database and finds the groups that have been
@@ -13,12 +14,17 @@
 		$conn = new Mongo();
 		$colGroups = $conn->selectDB('slideatlas')->selectCollection('groups');
 		$groups_list = array();
+		
+		# Reset the matching groups counter and 
+		# corresponding permissions index
+
+		$count = 0;
+		$_SESSION['perm'] = array();
 
 		foreach ($colGroups->find() as $sessDoc)
 			{
 			$in = 0;
 			$match = "";
-			$count = 0;
 
 			foreach($_SESSION['groups'] as $key => $facebook_group)
 				{
@@ -27,6 +33,11 @@
 					{
 						$in = 1;
 						$match = $facebook_group;
+						
+						# Add to the permissions information to the session cookie  
+						# hence no groups information will be user in the cookie anymore
+						$_SESSION['perm'][$count] = array("db" => $sessDoc['db'] , "facebook_id" => "dummy");
+						echo "I was here ", $count;
 						break;
 					}
 				} 
@@ -46,13 +57,20 @@
 					{
 						# Give a clickable list
 						$asession_obj = $colSessions->findOne(array("_id" => $asession_id));
-						echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $sessDoc['_id'] , '">' , $asession_obj['name'], '</a></li>' , "\n";
+						echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $asession_id, '&db=' , strval($count-1),'">' , $asession_obj['name'], '</a></li>' , "\n";
 #						echo $asession_obj["name"] . " </br>";
 					}
 				print_r("</br>");
 				}
 			}
+
+		# IF count is zero say some thing
+		if($count == 0)
+			{ 
+			echo "</br> Sorry .. no sessions listed for you today </br>" , "\n";
+			}
 		}
+	
 		
 		# Trim the irrelevant facebook groups and the fetched permissions 
 

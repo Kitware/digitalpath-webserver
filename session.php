@@ -16,11 +16,33 @@ try
 		return;
 		}
 	
-	# Perform database initialization
 	require_once("config.php");
+	
+	# Perform database initialization
+	@$db_index =  $_REQUEST['db'];
 
-	$conn = new Mongo('mongodb://' . $server);
+	#print_r($_SESSION);
+	#return;
+	
+	if(isset($db_index))
+		{
+		$database = $_SESSION['perm'][$db_index]['db'];
+		$_SESSION['book'] = $database;
+		}
+
+	if(!isset($server))
+		{
+		echo "Setting server";
+		$server = "127.0.0.1";
+		$_SESSION['host'] = $server;	
+		}
+	else
+		{
+		echo " Server already set";
+		}
+	$conn = new Mongo();
 	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
+
 
 	# Perform the query to get session document, for name
 	$sessDoc = $sessColl->findOne( array("_id" => new MongoId($sessIdStr)) );
@@ -33,7 +55,7 @@ try
 		{
 		$sessTitle = $sessDoc['name'];
 		}
-
+		
 	}
 
 # Error handling
@@ -43,6 +65,7 @@ catch (Exception $e)
 	echo 'Caught exception: ',  $e->getMessage(), "\n";
 	return;
 	}
+
 ?>
 
 <html>
