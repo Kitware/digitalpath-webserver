@@ -44,7 +44,6 @@
 
 
 						$_SESSION['perm'][$count] = array("db" => $sessDoc['db'] , "facebook_id" => "dummy");
-						echo "I was here ", $count;
 						break;
 					}
 				} 
@@ -55,8 +54,15 @@
 				# Found a match
 				$count = $count + 1;
 					
-				#Query the mentioned database and get the sessions names
-				$colSessions = $conn->selectDB($sessDoc["db"])->selectCollection("sessions");
+				# Query the mentioned database and get the sessions names
+
+				# Obtain the database 
+				$coldb = $conn->selectDB('slideatlas')->selectCollection('databases');;
+				$db = $coldb->findOne(array("_id" => $sessDoc["db"]));
+				
+				$conn2 = new Mongo($db['host']);				
+
+				$colSessions = $conn2->selectDB($db["dbname"])->selectCollection("sessions");
 					
 				echo '<ul data-role="listview" data-inset="true">';
 
