@@ -5,7 +5,8 @@
 	$app_id = "212057308863490";
 	$app_secret = "c46dd118cc71d9007a9062f7f9fa6b9c";
   #$my_url = "http://140.247.106.97/facebook/protected.php";
-	$my_url = "http://127.0.0.1:82/facebook_module.php";
+	#$my_url = "http://127.0.0.1:82/facebook_module.php";
+	$my_url = "http://140.247.106.97/facebook_module.php";
   #$my_url = "https://slide-atlas.org/facebook/protected.php";
 
 	if (!isset($_REQUEST['code']))
