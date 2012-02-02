@@ -3,10 +3,7 @@
 error_reporting(E_ALL ^ E_NOTICE);
 #ini_set('display_errors','On'); 
 
-if (!isset ($_cookie[ini_get('session.name')]))
-	{
-	session_start();
-	}
+session_start();
 
 # The location of the configuration dialog
 $_SESSION['loginConnName'] = 'ayodhya:27017';

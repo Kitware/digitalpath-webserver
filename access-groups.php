@@ -24,7 +24,7 @@
 		foreach ($colGroups->find() as $sessDoc)
 			{
 			$in = 0;
-			$match = "";
+			$match = array();
 
 			foreach($_SESSION['groups'] as $key => $facebook_group)
 				{
@@ -37,13 +37,11 @@
 						# Add to the permissions information to the session cookie  
 						# hence no groups information will be user in the cookie anymore
 
-						$_SESSION['host'] = $loginDBDoc['host'];
-						$_SESSION['book'] = $loginDBDoc['dbname'];
-						$_SESSION['copyright'] = $loginDBDoc['copyright'];
-						$_SESSION['auth'] = ($passwd == $loginDBDoc['adminpasswd']) ? 'admin' : 'student';
-
-
-						$_SESSION['perm'][$count] = array("db" => $sessDoc['db'] , "facebook_id" => "dummy");
+						# $_SESSION['host'] = $loginDBDoc['host'];
+						# $_SESSION['book'] = $loginDBDoc['dbname'];
+						# $_SESSION['copyright'] = $loginDBDoc['copyright'];
+						# $_SESSION['auth'] = ($passwd == $loginDBDoc['adminpasswd']) ? 'admin' : 'student';
+						$_SESSION['perm'][$count] = array("dbid" => $sessDoc['db'] , "facebook_id" => "dummy");
 						break;
 					}
 				} 
@@ -70,7 +68,7 @@
 					{
 						# Give a clickable list
 						$asession_obj = $colSessions->findOne(array("_id" => $asession_id));
-						echo '<li><a data-ajax="false" rel="external" href="session.php?sess=' , $asession_id, '&db=' , strval($count-1),'">' , $asession_obj['name'], '</a></li>' , "\n";
+						echo '<li><a data-ajax="false" rel="external" href="access-session.php?sess=' , $asession_id, '&db=' , strval($count-1),'">' , $asession_obj['name'], '</a></li>' , "\n";
 #						echo $asession_obj["name"] . " </br>";
 					}
 				print_r("</br>");

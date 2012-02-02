@@ -27,6 +27,7 @@ elseif($openid->mode != 'cancel')
 	$arr = $openid->getAttributes();
 	if($openid->validate())
 		{
+			session_destroy();
 			session_start();
 			$_SESSION['name'] = $arr['contact/email']; 
 			$_SESSION['start'] = time(); 

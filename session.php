@@ -19,27 +19,7 @@ try
 	require_once("config.php");
 	
 	# Perform database initialization
-	@$db_index =  $_REQUEST['db'];
-
-	#print_r($_SESSION);
-	#return;
 	
-	if(isset($db_index))
-		{
-		$database = $_SESSION['perm'][$db_index]['db'];
-		$_SESSION['book'] = $database;
-		}
-
-	if(!isset($server))
-		{
-		echo "Setting server";
-		$server = "127.0.0.1";
-		$_SESSION['host'] = $server;	
-		}
-	else
-		{
-		echo " Server already set";
-		}
 	$conn = new Mongo();
 	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
 
