@@ -36,6 +36,13 @@
 						
 						# Add to the permissions information to the session cookie  
 						# hence no groups information will be user in the cookie anymore
+
+						$_SESSION['host'] = $loginDBDoc['host'];
+						$_SESSION['book'] = $loginDBDoc['dbname'];
+						$_SESSION['copyright'] = $loginDBDoc['copyright'];
+						$_SESSION['auth'] = ($passwd == $loginDBDoc['adminpasswd']) ? 'admin' : 'student';
+
+
 						$_SESSION['perm'][$count] = array("db" => $sessDoc['db'] , "facebook_id" => "dummy");
 						echo "I was here ", $count;
 						break;
