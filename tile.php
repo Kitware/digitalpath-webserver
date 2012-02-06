@@ -7,11 +7,6 @@ require_once("config.php");
 @$fname =     $_GET['name'];
 //header('content-type: image/jpeg');
 # Return grey image as there is error or parameters not set
-
-#echo 'db : ', $database , " Server: ", $server , $col_name, $fname;
-#print_r($_SESSION);
-#return;
-
 header('content-type: image/jpeg');
 function grey_out()
 	{
@@ -27,7 +22,6 @@ if(!isset($col_name) || !isset($fname))
 	grey_out();
 	return;
   }
-
 try
 	{
 	# Connect
