@@ -16,13 +16,11 @@ try
 		return;
 		}
 	
-	require_once("config.php");
-	
 	# Perform database initialization
-	
-	$conn = new Mongo();
-	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
+	require_once("config.php");
 
+	$conn = new Mongo('mongodb://' . $server);
+	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
 
 	# Perform the query to get session document, for name
 	$sessDoc = $sessColl->findOne( array("_id" => new MongoId($sessIdStr)) );
@@ -35,7 +33,7 @@ try
 		{
 		$sessTitle = $sessDoc['name'];
 		}
-		
+
 	}
 
 # Error handling
@@ -45,7 +43,6 @@ catch (Exception $e)
 	echo 'Caught exception: ',  $e->getMessage(), "\n";
 	return;
 	}
-
 ?>
 
 <html>
