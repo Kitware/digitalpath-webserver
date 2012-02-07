@@ -3,12 +3,13 @@
 error_reporting(E_ALL ^ E_NOTICE);
 #ini_set('display_errors','On'); 
 
-if (!isset ($_cookie[ini_get('session.name')])) {
-  session_start();
-}
+session_start();
+
+# The location of the configuration dialog
+$_SESSION['loginConnName'] = 'ayodhya:27017';
+$_SESSION['loginDBName'] = 'slideatlas';
 
 // initialize a session
-
 if (!isset($_SESSION['book'])) 
 	{
 	// if no data, print the form
@@ -17,8 +18,8 @@ if (!isset($_SESSION['book']))
 else
 	{
 	# define some variables
-	$server = "slide-atlas.org:27017";
 	$database = $_SESSION['book'];
 	$base_url = "tile.php";
+	$server = $_SESSION['host'];
 	}
 ?>

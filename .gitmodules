@@ -1,6 +1,3 @@
 [submodule "webgl"]
 	path = webgl
 	url = git://kwsource.kitwarein.com/digitalpath/webgl-submodule.git
-[submodule "facebook"]
-	path = facebook
-	url = git://kwsource.kitwarein.com/digitalpath/facebook-submodule.git

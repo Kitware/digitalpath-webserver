@@ -4,133 +4,116 @@
 
 try
 	{
-	# Process command line parameters if any
-	@$sess_id =  $_GET['id'];
-	
-	# If parameters not available
-	if(!isset($sess_id))
+	@$sessIdStr =  $_GET['sess'];
+	if(!isset($sessIdStr))
+		{
+		@$sessIdStr =  $_GET['id'];
+		}
+	if(!isset($sessIdStr))
 		{
 		header('content-type: text/html');
+		echo "Error: no 'sess' or 'id' URL parameter";
 		return;
 		}
 	
-	# Perform database initialization
-	require_once("config.php"); 
-
-	# connect
-	$m = new Mongo($server);
+	require_once("config.php");
 	
-	# select a collection (analogous to a relational database's table)
-	$col_sess = $m->selectDB($database)->selectCollection("sessions"); 
+	# Perform database initialization
+	
+	$conn = new Mongo();
+	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
 
-	# Perform the query to get session name	
-	$sess_doc = $col_sess->findOne( array("_id" => new MongoId($sess_id)) );
 
-	if (array_key_exists('label', $sess_doc))
+	# Perform the query to get session document, for name
+	$sessDoc = $sessColl->findOne( array("_id" => new MongoId($sessIdStr)) );
+
+	if (array_key_exists('label', $sessDoc))
 		{
-		$sess_title = $sess_doc['label'];
+		$sessTitle = $sessDoc['label'];
 		}
 	else
 		{
-		$sess_title = $sess_doc['name'];	
+		$sessTitle = $sessDoc['name'];
 		}
-
+		
 	}
 
-# Error handling	
+# Error handling
 catch (Exception $e) 
 	{
 	header('content-type: text/plain');
-  echo 'Caught exception: ',  $e->getMessage(), "\n";
+	echo 'Caught exception: ',  $e->getMessage(), "\n";
 	return;
 	}
+
 ?>
 
 <html>
-    <head>
-    <title>Dermatopathology Atlas</title>
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.css" />
-		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.0b2/jquery.mobile-1.0b2.min.js"></script>
-</head>
-<body> 
-    <div data-role="page" data-add-back-btn="true">
-        
-	 			<div data-role="header" data-position="fixed" data-fullscreen="false">
-            <h1> <?php echo($sess_title) ?> </h1>
-						<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php
-							if($_SESSION['auth'] == 'admin')
-								{
-								echo("b");
-								}
-							else
-								{
-								echo("a");
-								}
-						?>">Options</a>
-        </div>
+	<head>
+		<title>Slide Atlas</title>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+	</head>
+	<body>
+		<div data-role="page" data-add-back-btn="true">
 
+			<div data-role="header" data-position="fixed" data-fullscreen="false">
+				<h1> <?php echo($sessTitle) ?> </h1>
+				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+			</div>
 
-        <div data-role="content">
-            <div id="banner">
-							<h2>List of images in session</h2>
-            </div>
-            
-						<ul data-role="listview" data-ajax="false">
-<?php
-	# Loop through the pages and load them
-	
-	# select a collection (analogous to a relational database's table)
-	$col_images = $m->selectDB($database)->selectCollection("images");
+			<div data-role="content">
+				<div id="banner">
+					<h2>List of images in session</h2>
+				</div>
+				<ul data-role="listview">
+					<?php
+					# Loop through images
 
-	# build a PHP-style sorted array from 'images' array
-	$sess_imgs = array();
-	foreach ($sess_doc['images'] as $img_data_obj)
-		{
-		$sess_imgs[$img_data_obj['pos']] = $img_data_obj['ref'];
-		}
-	ksort($sess_imgs);
+					$imgsColl = $conn->selectDB($database)->selectCollection("images");
 
-	foreach ($sess_imgs as $img_id) 
-		{
-		$img_doc = $col_images->findOne( array("_id" => $img_id) );		
-		if(array_key_exists('hide', $img_doc))
-			{
-			continue;
-			}
-		if(array_key_exists('label', $img_doc))
-			{
-			$img_name = $img_doc['label'];
-			}
-		else
-			{
-			$img_name = $img_doc['name'];
-			}
+					# build a PHP-style sorted array from 'images' array
+					$sessImgsSorted = array();
+					foreach ($sessDoc['images'] as $refListElem)
+						{
+						$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+						}
+					ksort($sessImgsSorted);
 
-		$thumb_doc = $m->selectDB($database)->selectCollection(strval($img_id))->findOne( array("name" => "thumb.jpg"),  array("file") );
-		if(!is_null($thumb_doc))
-			{
-			$thumb_file = 'thumb.jpg';
-			}
-		else
-			{
-			$thumb_file = 't.jpg';
-			}
+					foreach ($sessImgsSorted as $sessImgId)
+						{
+						$imgDoc = $imgsColl->findOne( array("_id" => $sessImgId) );
+						if(array_key_exists('hide', $imgDoc))
+							{
+							continue;
+							}
+						if(array_key_exists('label', $imgDoc))
+							{
+							$imgTitle = $imgDoc['label'];
+							}
+						else
+							{
+							$imgTitle = $imgDoc['name'];
+							}
 
-		echo('<li>');
-		echo('<a data-ajax="false" rel="external" href="image.php?id=');
-		echo($img_doc['_id']);
-		echo('#mappage">');
-		echo('<img src="/tile.php?image=');
-		echo($img_doc['_id']);
-		echo('&name=' . $thumb_file .'">' . $img_name . '</a></li>');
-		}	
-?>
-            </ul>
+						$thumbDoc = $conn->selectDB($database)->selectCollection(strval($sessImgId))->findOne( array("name" => "thumb.jpg"),  array("file") );
+						if(!is_null($thumbDoc))
+							{
+							$thumbDocFile = 'thumb.jpg';
+							}
+						else
+							{
+							$thumbDocFile = 't.jpg';
+							}
 
-        </div>
-    </div>
-
-
-</body>
+						echo '<li><a data-ajax="false" rel="external" href="image.php?sess=' , $sessDoc['_id'] , '&img=' , $imgDoc['_id'] , '#mappage">';
+						echo '<img src="/tile.php?image=' , $imgDoc['_id'] , '&name=' , $thumbDocFile , '">' , $imgTitle , '</a></li>' , "\n";
+						}
+					?>
+				</ul>
+			</div><!-- /content -->
+		</div><!-- /page -->
+	</body>
 </html>
+
