@@ -18,7 +18,7 @@ try
 	require_once("config.php"); 
 
 	# connect
-	$m = new Mongo($server, array('persist' => 'path'));
+	$m = new Mongo($server);
 	
 	# Perform the query to get image name, and number of levels
 	$coll = $m->selectDB($database)->selectCollection("images"); 
@@ -147,6 +147,9 @@ catch (Exception $e)
 		<script src="libs/Markers.js"> </script>
 		<script src="libs/mobile-jq.js"></script>
 		<script src="libs/operations.js"></script>
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
+		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+
 </head>
 <body> 
 		<!-- The large image page -->
@@ -189,6 +192,11 @@ catch (Exception $e)
 			<div id="copyright"> 
 				<?php echo($_SESSION['copyright']);?> 
 			</div>
+
+			<div id="logo">
+				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
+			</div>
+
 
 			<!-- Footer content -->
 			<div data-role="footer" class="ui-bar"> 

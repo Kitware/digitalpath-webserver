@@ -21,5 +21,4 @@ else
 	$database = $_SESSION['book'];
 	$base_url = "tile.php";
 	}
-
 ?>

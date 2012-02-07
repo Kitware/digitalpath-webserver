@@ -492,6 +492,11 @@ function init()
         map.zoomIn();
     });
 
+    $("#logo").click(function(){
+				window.location = "http://www.kitware.com";
+    });
+
+
     $("#minus").click(function(){
         map.zoomOut();
     });

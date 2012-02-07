@@ -31,7 +31,7 @@
 				$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo. All rights reserved";
 				$_SESSION['auth'] = 'admin';
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 			}
 		}
@@ -41,19 +41,30 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 	if(isset($book) && isset($pass)) 
 		{
 		
+		if($book == "demo" )
+			{
+				session_start();
+				$_SESSION['book'] = 'demo';
+				$_SESSION['copyright'] = "Copyright &copy 2011, All rights reserved";
+				$_SESSION['auth'] = 'admin';
+				header("location:session-index.php");
+				return;
+			}
+		
+
 		if($book == "wustl" )
 			{
 			if($pass == "showme" || $pass == 'MOmanage')
 				{
 				session_start();
-				$_SESSION['book'] = 'paul3';
+				$_SESSION['book'] = 'paul2';
 				$_SESSION['copyright'] = "Copyright &copy 2011, Paul Bridgman. All rights reserved";
 				$_SESSION['auth'] = 'student';
 				if($pass == 'MOmanage')
 					{
 					$_SESSION['auth'] = 'admin';
 					}
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 				}
 			}
@@ -71,7 +82,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					{
 					$_SESSION['auth'] = 'admin';
 					}
-				header("location:book.php");
+				header("location:session-index.php");
 				return;
 				}
 			}
@@ -113,6 +124,8 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 
 							<input type="radio" name="book" id="radio-choice-2" value="hms"  /> 
 							<label for="radio-choice-2">Harvard Combined Dermatology Residency Training Program </label> 
+							<input type="radio" name="book" id="radio-choice-3" value="demo"  /> 
+							<label for="radio-choice-3">Atlas Demonstration (no password)</label> 
 						</fieldset> 
 
 						<div data-role="fieldcontain">
@@ -142,6 +155,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 					<center>
 					<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook/protected.php">Facebook</a>
 					</center>
+				<!-- login -->
 				</form>
 
 			</div>

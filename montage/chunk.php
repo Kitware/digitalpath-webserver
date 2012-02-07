@@ -27,7 +27,7 @@ if(!isset($col_name) || !isset($fname))
 try
 	{
 	# Connect
-	$m = new Mongo($server, array('persist' => 'path'));
+	$m = new Mongo($server);
 	$collection = $m->selectDB($database)->selectCollection($col_name);
 	
 	# Query 
