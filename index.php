@@ -1,6 +1,6 @@
 <?php
 # Move these to index.php config file?
-$loginConnName = 'ayodhya:27017';
+$loginConnName = 'slide-atlas.org:27017';
 $loginDBName = 'slideatlas';
 
 # Logging in with Google $accounts requires setting special identity, so this example shows how to do it.
