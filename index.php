@@ -51,6 +51,7 @@ if(isset($databaseId) && isset($passwd))
 		{
 		if($passwd == $loginDBDoc['studentpasswd'] || $passwd == $loginDBDoc['adminpasswd'])
 			{
+<<<<<<< HEAD
 			session_start();
 			$_SESSION['host'] = $loginDBDoc['host'];
 			$_SESSION['book'] = $loginDBDoc['dbname'];
