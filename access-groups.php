@@ -124,9 +124,9 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<meta name = "viewport" content = "width = device-width">
 		<link rel="apple-touch-icon" href="favicon.ico" />
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
-		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
+		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
+		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
