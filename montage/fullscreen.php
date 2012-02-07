@@ -74,7 +74,7 @@ $baseName = 'tera';
 		<div id="rotater" class='button' onclick="rotate(-5);"> Rotate Left </div>
 </div>
 	
-	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="../libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
 	<script src="css-transform.js"></script>
 	<script src="css-rotate.js"></script>
 	<script src="OpenLayers.mobile.js"></script>
