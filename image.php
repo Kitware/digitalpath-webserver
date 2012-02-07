@@ -84,10 +84,14 @@ if(isset($sessIdStr))
 	$sessImgsSorted = array();
 	foreach ($sessDoc['images'] as $refListElem)
 		{
-		$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+		if($refListElem['hide'] === false)
+			{
+			$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+			}
 		}
 	ksort($sessImgsSorted);
 
+	$sessImgsSorted = array_values($sessImgsSorted); # repack array keys as contiguous values
 	$thisImgPos = array_search($imgId, $sessImgsSorted);
 	if(array_key_exists($thisImgPos-1, $sessImgsSorted))
 		{
