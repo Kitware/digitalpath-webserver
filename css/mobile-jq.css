@@ -56,7 +56,7 @@ body {
 
 #logo {
     position: absolute;
-    bottom: 70px;
+    bottom: 82px;
     right: 10px;
     z-index: 1001;
 		font-size:11px;
@@ -64,7 +64,7 @@ body {
 
 #copyright {
     position: absolute;
-    bottom: 52px;
+    bottom: 67px;
     right: 10px;
     z-index: 1001;
 		font-size:11px;

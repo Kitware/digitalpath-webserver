@@ -16,13 +16,11 @@ try
 		return;
 		}
 	
-	require_once("config.php");
-	
 	# Perform database initialization
-	
-	$conn = new Mongo();
-	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
+	require_once("config.php");
 
+	$conn = new Mongo('mongodb://' . $server);
+	$sessColl = $conn->selectDB($database)->selectCollection("sessions");
 
 	# Perform the query to get session document, for name
 	$sessDoc = $sessColl->findOne( array("_id" => new MongoId($sessIdStr)) );
@@ -35,7 +33,7 @@ try
 		{
 		$sessTitle = $sessDoc['name'];
 		}
-		
+
 	}
 
 # Error handling
@@ -45,15 +43,14 @@ catch (Exception $e)
 	echo 'Caught exception: ',  $e->getMessage(), "\n";
 	return;
 	}
-
 ?>
 
 <html>
 	<head>
 		<title>Slide Atlas</title>
-		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
-		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<script src="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
+		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
+		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 	</head>
 	<body>
 		<div data-role="page" data-add-back-btn="true">
@@ -77,17 +74,16 @@ catch (Exception $e)
 					$sessImgsSorted = array();
 					foreach ($sessDoc['images'] as $refListElem)
 						{
-						$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+						if($refListElem['hide'] === false)
+							{
+							$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+							}
 						}
 					ksort($sessImgsSorted);
 
 					foreach ($sessImgsSorted as $sessImgId)
 						{
 						$imgDoc = $imgsColl->findOne( array("_id" => $sessImgId) );
-						if(array_key_exists('hide', $imgDoc))
-							{
-							continue;
-							}
 						if(array_key_exists('label', $imgDoc))
 							{
 							$imgTitle = $imgDoc['label'];

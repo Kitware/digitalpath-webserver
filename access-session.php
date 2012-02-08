@@ -28,7 +28,7 @@ $obj_db = $col_db->findOne( array("_id" => new MongoId($id_db)) );
 
 $_SESSION['host'] = $obj_db['host'];
 $_SESSION['book'] = $obj_db['dbname'];
-$_SESSION['copyright'] = $obj_db['host'];
+$_SESSION['copyright'] = $obj_db['copyright'];
 $_SESSION['auth'] = 'student';
 
 header('location:session.php?sess=' . $id_sess);
