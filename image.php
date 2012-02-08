@@ -84,10 +84,14 @@ if(isset($sessIdStr))
 	$sessImgsSorted = array();
 	foreach ($sessDoc['images'] as $refListElem)
 		{
-		$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+		if($refListElem['hide'] === false)
+			{
+			$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+			}
 		}
 	ksort($sessImgsSorted);
 
+	$sessImgsSorted = array_values($sessImgsSorted); # repack array keys as contiguous values
 	$thisImgPos = array_search($imgId, $sessImgsSorted);
 	if(array_key_exists($thisImgPos-1, $sessImgsSorted))
 		{
@@ -218,6 +222,7 @@ if(isset($sessIdStr))
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
+					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="session.php?sess=<?php echo($sessIdStr); ?>">Return</a>
 				</div>
 				<div id="rotation" class="ui-block-b" data-role="controlgroup" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft">R</a>

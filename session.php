@@ -74,17 +74,16 @@ catch (Exception $e)
 					$sessImgsSorted = array();
 					foreach ($sessDoc['images'] as $refListElem)
 						{
-						$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+						if($refListElem['hide'] === false)
+							{
+							$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+							}
 						}
 					ksort($sessImgsSorted);
 
 					foreach ($sessImgsSorted as $sessImgId)
 						{
 						$imgDoc = $imgsColl->findOne( array("_id" => $sessImgId) );
-						if(array_key_exists('hide', $imgDoc))
-							{
-							continue;
-							}
 						if(array_key_exists('label', $imgDoc))
 							{
 							$imgTitle = $imgDoc['label'];
