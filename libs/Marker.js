@@ -231,7 +231,7 @@ OpenLayers.Marker = OpenLayers.Class({
  * {<OpenLayers.Icon>} A default OpenLayers.Icon to use for a marker
  */
 OpenLayers.Marker.defaultIcon = function() {
-    var url = OpenLayers.Util.getImagesLocation() + "marker.png";
+    var url = "https://slide-atlas.org/img/marker.png";
     var size = new OpenLayers.Size(21, 25);
     var calculateOffset = function(size) {
                     return new OpenLayers.Pixel(-(size.w/2), -size.h);
