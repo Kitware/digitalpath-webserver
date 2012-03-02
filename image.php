@@ -119,8 +119,12 @@ if(isset($sessIdStr))
 		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 
 		<!-- large image specific additions  -->
-		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
+<!--		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
+-->
+
+		<link rel="stylesheet" href="css/common.css" type="text/css">
+		<link rel="stylesheet" href="css/image.css" type="text/css">
 
 		<script>
 			<?php
@@ -197,8 +201,8 @@ if(isset($sessIdStr))
 				</div>
 			</div><!-- /header -->
 
-			<!-- image Content -->
-			<div data-role="content">
+			<!-- image content -->
+			<div id="mapcontent" data-role="content">
 				<div id="mapcontainer">
 					<div id="map"></div>
 				</div>
