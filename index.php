@@ -104,7 +104,9 @@ if(isset($databaseId) && isset($passwd))
 								}
 							?>
 						</fieldset>
-
+<script>
+$("input:radio").change(function(event){$("#password").focus();});
+</script>
 						<div data-role="fieldcontain">
 							<label for="password">Password:</label>
 							<input type="password" name="passwd" id="password" value="" />
