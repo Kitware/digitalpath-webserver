@@ -173,6 +173,7 @@ if(isset($sessIdStr))
 
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
+		<script src="libs/image.bookmarks.js"></script>
 		<script src="libs/operations.js"></script>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -186,13 +187,14 @@ if(isset($sessIdStr))
 			<!-- header -->
 			<div data-role="header" data-position="fixed">
 				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
-					<a id="show-anno" data-role="button">Annotations</a>
-				</div>
-				<h1><?php echo($imgTitle); ?></h1>
-				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
 					<a id="follow" data-role="button" href="">Join session</a>
 					<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
 						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				</div>
+				<h1>  <?php echo($imgTitle); ?> </h1>
+				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+					<a id="show-anno" data-role="button">Annotations</a>
+					<a id="show-bookmarks" data-role="button" data-theme="a" data-icon="star" data-iconpos="left" data-direction="forward" href="#bookmarkspage">Bookmarks</a>
 				</div>
 			</div><!-- /header -->
 
@@ -233,6 +235,27 @@ if(isset($sessIdStr))
 			</div><!-- /footer -->
 
 		</div><!-- /mappage -->
+
+		<!-- bookmarkspage -->
+		<div id="bookmarkspage" data-role="page" data-ajax="false">
+
+			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
+			<!-- header -->
+			<div data-role="header" data-position="fixed"> <!-- try to make persistant across transitions-->
+				<h1>  <?php echo($imgTitle); ?> </h1>
+				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+					<!-- work as a 'back' button by default, to not clog history -->
+					<a data-role="button" data-theme="b" data-icon="star" data-iconpos="left" data-direction="reverse" data-rel="back" href="#mappage">Bookmarks</a>
+				</div>
+			</div>
+
+			<!-- bookmark content -->
+			<div data-role="content">
+				<ul id="bookmark-list" data-role="listview" data-split-icon="arrow-r" data-filter="true" data-filter-placeholder="Filter bookmarks...">
+					<!-- bookmark list items -->
+				</ul>
+			</div><!-- bookmark content -->
+		</div><!-- /bookmarkspage -->
 
 		<!-- optionspage -->
 		<div id="optionspage" data-role="page" data-ajax="false">

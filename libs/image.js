@@ -16,6 +16,27 @@ var image_name =
 var image_label = 
 */
 
+// Utility functions
+function changeButtonTheme(buttonElement, newTheme, hover)
+	{
+	if (hover === undefined)
+		{
+		hover = true;
+		}
+
+	var oldTheme = buttonElement.attr("data-theme");
+	buttonElement.removeClass("ui-btn-up-"+oldTheme).removeClass("ui-btn-hover-"+oldTheme).removeClass("ui-btn-down-"+oldTheme);
+	buttonElement.attr("data-theme", newTheme);
+	if (hover)
+		{
+		buttonElement.addClass("ui-btn-hover-"+newTheme);
+		}
+	else
+		{
+		buttonElement.addClass("ui-btn-up-"+newTheme);
+		}
+	}
+
 
 $(document).bind( // TODO: review this, http://jquerymobile.com/test/docs/api/globalconfig.html
 	"mobileinit",
@@ -35,6 +56,7 @@ $(document).ready(function()
 		});
 
 	map.init()
+	bookmarks.init();
 	init_operations(); //TODO: review this
 
 }); // END $(document).ready(function()
