@@ -53,7 +53,7 @@ $(document).ready(function()
 {
 	$("#logo").on("vclick", function(event)
 		{
-		window.location = "http://www.kitware.com";
+		window.open("http://www.kitware.com");
 		});
 
 	map.init()

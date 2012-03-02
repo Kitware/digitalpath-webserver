@@ -221,7 +221,7 @@ if(isset($sessIdStr))
 			</div>
 
 			<div id="logo">
-				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
+				<img src="img/k-logo-64.png">
 			</div><!-- /image content -->
 
 			<!-- footer -->
