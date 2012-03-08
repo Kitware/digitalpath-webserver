@@ -31,7 +31,7 @@
         // DOM-is-ready events have fired.
         if
         (
-            typeof $.props['transform'] == 'undefined'
+            typeof $.propFix['transform'] == 'undefined'
             &&
             (
                 arg == 'transform'
@@ -53,7 +53,7 @@
         // for 'float' now anyway... but that'd require more testing.)
         if (arg == 'transform')
         {
-            arg = $.props['transform'];
+            arg = $.propFix['transform'];
         }
 
         return proxied.apply(this, arguments);
