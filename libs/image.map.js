@@ -15,6 +15,7 @@ var map = (function() // Revealing Module Pattern
 	// Private properties
 	var mapObject;
 	var tms;
+	var rotationDegree;
 
 	// Public registration methods
 	pub.addLayer = function(newLayer)
@@ -52,15 +53,95 @@ var map = (function() // Revealing Module Pattern
 
 	pub.rotateTo = function(newRotationDegree)
 		{
-		mapObject.mapRotation = newRotationDegree;
-		rotate(mapObject.mapRotation);
+		if (rotationDegree === newRotationDegree)
+			{
+			return;
+			}
+		rotationDegree = newRotationDegree;
+		updateRotation();
 		};
 
-	// Private helper methods
-	function rotate(num)
+	// OpenLayers callback
+	pub.rotateEventCoords = (function() // this function self-executes once to provide the closure for a 'static' cache
 		{
-		var stri = num + 'deg';
-		$('#map').animate({rotate: stri}, 0);
+		var cachedRotationDegree;
+		var cachedSine; // trig functions are slow, and rotateEventCoords is called on every mousemove event
+		var cachedCosine;
+		return function(evt) // this is the actual rotateEventCoords()
+			{
+			if (rotationDegree !== 0)
+				{
+				if (cachedRotationDegree !== rotationDegree)
+					{
+					cachedRotationDegree = rotationDegree;
+					cachedSine = Math.sin(cachedRotationDegree * Math.PI / 180.0); // JQuery rotates CW; to counter this, rotate CCW, or + degrees
+					cachedCosine = Math.cos(cachedRotationDegree * Math.PI / 180.0);
+					}
+
+				var centerX = $(window).innerWidth() / 2;
+				var centerY = $(window).innerHeight() / 2;
+
+				var oldDx = evt.clientX - centerX; // pixel origin is top-left, rotation origin is exact center
+				var oldDy = centerY - evt.clientY;
+				var newDx = oldDx * cachedCosine - oldDy * cachedSine;
+				var newDy = oldDx * cachedSine + oldDy * cachedCosine;
+				evt.clientXr = newDx + centerX;
+				evt.clientYr = centerY - newDy;
+				}
+			else
+				{
+				evt.clientXr = evt.clientX;
+				evt.clientYr = evt.clientY;
+				}
+
+			if (evt.touches)
+				{
+				for(var i = 0, len_i = evt.touches.length; i < len_i; i++)
+					{
+					if (rotationDegree !== 0)
+						{
+						var oldDx = evt.touches[i].clientX - centerX;
+						var oldDy = centerY - evt.touches[i].clientY;
+						var newDx = oldDx * cachedCosine - oldDy * cachedSine;
+						var newDy = oldDx * cachedSine + oldDy * cachedCosine;
+						evt.touches[i].clientXr = newDx + centerX; //TODO: make sure we can assign to this
+						evt.touches[i].clientYr = centerY - newDy;
+						}
+					else
+						{
+						evt.touches[i].clientXr = evt.touches[i].clientX;
+						evt.touches[i].clientYr = evt.touches[i].clientY;
+						}
+					}
+				}
+			}
+		})();
+
+	// Event handlers
+	function onClickRotateButton(event)
+		{
+		switch(event.data.rotateDirection)
+			{
+			case "cw":
+				rotationDegree += 5;
+				break;
+			case "ccw":
+				rotationDegree -= 5;
+				break;
+			case "reset":
+				rotationDegree = 0;
+				break;
+			default:
+				break;
+			}
+		updateRotation();
+		}
+
+	// Private helper methods
+	function updateRotation()
+		{
+		var stri = rotationDegree + 'deg';
+		$('#map').animate({rotate: stri}, 0); // TODO: review this
 		}
 
 	function get_my_url(bounds) // TODO: can this be done faster by bitshifting / divide by 2?
@@ -121,8 +202,8 @@ var map = (function() // Revealing Module Pattern
 			mapObject.moveTo(lonlat);
 			if("rotation" in startup_view)
 				{
-				mapObject.mapRotation = startup_view["rotation"];
-				rotate(mapObject.mapRotation);
+				rotationDegree = startup_view["rotation"];
+				updateRotation();
 				}
 			tms.redraw(true);
 			mapObject.pan(1,1);
@@ -247,7 +328,6 @@ var map = (function() // Revealing Module Pattern
 			maxResolution: boundSize / tileSize,
 			numZoomLevels: zoomLevels,
 			tileSize: new OpenLayers.Size(tileSize, tileSize),
-			mapRotation: 0.0,
 			cenPx: new OpenLayers.Pixel(0,0)
 			}); // END OpenLayers.Map
 
@@ -265,24 +345,10 @@ var map = (function() // Revealing Module Pattern
 		//add the tiles to the map
 		map.addLayer(tms);
 
-		$("#rright").on("vclick", function()
-			{
-			mapObject.mapRotation -= 5;
-			rotate(mapObject.mapRotation);
-			});
-
-		$("#rreset").on("vclick", function()
-			{
-			mapObject.mapRotation = 0;
-			rotate(mapObject.mapRotation);
-			});
-
-		$("#rleft").on("vclick", function()
-			{
-			mapObject.mapRotation += 5;
-			rotate(mapObject.mapRotation);
-			});
-
+		rotationDegree = 0;
+		$("#rright").on("vclick", {rotateDirection: "ccw"}, onClickRotateButton);
+		$("#rreset").on("vclick", {rotateDirection: "reset"}, onClickRotateButton);
+		$("#rleft").on("vclick", {rotateDirection: "cw"}, onClickRotateButton);
 		$("#plus").on("vclick", function()
 			{
 			mapObject.zoomIn();

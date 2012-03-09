@@ -168,15 +168,8 @@ if(isset($sessIdStr))
 		<script src="libs/jquery.timer.js" type="text/javascript"></script>
 		<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
 		<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
-<!--
-		<script src="libs/css-transform.js"></script>
-		<script src="libs/css-rotate.js"></script>
--->
-		<script src="libs/OpenLayers.mobile.js"> </script>
-		<script src="libs/TMS.js"> </script>
-		<script src="libs/Icon.js"> </script>
-		<script src="libs/Marker.js"> </script>
-		<script src="libs/Markers.js"> </script>
+
+		<script src="libs/rotating-openlayers.js"> </script>
 
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
