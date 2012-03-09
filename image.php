@@ -257,7 +257,7 @@ if(isset($sessIdStr))
 
 			<!-- bookmark content -->
 			<div data-role="content">
-				<ul id="bookmark-list" data-role="listview" data-split-icon="arrow-r" data-filter="true" data-filter-placeholder="Filter bookmarks...">
+				<ul id="bookmark-list" data-role="listview" data-split-icon="check" data-filter="true" data-filter-placeholder="Filter bookmarks...">
 					<!-- bookmark list items -->
 				</ul>
 			</div><!-- bookmark content -->

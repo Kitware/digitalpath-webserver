@@ -394,22 +394,24 @@ labelLayer.events.on({
 						})
 					.append(
 						$("<a/>")
-							.on("vclick", {bookmarkNum: i}, onClickSelectBookmarkButton)
+							.on("vclick", {bookmarkNum: i}, onClickGotoBookmarkButton)
+							.attr({
+								"data-rel": "back",
+								"href": "#mappage",
+								"data-direction": "reverse",
+								})
 							.append(
 								$("<h3/>").text(currBookmark["title"]),
 								$("<p/>").text(currBookmark["details"])
 //								$("<p/>").addClass("ui-li-aside").text("Right side extra content") // extra content can be added here
 								),
 						$("<a/>")
-							.on("vclick", {bookmarkNum: i}, onClickGotoBookmarkButton)
+							.on("vclick", {bookmarkNum: i}, onClickSelectBookmarkButton)
 							.attr({
 								"data-role": "button",
-								"data-theme": "c",
-								"data-rel": "back",
-								"href": "#mappage",
-								"data-direction": "reverse",
+								"data-theme": "c"
 								})
-							.text("Go to bookmark")
+							.text("Toggle visibility")
 						)
 				);
 			} // END for
