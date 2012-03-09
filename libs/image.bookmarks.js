@@ -436,6 +436,8 @@ labelLayer.events.on({
 					buildLayers(data);
 					buildList(data);
 					$("#show-anno").on("vclick", onClickAnnoButton);
+					$('#show-anno').removeClass('ui-disabled');
+					$('#show-bookmarks').removeClass('ui-disabled');
 					}
 				},
 			error: function(jqXHR, textStatus, errorThrown)

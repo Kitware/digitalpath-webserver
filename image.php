@@ -199,8 +199,8 @@ if(isset($sessIdStr))
 				</div>
 				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
-					<a id="show-anno" data-role="button">Annotations</a>
-					<a id="show-bookmarks" data-role="button" data-theme="a" data-icon="star" data-iconpos="left" data-direction="forward" href="#bookmarkspage">Bookmarks</a>
+					<a id="show-anno" data-role="button" class='ui-disabled'>Annotations</a>
+					<a id="show-bookmarks" data-role="button" class='ui-disabled' data-icon="star" data-iconpos="left" data-direction="forward" href="#bookmarkspage">Bookmarks</a>
 				</div>
 			</div><!-- /header -->
 
