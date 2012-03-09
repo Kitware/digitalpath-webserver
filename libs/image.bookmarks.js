@@ -26,6 +26,18 @@ var bookmarks = (function()
 	var shapeFeatures;
 	var globalVisibilityState;
 	var visibilityStates;
+	var onBookmarkEvent;
+
+	// Public registration methods
+	pub.registerEvent = function(callbackFunc)
+		{
+		onBookmarkEvent = callbackFunc;
+		}
+
+	pub.unregisterEvent = function()
+		{
+		onBookmarkEvent = null;
+		}
 
 	// Public mutators
 	pub.gotoBookmark = function(bookmarkNum)
@@ -73,6 +85,10 @@ var bookmarks = (function()
 		changeButtonTheme(selectButtonThemeElems, newTheme, !multipleCall); // if multipleCall == true, then call changeButtonTheme with hover = false
 
 		visibilityStates[bookmarkNum] = newState;
+		if (!multipleCall && onBookmarkEvent)
+			{
+			onBookmarkEvent();
+			}
 		};
 
 	pub.setGlobalVisibilityState = function(newState)
@@ -104,6 +120,19 @@ var bookmarks = (function()
 			}
 
 		globalVisibilityState = newState;
+		if (onBookmarkEvent)
+			{
+			onBookmarkEvent();
+			}
+		};
+
+	// Public accessor
+	pub.getState = function()
+		{
+		return {
+			// TODO: send global state too
+			bookmarks: visibilityStates.length ? visibilityStates : null // empty arrays aren't serialized properly for POST
+			};
 		};
 
 	// Event handlers
@@ -389,6 +418,9 @@ labelLayer.events.on({
 	// Initialization method - must be called before any others
 	pub.init = function()
 		{
+		onBookmarkEvent = null;
+		visibilityStates = [];
+
 		$.ajax(
 			{
 			url: "bookmarks.php",

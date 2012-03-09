@@ -6,6 +6,7 @@ from PHP:
 	startup_view
 	baseUrl
 	imageName
+	sessionName
 */
 
 var map = (function() // Revealing Module Pattern
@@ -22,6 +23,33 @@ var map = (function() // Revealing Module Pattern
 		{
 		mapObject.addLayer(newLayer);
 		};
+
+	pub.registerMapEvents = function(eventListeners)
+		{
+		mapObject.events.on(eventListeners);
+		mapObject.eventListeners = eventListeners; // allows eventListeners to be destroyed properly
+		};
+
+	pub.registerLayerEvents = function(eventListeners)
+		{
+		// only registers on the base layer
+		tms.events.on(eventListeners);
+		tms.eventListeners = eventListeners;
+		}
+
+	pub.unregisterAllEvents = function()
+		{
+		if (mapObject.eventListeners)
+			{
+			mapObject.events.un(mapObject.eventListeners);
+			mapObject.eventListeners = null;
+			}
+		if (tms.eventListeners)
+			{
+			tms.events.un(tms.eventListeners);
+			tms.eventListeners = null;
+			}
+		}
 
 	// Public mutators
 	pub.moveTo = function(newCenter, newZoom, smooth)
@@ -59,6 +87,20 @@ var map = (function() // Revealing Module Pattern
 			}
 		rotationDegree = newRotationDegree;
 		updateRotation();
+		};
+
+	// Public accessor
+	pub.getState = function()
+		{
+		var centerValue = mapObject.getCenter()
+		return {
+			img: imageName,
+			sess: sessionName,
+			zoom : mapObject.getZoom(),
+			cenx : centerValue.lon,
+			ceny : centerValue.lat,
+			rotation : rotationDegree,
+			};
 		};
 
 	// OpenLayers callback
@@ -142,6 +184,7 @@ var map = (function() // Revealing Module Pattern
 		{
 		var stri = rotationDegree + 'deg';
 		$('#map').animate({rotate: stri}, 0); // TODO: review this
+		mapObject.events.triggerEvent("moveend");
 		}
 
 	function get_my_url(bounds) // TODO: can this be done faster by bitshifting / divide by 2?

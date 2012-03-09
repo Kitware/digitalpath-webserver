@@ -12,6 +12,7 @@ var baseUrl =
 var zoomLevels = 
 var baseName = 
 var imageName = 
+var sessionName = 
 var image_name = 
 var image_label = 
 */
@@ -58,6 +59,7 @@ $(document).ready(function()
 	map.init()
 	bookmarks.init();
 	init_operations(); //TODO: review this
+	follow.init();
 
 }); // END $(document).ready(function()
 

@@ -10,3 +10,10 @@
     text-align: center !important;
 }
 
+/* align multiple groups of left header buttons horizontally;
+JQuery Mobile places button groups within header groups vertically */
+.ui-header>.ui-btn-left>div
+	{
+	display: inline-block !important;
+	}
+

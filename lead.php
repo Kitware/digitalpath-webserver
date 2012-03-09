@@ -1,85 +1,50 @@
 <?php
 header('Content-Type: text/javascript; charset=utf8');
 
-# sample data will be 
-# db['users'].insert({'name':'dhandeo@gmail.com', 'zoom':2, 'cenx':100, 'ceny':100, 'image':'4e537737e982f508a8000001'})
-
 try
 	{
-	# Process command line parameters if any
-	@$username = $_REQUEST['id'];
-	@$cenx = $_REQUEST['cenx'];
-	@$ceny = $_REQUEST['ceny'];
-	@$zoom = $_REQUEST['zoom'];
-	@$rotation = $_REQUEST['rotation'];
-	@$image = $_REQUEST['image'];
-	@$anno = $_REQUEST['anno'];
-	@$curx = $_REQUEST['curx'];
-	@$cury = $_REQUEST['cury'];
-	
-	# If parameters not available
-	if(!isset($username))
-		{
-		$username = "dhandeo@gmail.com";
-		}
-	
-	# Perform database initialization and get chapter name
-	require_once("config.php"); 
+	@$username = $_POST['username']; # TODO: get/confirm username from session cookie for better security
 
-	# connect
-	$m = new Mongo($server);
-	
-	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB($database)->selectCollection("users"); 
+	$followProperties = array(
+		'username',
+		'img',
+		'sess',
+		'zoom',
+		'cenx',
+		'ceny',
+		'rotation',
+		'bookmarks',
+		'curx',
+		'cury'
+		);
+	# note: all field data are recieved as strings and will be stored in the database as strings
 
-	# Perform the query to get chapter name
-	
-	$query = array( "name" => $username);
-	$obj = $collection->findOne($query);
-	
-	if($obj != null)
+	$followData = array();
+	foreach ($followProperties as $prop)
 		{
-		if(isset($zoom))
+		if (array_key_exists($prop, $_POST))
 			{
-			$collection->update($query,array('$set' => array("zoom" => $zoom)));
+			$followData[$prop] = $_POST[$prop];
 			}
-		if(isset($cenx))
+		else
 			{
-			$collection->update($query,array('$set' => array("cenx" => $cenx)));
-			}
-		if(isset($ceny))
-			{
-			$collection->update($query,array('$set' => array("ceny" => $ceny)));
-			}
-		if(isset($rotation))
-			{
-			$collection->update($query,array('$set' => array("rotation" => $rotation)));
-			}
-		if(isset($image))
-			{
-			$collection->update($query,array('$set' => array("image" => $image)));
-			}
-		if(isset($anno))
-			{
-			$collection->update($query,array('$set' => array("anno" => $anno)));
-			}
-		if(isset($curx))
-			{
-			$collection->update($query,array('$set' => array("curx" => $curx)));
-			}
-		if(isset($cury))
-			{
-			$collection->update($query,array('$set' => array("cury" => $cury)));
+			throw new Exception($prop . " not found in lead.php data");
 			}
 		}
-	else
-		{
-		echo json_encode(array());
-		} 
+	$followData['timestamp'] = new MongoDate();
+
+	require_once("config.php"); # get $server and $database
+	$conn = new Mongo('mongodb://' . $server);
+	$collection = $conn->selectDB($database)->selectCollection("follow");
+
+	$collection->update(array("username" => $username), $followData, array('upsert' => true));
 	}
-# Error handling	
+# Error handling
 catch (Exception $e) 
 	{
+	# TODO: send a better failure response to client
+	header("HTTP/1.1 400 Bad Request");
 	return;
 	}
 ?>
+

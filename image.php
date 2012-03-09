@@ -143,6 +143,7 @@ if(isset($sessIdStr))
 			echo("var zoomLevels = ". $imgLevel .";\n");
 			echo("var baseName = '" . $database . "';\n");
 			echo("var imageName = '" . $imgIdStr . "';\n");
+			echo("var sessionName = '" . $sessIdStr . "';\n");
 
 			echo("var image_name = '");
 			echo(trim($image_name));
@@ -174,6 +175,7 @@ if(isset($sessIdStr))
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
 		<script src="libs/image.bookmarks.js"></script>
+		<script src="libs/image.follow.js"></script>
 		<script src="libs/operations.js"></script>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -186,10 +188,14 @@ if(isset($sessIdStr))
 			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- header -->
 			<div data-role="header" data-position="fixed">
-				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
-					<a id="follow" data-role="button" href="">Join session</a>
-					<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
-						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				<div class="ui-btn-left">
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
+							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+					</div>
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="follow" data-role="button" class='ui-disabled'>Join session</a>
+					</div>
 				</div>
 				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
@@ -260,7 +266,11 @@ if(isset($sessIdStr))
 		<!-- optionspage -->
 		<div id="optionspage" data-role="page" data-ajax="false">
 
-			<div data-role="header">
+			<div data-role="header" data-position="fixed">
+				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+					<a data-role="button" data-icon="gear" data-iconpos="left" data-direction="reverse" data-rel="back" href="#mappage"
+						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				</div>
 				<h1>Options</h1>
 			</div>
 

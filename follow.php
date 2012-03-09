@@ -1,55 +1,62 @@
 <?php
 header('Content-Type: text/javascript; charset=utf8');
 
-# sample data will be 
-# db['users'].insert({'name':'dhandeo@gmail.com', 'zoom':2, 'cenx':100, 'ceny':100, 'image':'4e537737e982f508a8000001'})
-
 try
 	{
-	# Process command line parameters if any
-	@$username = $_REQUEST['id'];
-
-	
-	# If parameters not available
+	@$username = $_REQUEST['username'];
 	if(!isset($username))
 		{
-		$username = "dhandeo@gmail.com";
+		header("HTTP/1.1 400 Bad Request");
+		return;
 		}
-	
-	# Perform database initialization and get chapter name
-	require_once("config.php"); 
 
-	# connect
-	$m = new Mongo($server);
-	
-	# select a collection (analogous to a relational database's table)
-	$collection = $m->selectDB($database)->selectCollection("users"); 
+	require_once("config.php"); # get $server and $database
+	$conn = new Mongo('mongodb://' . $server);
+	$collection = $conn->selectDB($database)->selectCollection("follow");
 
-	# Perform the query to get chapter name
-	
-	$query = array( "name" => $username);
-	$obj = $collection->findOne($query);
-	
-	if($obj != null)
+	$followDoc = $collection->findOne(array("username" => $username));
+
+	if($followDoc != null )
 		{
-		echo json_encode(array(
-					"image" => $obj["image"], 
-					"zoom" => $obj["zoom"],
-					"cenx" => $obj["cenx"], 
-					"ceny" => $obj["ceny"],
-					"rotation" => $obj["rotation"],
-					"anno" => $obj["anno"],
-					"curx" => $obj["curx"], 
-					"cury" => $obj["cury"]));
+		$followTimeout = 30;
+		if (time() - $followDoc['timestamp']->sec <= $followTimeout) # only send data for recently-updated sessions
+			{
+			$followProperties = array(
+				'username',
+				'img',
+				'sess',
+				'zoom',
+				'cenx',
+				'ceny',
+				'rotation',
+				'bookmarks',
+				'curx',
+				'cury'
+				);
+
+			$followData = array();
+			foreach ($followProperties as $prop)
+				{
+				$followData[$prop] = $followDoc[$prop];
+				}
+			echo json_encode($followData);
+			return;
+			}
+		else
+			{
+			# delete expired sessions
+			$collection->remove(array("username" => $username));
+			}
 		}
-	else
-		{
-		echo json_encode(array());
-		} 
+	# if data wasn't sent
+	header("HTTP/1.1 204 No Content");
 	}
-# Error handling	
-catch (Exception $e) 
+# Error handling
+catch (Exception $e)
 	{
+	# TODO: send a better failure response to client
+	header("HTTP/1.1 500 Internal Server Error");
 	return;
 	}
 ?>
+
