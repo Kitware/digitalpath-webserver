@@ -138,9 +138,7 @@ if(isset($sessIdStr))
 			echo("var baseUrl = '" . $base_url . "';\n");
 			echo("var zoomLevels = ". $imgLevel .";\n");
 			echo("var baseName = '" . $database . "';\n");
-			echo("var imageName = '");
-			echo($imgIdStr);
-			echo("';\n");
+			echo("var imageName = '" . $imgIdStr . "';\n");
 
 			echo("var image_name = '");
 			echo(trim($image_name));
@@ -186,7 +184,7 @@ if(isset($sessIdStr))
 		<div id="mappage" data-role="page">
 
 			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
-			<!-- Header -->
+			<!-- header -->
 			<div data-role="header" data-position="fixed">
 				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
 					<a id="show-anno" data-role="button">Annotations</a>
@@ -194,12 +192,12 @@ if(isset($sessIdStr))
 				<h1><?php echo($imgTitle); ?></h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
 					<a id="follow" data-role="button" href="">Join session</a>
-					<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#options" 
+					<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
 						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 				</div>
 			</div><!-- /header -->
 
-			<!-- Image Content -->
+			<!-- image Content -->
 			<div data-role="content">
 				<div id="mapcontainer">
 					<div id="map"></div>
@@ -217,9 +215,9 @@ if(isset($sessIdStr))
 
 			<div id="logo">
 				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
-			</div>
+			</div><!-- /image content -->
 
-			<!-- Footer content -->
+			<!-- footer -->
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
@@ -237,7 +235,8 @@ if(isset($sessIdStr))
 
 		</div><!-- /mappage -->
 
-		<div id="options" data-role="page" data-ajax="false">
+		<!-- optionspage -->
+		<div id="optionspage" data-role="page" data-ajax="false">
 
 			<div data-role="header">
 				<h1>Options</h1>
@@ -279,7 +278,7 @@ if(isset($sessIdStr))
 			<?php
 				}
 			?>
-		</div><!-- /options -->
+		</div><!-- /optionspage -->
 
 	</body>
 </html>
