@@ -1,0 +1,19 @@
+/* JQuery Mobile places button groups in the header too low */
+.ui-header .ui-controlgroup
+	{
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+	}
+
+/* JQuery Mobile left-aligns button groups on the footer */
+.ui-footer {
+    text-align: center !important;
+}
+
+/* align multiple groups of left header buttons horizontally;
+JQuery Mobile places button groups within header groups vertically */
+.ui-header>.ui-btn-left>div
+	{
+	display: inline-block !important;
+	}
+

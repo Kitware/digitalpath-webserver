@@ -119,8 +119,12 @@ if(isset($sessIdStr))
 		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 
 		<!-- large image specific additions  -->
-		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
+<!--		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
+-->
+
+		<link rel="stylesheet" href="css/common.css" type="text/css">
+		<link rel="stylesheet" href="css/image.css" type="text/css">
 
 		<script>
 			<?php
@@ -138,9 +142,8 @@ if(isset($sessIdStr))
 			echo("var baseUrl = '" . $base_url . "';\n");
 			echo("var zoomLevels = ". $imgLevel .";\n");
 			echo("var baseName = '" . $database . "';\n");
-			echo("var imageName = '");
-			echo($imgIdStr);
-			echo("';\n");
+			echo("var imageName = '" . $imgIdStr . "';\n");
+			echo("var sessionName = '" . $sessIdStr . "';\n");
 
 			echo("var image_name = '");
 			echo(trim($image_name));
@@ -166,16 +169,13 @@ if(isset($sessIdStr))
 		<script src="libs/jquery.timer.js" type="text/javascript"></script>
 		<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
 		<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
-<!--
-		<script src="libs/css-transform.js"></script>
-		<script src="libs/css-rotate.js"></script>
--->
-		<script src="libs/OpenLayers.mobile.js"> </script>
-		<script src="libs/TMS.js"> </script>
-		<script src="libs/Icon.js"> </script>
-		<script src="libs/Marker.js"> </script>
-		<script src="libs/Markers.js"> </script>
-		<script src="libs/mobile-jq.js"></script>
+
+		<script src="libs/rotating-openlayers.js"> </script>
+
+		<script src="libs/image.js"></script>
+		<script src="libs/image.map.js"></script>
+		<script src="libs/image.bookmarks.js"></script>
+		<script src="libs/image.follow.js"></script>
 		<script src="libs/operations.js"></script>
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -185,21 +185,27 @@ if(isset($sessIdStr))
 		<!-- The large image page -->
 		<div id="mappage" data-role="page">
 
-			<!-- Header -->
+			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
+			<!-- header -->
 			<div data-role="header" data-position="fixed">
-				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
-					<a id="show-anno" data-role="button">Annotations</a>
+				<div class="ui-btn-left">
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
+							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+					</div>
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="follow" data-role="button" class='ui-disabled'>Join session</a>
+					</div>
 				</div>
-				<h1><?php echo($imgTitle); ?></h1>
+				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
-					<a id="follow" data-role="button" href="">Join session</a>
-					<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#options" 
-						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+					<a id="show-anno" data-role="button" class='ui-disabled'>Annotations</a>
+					<a id="show-bookmarks" data-role="button" class='ui-disabled' data-icon="star" data-iconpos="left" data-direction="forward" href="#bookmarkspage">Bookmarks</a>
 				</div>
 			</div><!-- /header -->
 
-			<!-- Image Content -->
-			<div data-role="content">
+			<!-- image content -->
+			<div id="mapcontent" data-role="content">
 				<div id="mapcontainer">
 					<div id="map"></div>
 				</div>
@@ -215,10 +221,10 @@ if(isset($sessIdStr))
 			</div>
 
 			<div id="logo">
-				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
-			</div>
+				<img src="img/k-logo-64.png">
+			</div><!-- /image content -->
 
-			<!-- Footer content -->
+			<!-- footer -->
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
@@ -236,9 +242,35 @@ if(isset($sessIdStr))
 
 		</div><!-- /mappage -->
 
-		<div id="options" data-role="page" data-ajax="false">
+		<!-- bookmarkspage -->
+		<div id="bookmarkspage" data-role="page" data-ajax="false">
 
-			<div data-role="header">
+			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
+			<!-- header -->
+			<div data-role="header" data-position="fixed"> <!-- try to make persistant across transitions-->
+				<h1>  <?php echo($imgTitle); ?> </h1>
+				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
+					<!-- work as a 'back' button by default, to not clog history -->
+					<a data-role="button" data-theme="b" data-icon="star" data-iconpos="left" data-direction="reverse" data-rel="back" href="#mappage">Bookmarks</a>
+				</div>
+			</div>
+
+			<!-- bookmark content -->
+			<div data-role="content">
+				<ul id="bookmark-list" data-role="listview" data-split-icon="check" data-filter="true" data-filter-placeholder="Filter bookmarks...">
+					<!-- bookmark list items -->
+				</ul>
+			</div><!-- bookmark content -->
+		</div><!-- /bookmarkspage -->
+
+		<!-- optionspage -->
+		<div id="optionspage" data-role="page" data-ajax="false">
+
+			<div data-role="header" data-position="fixed">
+				<div class="ui-btn-left" data-role="controlgroup" data-type="horizontal">
+					<a data-role="button" data-icon="gear" data-iconpos="left" data-direction="reverse" data-rel="back" href="#mappage"
+						data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				</div>
 				<h1>Options</h1>
 			</div>
 
@@ -278,7 +310,7 @@ if(isset($sessIdStr))
 			<?php
 				}
 			?>
-		</div><!-- /options -->
+		</div><!-- /optionspage -->
 
 	</body>
 </html>
