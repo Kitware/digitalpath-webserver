@@ -75,8 +75,55 @@ catch (Exception $e)
 			</div>
 
 			<div data-role="content">
+					<?php
+					# Loop through images
+					$grid = $conn->selectDB($database)->getGridFS("attachments");
+
+					# build a PHP-style sorted array from 'images' array
+					$sessImgsSorted = array();
+					foreach ($sessDoc['attachments'] as $refListElem)
+						{
+						if($refListElem['hide'] === false)
+							{
+							$sessImgsSorted[$refListElem['pos']] = $refListElem['ref'];
+							}
+						}
+					ksort($sessImgsSorted);
+
+					if(count($sessImgsSorted) > 0)
+						{
+						?>
+						<div id="banner">
+							<h2>List of attached files</h2>
+						</div>
+
+						<ul data-role="listview">
+							<?php
+							#var_dump($sessImgsSorted);
+							foreach ($sessImgsSorted as $sessImgId)
+								{
+								$imgDoc = $grid->findOne( array("_id" => $sessImgId) );
+								$imgTitle = $imgDoc->getFilename();
+								$imgExtension = pathinfo($imgTitle, PATHINFO_EXTENSION);
+
+								if($imgExtension != 'ppt' && $imgExtension != 'pdf')
+									{
+									$imgExtension = 'file';	
+									}
+
+								echo '<li><a data-ajax="false" rel="external" href="attachment.php?id=' , $sessImgId, '">';
+								echo '<img src="img/', $imgExtension , '.png">' , $imgTitle , '</a></li>' , "\n";
+								}
+							?>
+						</ul>
+						<br/>
+						<br/>
+					<?php
+						}
+					?>
+				 
 				<div id="banner">
-					<h2>List of images in session</h2>
+					<h2>List of images</h2>
 				</div>
 				<ul data-role="listview">
 					<?php
