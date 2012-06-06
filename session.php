@@ -106,7 +106,7 @@ catch (Exception $e)
 								$imgTitle = $imgDoc->getFilename();
 								$imgExtension = pathinfo($imgTitle, PATHINFO_EXTENSION);
 
-								if($imgExtension != 'ppt' && $imgExtension != 'pdf' && $imgExtension != 'wmv' && $imgExtension != 'mp4')
+								if($imgExtension != 'ppt' && $imgExtension != 'pdf' && $imgExtension != 'wmv' && $imgExtension != 'mp4' && $imgExtension != 'm4v')
 									{
 									$imgExtension = 'file';	
 									}
