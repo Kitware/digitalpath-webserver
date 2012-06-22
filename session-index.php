@@ -1,6 +1,6 @@
 <?php
 # Perform database initialization
-require_once("config.php"); 
+require_once("config.php");
 ?>
 
 <!DOCTYPE html>
@@ -19,7 +19,7 @@ require_once("config.php");
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
 	</head>
-	<body> 
+	<body>
 		<!-- Index pages -->
 		<div data-role="page">
 			<div data-role="header">

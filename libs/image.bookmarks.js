@@ -205,7 +205,7 @@ var bookmarks = (function()
 /* // TODO: deal with all this
 
 		shapeLayer.events.register("featureselected", shapeLayer, displayAnnotation); //may not need this, could do from OpenLayers.Control.SelectFeature
-		// Create control for clicking pointers	
+		// Create control for clicking pointers
 		selControl = new OpenLayers.Control.SelectFeature( // set additional properties here
 			anno, // can add an array of annotations at once, pass in that way
 			{

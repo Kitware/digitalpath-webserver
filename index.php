@@ -10,8 +10,8 @@ require 'protected/openid.php';
 @$passwd = $_REQUEST['passwd'];
 $openid = new LightOpenID('ayodhya:82');
 
-# First see if OpenID login is called 
-if(!$openid->mode) 
+# First see if OpenID login is called
+if(!$openid->mode)
 	{
 	if(isset($_REQUEST['login']))
 		{
@@ -22,16 +22,16 @@ if(!$openid->mode)
 		return;
 		}
 	}
-elseif($openid->mode != 'cancel') 
+elseif($openid->mode != 'cancel')
 	{
 	$arr = $openid->getAttributes();
 	if($openid->validate())
 		{
 			session_destroy();
 			session_start();
-			$_SESSION['name'] = $arr['contact/email']; 
-			$_SESSION['start'] = time(); 
-			$_SESSION['last_activity'] = time(); 
+			$_SESSION['name'] = $arr['contact/email'];
+			$_SESSION['start'] = time();
+			$_SESSION['last_activity'] = time();
 			$_SESSION['book'] = 'bev1';
 			$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo. All rights reserved";
@@ -43,7 +43,7 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 
 
 # Check for categorical logins
-if(isset($databaseId) && isset($passwd)) 
+if(isset($databaseId) && isset($passwd))
 	{
 	$loginConn = new Mongo('mongodb://' . $loginConnName);
 	$loginDBColl = $loginConn->selectDB($loginDBName)->selectCollection('databases');
@@ -77,7 +77,7 @@ if(isset($databaseId) && isset($passwd))
 		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
 		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 	</head>
-	<body> 
+	<body>
 		<!-- Index pages -->
 		<div data-role="page">
 			<!-- Header -->

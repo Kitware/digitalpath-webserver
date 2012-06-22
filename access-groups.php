@@ -1,6 +1,6 @@
 <?php
 	# To be called from facebook or google submodule
-	require_once("config.php"); 
+	require_once("config.php");
 	# Create global mongo collection
 
 	#$conn = new Mongo('mongodb://' . $_SESSION['loginConnName']);
@@ -10,12 +10,12 @@
 	function get_memberships()
 		{
 		# Connects to the database and finds the groups that have been
-		
+
 		$conn = new Mongo();
 		$colGroups = $conn->selectDB('slideatlas')->selectCollection('groups');
 		$groups_list = array();
-		
-		# Reset the matching groups counter and 
+
+		# Reset the matching groups counter and
 		# corresponding permissions index
 
 		$count = 0;
@@ -33,8 +33,8 @@
 					{
 						$in = 1;
 						$match = $facebook_group;
-						
-						# Add to the permissions information to the session cookie  
+
+						# Add to the permissions information to the session cookie
 						# hence no groups information will be user in the cookie anymore
 
 						# $_SESSION['host'] = $loginDBDoc['host'];
@@ -44,24 +44,24 @@
 						$_SESSION['perm'][$count] = array("dbid" => $sessDoc['db'] , "facebook_id" => "dummy");
 						break;
 					}
-				} 
+				}
 			if($in == 1)
 				{
 				echo "<h3>" . $match["name"] . " </h3>";
 
 				# Found a match
 				$count = $count + 1;
-					
+
 				# Query the mentioned database and get the sessions names
 
-				# Obtain the database 
+				# Obtain the database
 				$coldb = $conn->selectDB('slideatlas')->selectCollection('databases');;
 				$db = $coldb->findOne(array("_id" => $sessDoc["db"]));
-				
-				$conn2 = new Mongo($db['host']);				
+
+				$conn2 = new Mongo($db['host']);
 
 				$colSessions = $conn2->selectDB($db["dbname"])->selectCollection("sessions");
-					
+
 				echo '<ul data-role="listview" data-inset="true">';
 
 				foreach($sessDoc["can_see"] as $asession_id)
@@ -77,27 +77,27 @@
 
 		# IF count is zero say some thing
 		if($count == 0)
-			{ 
+			{
 			echo "</br> Sorry .. no sessions listed for you today </br>" , "\n";
 			}
 		}
-	
-		
-		# Trim the irrelevant facebook groups and the fetched permissions 
+
+
+		# Trim the irrelevant facebook groups and the fetched permissions
 
 	function display_user_information()
 		{
-		# Displays user information including group memberships 
-		
+		# Displays user information including group memberships
+
 		foreach ($_SESSION['facebook'] as $key => $val)
-			{	
+			{
 			echo $key . " " . $val . "</br>";
-			} 
+			}
 
 		foreach ($_SESSION['groups'] as $key => $val)
-			{	
+			{
 			echo $key . " " . $val['name'] . "</br>";
-			} 
+			}
 		}
 
 	function display_available_groups()
@@ -114,7 +114,7 @@
 	# Loads the groups database, and lists the intersection
 	# Cleans up session cookie
 ?>
-	
+
 <!DOCTYPE html>
 <html>
 	<head>
@@ -131,7 +131,7 @@
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
 	</head>
-	<body> 
+	<body>
 		<!-- Index pages -->
 		<div id="list" data-role="page">
 			<div data-role="header">
@@ -145,8 +145,8 @@
 				</div>
 				<p>This website is supported on multiple devices including iPad, iPhone and latest desktop browsers</p>
 
-				<?php  
-					
+				<?php
+
 					#display_user_information();
 					#display_available_groups();
 					get_memberships();

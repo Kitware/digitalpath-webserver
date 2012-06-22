@@ -22,7 +22,7 @@ $conn = new Mongo();
 $col_db = $conn->selectDB('slideatlas')->selectCollection("databases");
 $obj_db = $col_db->findOne( array("_id" => new MongoId($id_db)) );
 
-# Assuming that the db is found 
+# Assuming that the db is found
 
 # Now get the server information and put it in the cookie
 

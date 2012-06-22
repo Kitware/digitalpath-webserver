@@ -15,7 +15,7 @@ try
 		echo "Error: no 'sess' or 'id' URL parameter";
 		return;
 		}
-	
+
 	# Perform database initialization
 	require_once("config.php");
 
@@ -37,7 +37,7 @@ try
 	}
 
 # Error handling
-catch (Exception $e) 
+catch (Exception $e)
 	{
 	header('content-type: text/plain');
 	echo 'Caught exception: ',  $e->getMessage(), "\n";

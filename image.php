@@ -22,7 +22,7 @@ try
 
 	session_start();
 	# Perform database initialization and get chapter name
-	require_once("config.php"); 
+	require_once("config.php");
 
 	$conn = new Mongo('mongodb://' . $server);
 	$imgsColl = $conn->selectDB($database)->selectCollection("images");
@@ -190,7 +190,7 @@ if(isset($sessIdStr))
 			<div data-role="header" data-position="fixed">
 				<div class="ui-btn-left">
 					<div data-role="controlgroup" data-type="horizontal">
-						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
+						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage"
 							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 					</div>
 					<div data-role="controlgroup" data-type="horizontal">
@@ -216,8 +216,8 @@ if(isset($sessIdStr))
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>
 			</div>
 
-			<div id="copyright"> 
-				<?php echo($_SESSION['copyright']);?> 
+			<div id="copyright">
+				<?php echo($_SESSION['copyright']);?>
 			</div>
 
 			<div id="logo">
@@ -280,13 +280,13 @@ if(isset($sessIdStr))
 				{
 			?>
 			<div data-role="content">
-				<h2>Manage collaborative view</h2>	
+				<h2>Manage collaborative view</h2>
 				<a href="" data-inline="true" data-role="button" id="lead">Lead a collaborative session</a>
 
 				<h2>Label</h2>
 				<input type="text" id="newname" value="<?php echo($imgTitle); ?>"/>
-				<a id=renameimage data-role="button" data-inline="true">Rename</a> 
-				<a id=resetrename data-role="button" data-inline="true">Reset</a> 
+				<a id=renameimage data-role="button" data-inline="true">Rename</a>
+				<a id=resetrename data-role="button" data-inline="true">Reset</a>
 
 				<div data-role="collapsible" data-inline="true">
 					<h3>Delete</h3>

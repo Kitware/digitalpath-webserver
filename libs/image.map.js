@@ -364,7 +364,7 @@ var map = (function() // Revealing Module Pattern
 						interval: 300, // TODO: is this a good delay?
 						cumulative: false
 						}
-					}), 
+					}),
 				new OpenLayers.Control.Attribution() //TODO: why, ask DJ?
 				],
 			maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
