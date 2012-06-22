@@ -48,9 +48,9 @@ catch (Exception $e)
 <html>
 	<head>
 		<title>Slide Atlas</title>
-		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css" />
 		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
-		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
 	</head>
 	<body>
 		<div data-role="page" data-add-back-btn="true">
