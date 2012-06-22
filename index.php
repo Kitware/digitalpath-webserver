@@ -74,7 +74,7 @@ if(isset($databaseId) && isset($passwd))
 		<link rel="apple-touch-icon" href="favicon.ico" />
 
 		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
+		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
 		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
 	</head>
 	<body>
