@@ -106,22 +106,17 @@ if(isset($sessIdStr))
 
 <html>
 	<head>
-<!--
-		<meta name="viewport" content="width=device-width" />
--->
-		<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
-
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
 
-		<!-- jQuery mobile -->
-		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css" />
 		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
 		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
 
-		<!-- large image specific additions  -->
-<!--		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
-		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
--->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
 
 		<link rel="stylesheet" href="css/common.css" type="text/css">
 		<link rel="stylesheet" href="css/image.css" type="text/css">

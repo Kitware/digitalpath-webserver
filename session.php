@@ -47,10 +47,17 @@ catch (Exception $e)
 
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
-		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css" />
+
 		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
 		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
 	</head>
 	<body>
 		<div data-role="page" data-add-back-btn="true">
