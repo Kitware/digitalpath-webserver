@@ -110,8 +110,8 @@ catch (Exception $e)
 							$thumbDocFile = 't.jpg';
 							}
 
-						echo '<li><a data-ajax="false" rel="external" href="image.php?sess=' , $sessDoc['_id'] , '&img=' , $imgDoc['_id'] , '#mappage">';
-						echo '<img src="/tile.php?image=' , $imgDoc['_id'] , '&name=' , $thumbDocFile , '" alt="">' , $imgTitle , '</a></li>' , "\n";
+						echo '<li><a data-ajax="false" rel="external" href="image.php?sess=' , $sessDoc['_id'] , '&amp;img=' , $imgDoc['_id'] , '#mappage">';
+						echo '<img src="/tile.php?image=' , $imgDoc['_id'] , '&amp;name=' , $thumbDocFile , '" alt="">' , $imgTitle , '</a></li>' , "\n";
 						}
 					?>
 				</ul>

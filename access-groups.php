@@ -68,7 +68,7 @@
 					{
 						# Give a clickable list
 						$asession_obj = $colSessions->findOne(array("_id" => $asession_id));
-						echo '<li><a data-ajax="false" rel="external" href="access-session.php?sess=' , $asession_id, '&db=' , strval($count-1),'">' , $asession_obj['name'], '</a></li>' , "\n";
+						echo '<li><a data-ajax="false" rel="external" href="access-session.php?sess=' , $asession_id, '&amp;db=' , strval($count-1),'">' , $asession_obj['name'], '</a></li>' , "\n";
 #						echo $asession_obj["name"] . " </br>";
 					}
 				print_r("</br>");

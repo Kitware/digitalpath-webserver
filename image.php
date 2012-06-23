@@ -95,11 +95,11 @@ if(isset($sessIdStr))
 	$thisImgPos = array_search($imgId, $sessImgsSorted);
 	if(array_key_exists($thisImgPos-1, $sessImgsSorted))
 		{
-		$prevImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos-1] . '#mappage';
+		$prevImg_href = 'image.php?sess=' . $sessIdStr . '&amp;img=' . $sessImgsSorted[$thisImgPos-1] . '#mappage';
 		}
 	if(array_key_exists($thisImgPos+1, $sessImgsSorted))
 		{
-		$nextImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos+1] . '#mappage';
+		$nextImg_href = 'image.php?sess=' . $sessIdStr . '&amp;img=' . $sessImgsSorted[$thisImgPos+1] . '#mappage';
 		}
 	}
 ?>
