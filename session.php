@@ -62,7 +62,7 @@ catch (Exception $e)
 	<body>
 		<div data-role="page" data-add-back-btn="true">
 
-			<div data-role="header" data-position="fixed" data-fullscreen="false">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
 				<h1> <?php echo($sessTitle) ?> </h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div>

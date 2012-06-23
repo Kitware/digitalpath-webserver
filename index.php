@@ -82,7 +82,7 @@ if(isset($databaseId) && isset($passwd))
 		<!-- Index pages -->
 		<div data-role="page">
 			<!-- Header -->
-			<div data-role="header" data-position='fixed' data-fullscreen='false'>
+			<div data-role="header" data-position='fixed' data-tap-toggle="false">
 				<h1> Slide Atlas </h1>
 			</div>
 

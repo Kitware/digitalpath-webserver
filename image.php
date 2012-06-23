@@ -121,6 +121,7 @@ if(isset($sessIdStr))
 		<link rel="stylesheet" href="css/common.css" type="text/css">
 		<link rel="stylesheet" href="css/image.css" type="text/css">
 
+		<meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0">
 		<script>
 			<?php
 			# Create javascript variables for large_images.js
@@ -180,9 +181,8 @@ if(isset($sessIdStr))
 		<!-- The large image page -->
 		<div id="mappage" data-role="page">
 
-			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- header -->
-			<div data-role="header" data-position="fixed">
+			<div data-role="header"> <!-- don't make fixed, it causes bugs -->
 				<div class="ui-btn-left">
 					<div data-role="controlgroup" data-type="horizontal">
 						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage"
@@ -220,7 +220,7 @@ if(isset($sessIdStr))
 			</div><!-- /image content -->
 
 			<!-- footer -->
-			<div data-role="footer" data-position="fixed" class="ui-grid-b">
+			<div data-role="footer" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
 					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="session.php?sess=<?php echo($sessIdStr); ?>">Return</a>
@@ -240,9 +240,8 @@ if(isset($sessIdStr))
 		<!-- bookmarkspage -->
 		<div id="bookmarkspage" data-role="page" data-ajax="false">
 
-			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- header -->
-			<div data-role="header" data-position="fixed"> <!-- try to make persistant across transitions-->
+			<div data-role="header" data-position="fixed" data-tap-toggle="false"> <!-- TODO: try to make persistant across transitions-->
 				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
 					<!-- work as a 'back' button by default, to not clog history -->

@@ -25,7 +25,7 @@ require_once("config.php");
 	<body>
 		<!-- Index pages -->
 		<div data-role="page">
-			<div data-role="header">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
 				<h1>Slide Atlas</h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div><!-- /header -->
