@@ -1,28 +1,31 @@
 <?php
 # Perform database initialization
-require_once("config.php"); 
+require_once("config.php");
 ?>
 
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
-		<meta charset='utf-8' />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-		<meta name = "viewport" content = "width = device-width">
-		<link rel="apple-touch-icon" href="favicon.ico" />
-		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
-		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
+
+		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
+
 		<!-- large image specific additions  -->
 		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
 		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
 	</head>
-	<body> 
+	<body>
 		<!-- Index pages -->
 		<div data-role="page">
-			<div data-role="header">
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
 				<h1>Slide Atlas</h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div><!-- /header -->

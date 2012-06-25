@@ -22,7 +22,7 @@ try
 
 	session_start();
 	# Perform database initialization and get chapter name
-	require_once("config.php"); 
+	require_once("config.php");
 
 	$conn = new Mongo('mongodb://' . $server);
 	$imgsColl = $conn->selectDB($database)->selectCollection("images");
@@ -95,37 +95,33 @@ if(isset($sessIdStr))
 	$thisImgPos = array_search($imgId, $sessImgsSorted);
 	if(array_key_exists($thisImgPos-1, $sessImgsSorted))
 		{
-		$prevImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos-1] . '#mappage';
+		$prevImg_href = 'image.php?sess=' . $sessIdStr . '&amp;img=' . $sessImgsSorted[$thisImgPos-1] . '#mappage';
 		}
 	if(array_key_exists($thisImgPos+1, $sessImgsSorted))
 		{
-		$nextImg_href = 'image.php?sess=' . $sessIdStr . '&img=' . $sessImgsSorted[$thisImgPos+1] . '#mappage';
+		$nextImg_href = 'image.php?sess=' . $sessIdStr . '&amp;img=' . $sessImgsSorted[$thisImgPos+1] . '#mappage';
 		}
 	}
 ?>
 
 <html>
 	<head>
-<!--
-		<meta name="viewport" content="width=device-width" />
--->
-		<meta name="viewport" content="width=device-width, maximum-scale=1.0" />
-
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
 
-		<!-- jQuery mobile -->
-		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
-		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
+		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
 
-		<!-- large image specific additions  -->
-<!--		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
-		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
--->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
 
 		<link rel="stylesheet" href="css/common.css" type="text/css">
 		<link rel="stylesheet" href="css/image.css" type="text/css">
 
+		<meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0">
 		<script>
 			<?php
 			# Create javascript variables for large_images.js
@@ -170,7 +166,7 @@ if(isset($sessIdStr))
 		<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
 		<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
 
-		<script src="libs/rotating-openlayers.js"> </script>
+		<script src="libs/openlayers/openlayers.rotating-2.12.rc7.js"> </script>
 
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
@@ -185,12 +181,11 @@ if(isset($sessIdStr))
 		<!-- The large image page -->
 		<div id="mappage" data-role="page">
 
-			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- header -->
-			<div data-role="header" data-position="fixed">
+			<div data-role="header"> <!-- don't make fixed, it causes bugs -->
 				<div class="ui-btn-left">
 					<div data-role="controlgroup" data-type="horizontal">
-						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage" 
+						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage"
 							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 					</div>
 					<div data-role="controlgroup" data-type="horizontal">
@@ -216,16 +211,16 @@ if(isset($sessIdStr))
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>
 			</div>
 
-			<div id="copyright"> 
-				<?php echo($_SESSION['copyright']);?> 
+			<div id="copyright">
+				<?php echo($_SESSION['copyright']);?>
 			</div>
 
 			<div id="logo">
-				<img src="img/k-logo-64.png">
+				<img src="img/k-logo-64.png" alt="Kitware, Inc.">
 			</div><!-- /image content -->
 
 			<!-- footer -->
-			<div data-role="footer" data-position="fixed" class="ui-grid-b">
+			<div data-role="footer" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
 					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="session.php?sess=<?php echo($sessIdStr); ?>">Return</a>
@@ -245,9 +240,8 @@ if(isset($sessIdStr))
 		<!-- bookmarkspage -->
 		<div id="bookmarkspage" data-role="page" data-ajax="false">
 
-			<script>$.mobile.fixedToolbars.setTouchToggleEnabled(false); </script> <!-- move to common .js pages? -->
 			<!-- header -->
-			<div data-role="header" data-position="fixed"> <!-- try to make persistant across transitions-->
+			<div data-role="header" data-position="fixed" data-tap-toggle="false"> <!-- TODO: try to make persistant across transitions-->
 				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
 					<!-- work as a 'back' button by default, to not clog history -->
@@ -280,13 +274,13 @@ if(isset($sessIdStr))
 				{
 			?>
 			<div data-role="content">
-				<h2>Manage collaborative view</h2>	
+				<h2>Manage collaborative view</h2>
 				<a href="" data-inline="true" data-role="button" id="lead">Lead a collaborative session</a>
 
 				<h2>Label</h2>
 				<input type="text" id="newname" value="<?php echo($imgTitle); ?>"/>
-				<a id=renameimage data-role="button" data-inline="true">Rename</a> 
-				<a id=resetrename data-role="button" data-inline="true">Reset</a> 
+				<a id=renameimage data-role="button" data-inline="true">Rename</a>
+				<a id=resetrename data-role="button" data-inline="true">Reset</a>
 
 				<div data-role="collapsible" data-inline="true">
 					<h3>Delete</h3>

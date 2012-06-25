@@ -10,8 +10,8 @@ require 'protected/openid.php';
 @$passwd = $_REQUEST['passwd'];
 $openid = new LightOpenID('ayodhya:82');
 
-# First see if OpenID login is called 
-if(!$openid->mode) 
+# First see if OpenID login is called
+if(!$openid->mode)
 	{
 	if(isset($_REQUEST['login']))
 		{
@@ -22,16 +22,16 @@ if(!$openid->mode)
 		return;
 		}
 	}
-elseif($openid->mode != 'cancel') 
+elseif($openid->mode != 'cancel')
 	{
 	$arr = $openid->getAttributes();
 	if($openid->validate())
 		{
 			session_destroy();
 			session_start();
-			$_SESSION['name'] = $arr['contact/email']; 
-			$_SESSION['start'] = time(); 
-			$_SESSION['last_activity'] = time(); 
+			$_SESSION['name'] = $arr['contact/email'];
+			$_SESSION['start'] = time();
+			$_SESSION['last_activity'] = time();
 			$_SESSION['book'] = 'bev1';
 			$_SESSION['copyright'] = "Copyright &copy 2011, Charles Palmer, Beverly
 Faulkner-Jones and Su-jean Seo. All rights reserved";
@@ -41,9 +41,8 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 		}
 	}
 
-
 # Check for categorical logins
-if(isset($databaseId) && isset($passwd)) 
+if(isset($databaseId) && isset($passwd))
 	{
 	$loginConn = new Mongo('mongodb://' . $loginConnName);
 	$loginDBColl = $loginConn->selectDB($loginDBName)->selectCollection('databases');
@@ -66,28 +65,33 @@ if(isset($databaseId) && isset($passwd))
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
-		<meta charset='utf-8' />
-		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
-		<meta name = "viewport" content = "width = device-width">
-		<link rel="apple-touch-icon" href="favicon.ico" />
 
-		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
-		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
+		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
+
+		<script src="libs/index.js"></script>
+		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" href="css/index.css">
 	</head>
-	<body> 
+	<body>
 		<!-- Index pages -->
 		<div data-role="page">
 			<!-- Header -->
-			<div data-role="header" data-position='fixed' data-fullscreen='false'>
-				<h1> Slide Atlas </h1>
+			<div data-role="header" data-position='fixed' data-tap-toggle="false">
+				<h1>Slide Atlas</h1>
 			</div>
 
 			<!-- Content -->
 			<div data-role="content">
-				<p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
+				<p>This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers</p>
 
 				<form action="index.php" data-ajax="false" method="post">
 					<div data-role="fieldcontain">
@@ -99,24 +103,22 @@ if(isset($databaseId) && isset($passwd))
 
 							foreach ($loginDBColl->find() as $loginDBDoc)
 								{
-								echo '<input type="radio" name="database" id="' , $loginDBDoc['_id'], '" value="' , $loginDBDoc['_id'] , '" /> ', "\n";
-								echo '<label for="' , $loginDBDoc['_id'] , '">' , $loginDBDoc['label'] , '</label> ', "\n";
+								echo '<input type="radio" name="database" id="' , $loginDBDoc['_id'], '" value="' , $loginDBDoc['_id'] , '">', "\n";
+								echo '<label for="' , $loginDBDoc['_id'] , '">' , $loginDBDoc['label'] , '</label>', "\n";
 								}
 							?>
 						</fieldset>
-<script>
-$("input:radio").change(function(event){$("#password").focus();});
-</script>
-						<div data-role="fieldcontain">
-							<label for="password">Password:</label>
-							<input type="password" name="passwd" id="password" value="" />
-						</div>
-						<center>
-							<div>
-								<button type="submit"  data-inline='true' data-theme="a">Submit</button>
-							</div>
-						</center>
 					</div>
+
+					<div data-role="fieldcontain">
+						<label for="password">Password:</label>
+						<input type="password" name="passwd" id="password" value="">
+					</div>
+
+					<div data-role="fieldcontain" class="btn-container">
+						<button type="submit" data-inline="true" data-theme="a">Submit</button>
+					</div>
+
 				</form>
 
 				<!-- login
@@ -128,13 +130,12 @@ $("input:radio").change(function(event){$("#password").focus();});
 				</form>
 				-->
 
-				<!-- login -->
-					Or authenticate using :
-					<center>
-					<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook_module.php">Facebook</a>
-					</center>
-				<!-- login -->
-				</form>
+				<div>
+					<p>Or authenticate using :</p>
+					<div class="btn-container">
+						<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook_module.php">Facebook</a>
+					</div>
+				</div>
 
 			</div><!-- /content -->
 		</div><!-- /page -->

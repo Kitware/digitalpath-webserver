@@ -15,7 +15,7 @@ try
 		echo "Error: no 'sess' or 'id' URL parameter";
 		return;
 		}
-	
+
 	# Perform database initialization
 	require_once("config.php");
 
@@ -37,7 +37,7 @@ try
 	}
 
 # Error handling
-catch (Exception $e) 
+catch (Exception $e)
 	{
 	header('content-type: text/plain');
 	echo 'Caught exception: ',  $e->getMessage(), "\n";
@@ -47,16 +47,25 @@ catch (Exception $e)
 
 <html>
 	<head>
+		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
-		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
-		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
+
+		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
+		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
+		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="apple-touch-icon" href="favicon.ico">
+
+		<link rel="stylesheet" href="css/common.css" type="text/css">
 	</head>
 	<body>
-		<div data-role="page" data-add-back-btn="true">
+		<div data-role="page">
 
-			<div data-role="header" data-position="fixed" data-fullscreen="false">
-				<h1> <?php echo($sessTitle) ?> </h1>
+			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<h1><?php echo($sessTitle) ?></h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div>
 
@@ -67,8 +76,6 @@ catch (Exception $e)
 				<ul data-role="listview">
 					<?php
 					# Loop through images
-
-					$imgsColl = $conn->selectDB($database)->selectCollection("images");
 
 					# build a PHP-style sorted array from 'images' array
 					$sessImgsSorted = array();
@@ -81,6 +88,7 @@ catch (Exception $e)
 						}
 					ksort($sessImgsSorted);
 
+					$imgsColl = $conn->selectDB($database)->selectCollection("images");
 					foreach ($sessImgsSorted as $sessImgId)
 						{
 						$imgDoc = $imgsColl->findOne( array("_id" => $sessImgId) );
@@ -103,8 +111,8 @@ catch (Exception $e)
 							$thumbDocFile = 't.jpg';
 							}
 
-						echo '<li><a data-ajax="false" rel="external" href="image.php?sess=' , $sessDoc['_id'] , '&img=' , $imgDoc['_id'] , '#mappage">';
-						echo '<img src="/tile.php?image=' , $imgDoc['_id'] , '&name=' , $thumbDocFile , '">' , $imgTitle , '</a></li>' , "\n";
+						echo '<li><a data-ajax="false" rel="external" href="image.php?sess=' , $sessDoc['_id'] , '&amp;img=' , $imgDoc['_id'] , '#mappage">';
+						echo '<img src="/tile.php?image=' , $imgDoc['_id'] , '&amp;name=' , $thumbDocFile , '" alt="">' , $imgTitle , '</a></li>' , "\n";
 						}
 					?>
 				</ul>
