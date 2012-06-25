@@ -58,12 +58,14 @@ catch (Exception $e)
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<link rel="apple-touch-icon" href="favicon.ico">
+
+		<link rel="stylesheet" href="css/common.css" type="text/css">
 	</head>
 	<body>
-		<div data-role="page" data-add-back-btn="true">
+		<div data-role="page">
 
 			<div data-role="header" data-position="fixed" data-tap-toggle="false">
-				<h1> <?php echo($sessTitle) ?> </h1>
+				<h1><?php echo($sessTitle) ?></h1>
 				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
 			</div>
 
@@ -74,8 +76,6 @@ catch (Exception $e)
 				<ul data-role="listview">
 					<?php
 					# Loop through images
-
-					$imgsColl = $conn->selectDB($database)->selectCollection("images");
 
 					# build a PHP-style sorted array from 'images' array
 					$sessImgsSorted = array();
@@ -88,6 +88,7 @@ catch (Exception $e)
 						}
 					ksort($sessImgsSorted);
 
+					$imgsColl = $conn->selectDB($database)->selectCollection("images");
 					foreach ($sessImgsSorted as $sessImgId)
 						{
 						$imgDoc = $imgsColl->findOne( array("_id" => $sessImgId) );

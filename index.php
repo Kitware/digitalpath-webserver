@@ -41,7 +41,6 @@ Faulkner-Jones and Su-jean Seo. All rights reserved";
 		}
 	}
 
-
 # Check for categorical logins
 if(isset($databaseId) && isset($passwd))
 	{
@@ -77,18 +76,21 @@ if(isset($databaseId) && isset($passwd))
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<link rel="apple-touch-icon" href="favicon.ico">
+
+		<script src="libs/index.js"></script>
+		<link rel="stylesheet" href="css/common.css">
 	</head>
 	<body>
 		<!-- Index pages -->
 		<div data-role="page">
 			<!-- Header -->
 			<div data-role="header" data-position='fixed' data-tap-toggle="false">
-				<h1> Slide Atlas </h1>
+				<h1>Slide Atlas</h1>
 			</div>
 
 			<!-- Content -->
 			<div data-role="content">
-				<p> This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers </p>
+				<p>This website is supported on multiple devices including iPad, iPhone and the latest desktop browsers</p>
 
 				<form action="index.php" data-ajax="false" method="post">
 					<div data-role="fieldcontain">
@@ -100,14 +102,11 @@ if(isset($databaseId) && isset($passwd))
 
 							foreach ($loginDBColl->find() as $loginDBDoc)
 								{
-								echo '<input type="radio" name="database" id="' , $loginDBDoc['_id'], '" value="' , $loginDBDoc['_id'] , '" /> ', "\n";
-								echo '<label for="' , $loginDBDoc['_id'] , '">' , $loginDBDoc['label'] , '</label> ', "\n";
+								echo '<input type="radio" name="database" id="' , $loginDBDoc['_id'], '" value="' , $loginDBDoc['_id'] , '">', "\n";
+								echo '<label for="' , $loginDBDoc['_id'] , '">' , $loginDBDoc['label'] , '</label>', "\n";
 								}
 							?>
 						</fieldset>
-<script>
-$("input:radio").change(function(event){$("#password").focus();});
-</script>
 						<div data-role="fieldcontain">
 							<label for="password">Password:</label>
 							<input type="password" name="passwd" id="password" value="" />
@@ -118,6 +117,7 @@ $("input:radio").change(function(event){$("#password").focus();});
 							</div>
 						</center>
 					</div>
+
 				</form>
 
 				<!-- login
