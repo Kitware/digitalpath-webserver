@@ -79,6 +79,7 @@ if(isset($databaseId) && isset($passwd))
 
 		<script src="libs/index.js"></script>
 		<link rel="stylesheet" href="css/common.css">
+		<link rel="stylesheet" href="css/index.css">
 	</head>
 	<body>
 		<!-- Index pages -->
@@ -107,15 +108,15 @@ if(isset($databaseId) && isset($passwd))
 								}
 							?>
 						</fieldset>
-						<div data-role="fieldcontain">
-							<label for="password">Password:</label>
-							<input type="password" name="passwd" id="password" value="" />
-						</div>
-						<center>
-							<div>
-								<button type="submit"  data-inline='true' data-theme="a">Submit</button>
-							</div>
-						</center>
+					</div>
+
+					<div data-role="fieldcontain">
+						<label for="password">Password:</label>
+						<input type="password" name="passwd" id="password" value="">
+					</div>
+
+					<div data-role="fieldcontain" class="btn-container">
+						<button type="submit" data-inline="true" data-theme="a">Submit</button>
 					</div>
 
 				</form>
@@ -129,13 +130,12 @@ if(isset($databaseId) && isset($passwd))
 				</form>
 				-->
 
-				<!-- login -->
-					Or authenticate using :
-					<center>
-					<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook_module.php">Facebook</a>
-					</center>
-				<!-- login -->
-				</form>
+				<div>
+					<p>Or authenticate using :</p>
+					<div class="btn-container">
+						<a data-role="button" data-theme="a" data-inline="true" data-ajax="false" href="facebook_module.php">Facebook</a>
+					</div>
+				</div>
 
 			</div><!-- /content -->
 		</div><!-- /page -->
