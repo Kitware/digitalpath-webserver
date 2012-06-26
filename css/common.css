@@ -3,9 +3,10 @@
     text-align: center !important;
 }
 
-/* align multiple groups of left header buttons horizontally;
-JQuery Mobile places button groups within header groups vertically */
-.ui-header>[class|=ui-btn]>div
+/* align multiple groups of left header/footer buttons horizontally;
+JQuery Mobile places button groups within header/footer groups vertically */
+.ui-header>[class|=ui-btn]>div,
+.ui-footer>.ui-controlgroup>div
 	{
 	display: inline-block !important;
 	}

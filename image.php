@@ -184,13 +184,7 @@ if(isset($sessIdStr))
 			<!-- header -->
 			<div data-role="header"> <!-- don't make fixed, it causes bugs -->
 				<div class="ui-btn-left">
-					<div data-role="controlgroup" data-type="horizontal">
-						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage"
-							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
-					</div>
-					<div data-role="controlgroup" data-type="horizontal">
-						<a id="follow" data-role="button" class='ui-disabled'>Join session</a>
-					</div>
+					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="session.php?sess=<?php echo($sessIdStr); ?>">Return</a>
 				</div>
 				<h1>  <?php echo($imgTitle); ?> </h1>
 				<div class="ui-btn-right" data-role="controlgroup" data-type="horizontal">
@@ -223,7 +217,7 @@ if(isset($sessIdStr))
 			<div data-role="footer" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<?php if(!is_null($prevImg_href)) echo '<a data-role="button" data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="' , $prevImg_href , '">Previous</a>', "\n"; ?>
-					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="session.php?sess=<?php echo($sessIdStr); ?>">Return</a>
+					<?php if(!is_null($nextImg_href)) echo '<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="' , $nextImg_href , '">Next</a>', "\n"; ?>
 				</div>
 				<div id="rotation" class="ui-block-b" data-role="controlgroup" data-type="horizontal">
 					<a href="" data-role="button" data-icon="forward" id="rleft">R</a>
@@ -231,7 +225,13 @@ if(isset($sessIdStr))
 					<a href="" data-role="button" data-icon="back" id="rright">L</a>
 				</div>
 				<div class="ui-block-c" data-role="controlgroup" data-type="horizontal">
-					<?php if(!is_null($nextImg_href)) echo '<a data-role="button" data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="' , $nextImg_href , '">Next</a>', "\n"; ?>
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="imageoptions" data-role="button" data-icon="gear" data-iconpos="left" href="#optionspage"
+							data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+					</div>
+					<div data-role="controlgroup" data-type="horizontal">
+						<a id="follow" data-role="button" class='ui-disabled'>Join session</a>
+					</div>
 				</div>
 			</div><!-- /footer -->
 
