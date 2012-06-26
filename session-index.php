@@ -18,16 +18,19 @@ require_once("config.php");
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<link rel="apple-touch-icon" href="favicon.ico">
 
-		<!-- large image specific additions  -->
-		<link rel="stylesheet" href="css/mobile-map.css" type="text/css">
-		<link rel="stylesheet" href="css/mobile-jq.css" type="text/css">
+		<link rel="stylesheet" href="css/common.css" type="text/css">
 	</head>
 	<body>
 		<!-- Index pages -->
 		<div data-role="page">
 			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<div class="ui-btn-left">
+					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="index.php">Return</a>
+				</div>
 				<h1>Slide Atlas</h1>
-				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				<div class="ui-btn-right">
+					<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				</div>
 			</div><!-- /header -->
 
 			<div data-role="content">

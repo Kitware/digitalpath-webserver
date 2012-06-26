@@ -65,8 +65,13 @@ catch (Exception $e)
 		<div data-role="page">
 
 			<div data-role="header" data-position="fixed" data-tap-toggle="false">
+				<div class="ui-btn-left">
+					<a data-role="button" data-icon="arrow-u" data-iconpos="right" data-ajax="false" href="<?php echo(array_key_exists('facebook', $_SESSION) ? "access-groups.php" : "session-index.php"); ?>">Return</a>
+				</div>
 				<h1><?php echo($sessTitle) ?></h1>
-				<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				<div class="ui-btn-right">
+					<a href="" data-role="button" data-icon="gear" class='ui-btn-right' data-theme="<?php echo(($_SESSION['auth'] == 'admin') ? "b" : "a"); ?>">Options</a>
+				</div>
 			</div>
 
 			<div data-role="content">
