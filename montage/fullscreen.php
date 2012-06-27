@@ -2,9 +2,12 @@
 
 @$image = $_GET["image"];
 @$zoomLevels = $_GET["levels"];
+@$baseName = $_GET["db"];
+if(!isset($baseName))
+	{
+	$baseName = 'tera';
+	}
 $tileSize = 256;
-$baseName = 'tera';
-
 ?>
 
 
