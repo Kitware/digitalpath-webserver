@@ -115,7 +115,7 @@ if(isset($sessIdStr))
 
 		<!-- jQuery mobile -->
 		<link rel="stylesheet" href="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.css" />
-		<script src="libs/jquery-1.7.1/jquery-1.7.1.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 		<script src="libs/jquery.mobile-1.0.1/jquery.mobile-1.0.1.min.js"></script>
 
 		<!-- large image specific additions  -->
@@ -170,13 +170,27 @@ if(isset($sessIdStr))
 		<script src="libs/css-transform.js"></script>
 		<script src="libs/css-rotate.js"></script>
 -->
-		<script src="libs/OpenLayers.mobile.js"> </script>
+		<script src="lib/OpenLayers.js"> </script>
+
+<!--
 		<script src="libs/TMS.js"> </script>
 		<script src="libs/Icon.js"> </script>
 		<script src="libs/Marker.js"> </script>
 		<script src="libs/Markers.js"> </script>
-		<script src="libs/mobile-jq.js"></script>
+	<script src="libs/CanvasFilter.js"> </script>
+-->
+
+
 		<script src="libs/operations.js"></script>
+		<script src="libs/canvas_adjust.js"></script>
+		<script src="libs/mobile-jq.js"></script>
+
+    <!-- Scripts required for image adjust -->
+    <script src="libs/image_adjust/pixastic.core.js"></script>
+    <script src="libs/image_adjust/image_adjust.js"></script>
+    <script src="libs/image_adjust/brightness.js"></script>
+    <script src="libs/image_adjust/coloradjust.js"></script>
+
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 	</head>
@@ -204,7 +218,7 @@ if(isset($sessIdStr))
 					<div id="map"></div>
 				</div>
 			</div>
-
+      <div id="progress"> </div>
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
 				<a href="" data-role="button" data-icon="plus" id="plus" data-iconpos="notext"></a>
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>
@@ -217,6 +231,29 @@ if(isset($sessIdStr))
 			<div id="logo">
 				<img src="img/k-logo-64.png" href="http://www.kitware.com"> 
 			</div>
+
+      <div>
+        <form id="settings" action="" method="get">
+            <label for="brightness"> Brightness </label>
+            <input name="brightness" id="brightness" type='range' min='-100' max='100' value='-50' data-mini="true" /> 
+
+            <label for="contrast"> Contrast </label>
+            <input name= "contrast" id="contrast" type='range' min='-100' max='100' value='0' step='any' data-mini="true" />  
+
+            <label for="red"> Red </label>
+            <input name= "red" id="red" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <label for="green"> Green </label>
+            <input name= "green" id="green" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <label for="blue"> Blue </label>
+            <input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <input type="button" value="Set Filter" onClick="setFilter(this.form)">
+            <input type="button" value="Reset" onClick="resetFilter(this.form)">
+        </form>
+
+    </div>
 
 			<!-- Footer content -->
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">

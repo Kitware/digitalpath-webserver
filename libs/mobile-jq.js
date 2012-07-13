@@ -24,14 +24,13 @@ var curceny;
 var curzoom;
 var currotation;
 var curxy;
-
+var filter;
 // variables for following 
 var isFollowing=false;
 var timersec;
 var seccount = 0;
 var isWaiting = false;
 var whomToFollow = '';
-
 
 // Some variables come directly from the php and will 
 // get modified if the server modifies them
@@ -276,6 +275,66 @@ function init()
   {
 	var boundSize = tileSize *  Math.pow(2.0,zoomLevels-1); 
   //create the map  
+  //
+
+BrightnessFilter = OpenLayers.Class(OpenLayers.Tile.CanvasFilter, {
+    brightness: -50,
+    contrast:0,
+    red:0,
+    blue:0,
+    green:0,
+
+    webworkerScript: "canvasfilter-webworker.js",
+    numberOfWebWorkers: 1, // per tile
+    
+    process: function(image) {
+        var white = {
+              brightness: this.brightness,
+              contrast: this.contrast
+            };
+
+        var rgb = {
+              red: this.red,
+              green: this.green,
+              blue: this.blue
+            };
+       
+        
+        // directly calling 'Pixastic.applyAction' instead of 'Pixastic.process'
+        // works better in Chromium when using a proxy
+        Pixastic.applyAction(image, image, "coloradjust", rgb);
+        Pixastic.applyAction(rgb.resultCanvas, rgb.resultCanvas, "brightness", white) ;
+        
+
+        if (!white.resultCanvas) {
+            // if something went wrong, return the original image
+            return image;
+        } else {
+            return white.resultCanvas;
+        }                
+    },
+    
+    supportsAsync: function() {
+        return false;    
+    },
+
+    getParameters: function() {
+        // these parameters are passed to the web worker script
+        return {
+            brightness: this.brightness,
+            contrast: this.contrast,
+
+            red: this.red,
+            green: this.green,
+            blue: this.blue,
+        };    
+    },
+    
+    CLASS_NAME: "BrightnessFilter"    
+});
+  
+  filter = new BrightnessFilter();
+
   map = new OpenLayers.Map( {
 			div: 'map',
 			theme : null,
@@ -287,13 +346,19 @@ function init()
 				},
 			controls: [
 				new OpenLayers.Control.Attribution(),
-				new OpenLayers.Control.TouchNavigation(
-							{
-							dragPanOptions: 
-								{
-								enableKinetic: true
-								}
-							}),
+				new OpenLayers.Control.Navigation( // TODO: add options
+					{
+					zoomBoxEnabled: false,
+					dragPanOptions:
+						{
+						enableKinetic: true
+						},
+					mouseWheelOptions:
+						{
+						interval: 300, // TODO: is this a good delay?
+						cumulative: false
+						}
+					}),
 				],
       maxExtent: new OpenLayers.Bounds(0,0, boundSize, boundSize),
 	    maxResolution: boundSize / tileSize, 
@@ -309,21 +374,100 @@ function init()
 					"Large Image Viewer",  // Name in the layer switcher
 					"http://127.0.0.1/",
     {
-    'type':'jpg',
-    'getURL':get_my_url,
-		'isBaseLayer':true,
-			'eventListeners': 
+    type:'jpg',
+    getURL:get_my_url,
+		isBaseLayer:true,
+			eventListeners: 
 				{
 				"dragend": mapEvent
-				}
-}
+				},
+
+  useCanvas : OpenLayers.Layer.Grid.ONECANVASPERTILE,
+  buffer : 0,
+  canvasFilter : filter,
+  // 'transitionEffect' : 'resize',
+  //add the tiles to the map
+  canvasAsync : true
+  }
+
   );
 
-  tms.transitionEffect = 'resize';
-  //add the tiles to the map
+  //
+  //
+  //
+  //
+
+  resetFilter = function(form) 
+    {
+    $("#brightness").val(0).slider("refresh");
+    $("#contrast").val(0).slider("refresh");
+    $("#red").val(0).slider("refresh");
+    $("#green").val(0).slider("refresh");
+    $("#blue").val(0).slider("refresh");
+
+
+    tms.canvasFilter = null; 
+    tms.redraw();
+    }
+
+  setFilter = function(form) {
+      var brightness = parseInt(form.brightness.value * 150);
+      var contrast = parseFloat(form.contrast.value);
+
+      var red = parseFloat(form.red.value);
+      var green = parseFloat(form.green.value);
+      var blue = parseFloat(form.blue.value);
+    
+      filter.brightness = brightness;
+      
+      // Map contrast between -1 and 5  
+      if(contrast < 0)
+        {
+        contrast = contrast / 100
+        }
+      else
+        {
+        contrast = contrast / 20
+        }
+
+      filter.contrast = contrast;
+      filter.red = red / 100.;
+      filter.green = green/ 100.;
+      filter.blue = blue / 100.;
+      
+      // refresh map  
+      tms.canvasFilter = filter;
+      tms.redraw();  
+  };
 
   map.addLayer(tms);
   //map.zoomToMaxExtent();
+  showProgress = function(event) {
+      var progressBars = document.getElementById("progress");
+      var id = event.tile.id;
+      
+      var progressBar = document.getElementById(id);
+      if (progressBar) {
+          if (event.progress >= 100) {
+              // the tile finished loading, remove the progress bar
+           //   progressBars.removeChild(progressBar);
+          } else {
+              progressBar.value = event.progress;
+          }
+      } else {
+          // the tile just started loading, create a new progress bar
+          progressBar = document.createElement("progress");
+          progressBar.id = id;
+          progressBar.max = 100;
+          progressBar.value = event.progress;
+          
+          progressBars.appendChild(progressBar);
+      }
+  };
+
+  tms.events.register("tileFilterProgress", null, showProgress);
+        
+
 		  
   // we want opaque external graphics and non-opaque internal graphics
 	vector_styles = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
