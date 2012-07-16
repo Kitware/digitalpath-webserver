@@ -24,7 +24,6 @@ var curceny;
 var curzoom;
 var currotation;
 var curxy;
-var filter;
 // variables for following 
 var isFollowing=false;
 var timersec;
@@ -277,63 +276,6 @@ function init()
   //create the map  
   //
 
-BrightnessFilter = OpenLayers.Class(OpenLayers.Tile.CanvasFilter, {
-    brightness: -50,
-    contrast:0,
-    red:0,
-    blue:0,
-    green:0,
-
-    webworkerScript: "canvasfilter-webworker.js",
-    numberOfWebWorkers: 1, // per tile
-    
-    process: function(image) {
-        var white = {
-              brightness: this.brightness,
-              contrast: this.contrast
-            };
-
-        var rgb = {
-              red: this.red,
-              green: this.green,
-              blue: this.blue
-            };
-       
-        
-        // directly calling 'Pixastic.applyAction' instead of 'Pixastic.process'
-        // works better in Chromium when using a proxy
-        Pixastic.applyAction(image, image, "coloradjust", rgb);
-        Pixastic.applyAction(rgb.resultCanvas, rgb.resultCanvas, "brightness", white) ;
-        
-
-        if (!white.resultCanvas) {
-            // if something went wrong, return the original image
-            return image;
-        } else {
-            return white.resultCanvas;
-        }                
-    },
-    
-    supportsAsync: function() {
-        return false;    
-    },
-
-    getParameters: function() {
-        // these parameters are passed to the web worker script
-        return {
-            brightness: this.brightness,
-            contrast: this.contrast,
-
-            red: this.red,
-            green: this.green,
-            blue: this.blue,
-        };    
-    },
-    
-    CLASS_NAME: "BrightnessFilter"    
-});
-  
-  filter = new BrightnessFilter();
 
   map = new OpenLayers.Map( {
 			div: 'map',
@@ -387,7 +329,7 @@ BrightnessFilter = OpenLayers.Class(OpenLayers.Tile.CanvasFilter, {
   canvasFilter : filter,
   // 'transitionEffect' : 'resize',
   //add the tiles to the map
-  canvasAsync : true
+  canvasAsync : false
   }
 
   );
@@ -397,48 +339,6 @@ BrightnessFilter = OpenLayers.Class(OpenLayers.Tile.CanvasFilter, {
   //
   //
 
-  resetFilter = function(form) 
-    {
-    $("#brightness").val(0).slider("refresh");
-    $("#contrast").val(0).slider("refresh");
-    $("#red").val(0).slider("refresh");
-    $("#green").val(0).slider("refresh");
-    $("#blue").val(0).slider("refresh");
-
-
-    tms.canvasFilter = null; 
-    tms.redraw();
-    }
-
-  setFilter = function(form) {
-      var brightness = parseInt(form.brightness.value * 150);
-      var contrast = parseFloat(form.contrast.value);
-
-      var red = parseFloat(form.red.value);
-      var green = parseFloat(form.green.value);
-      var blue = parseFloat(form.blue.value);
-    
-      filter.brightness = brightness;
-      
-      // Map contrast between -1 and 5  
-      if(contrast < 0)
-        {
-        contrast = contrast / 100
-        }
-      else
-        {
-        contrast = contrast / 20
-        }
-
-      filter.contrast = contrast;
-      filter.red = red / 100.;
-      filter.green = green/ 100.;
-      filter.blue = blue / 100.;
-      
-      // refresh map  
-      tms.canvasFilter = filter;
-      tms.redraw();  
-  };
 
   map.addLayer(tms);
   //map.zoomToMaxExtent();

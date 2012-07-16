@@ -182,14 +182,22 @@ if(isset($sessIdStr))
 
 
 		<script src="libs/operations.js"></script>
-		<script src="libs/canvas_adjust.js"></script>
-		<script src="libs/mobile-jq.js"></script>
+
 
     <!-- Scripts required for image adjust -->
     <script src="libs/image_adjust/pixastic.core.js"></script>
-    <script src="libs/image_adjust/image_adjust.js"></script>
     <script src="libs/image_adjust/brightness.js"></script>
     <script src="libs/image_adjust/coloradjust.js"></script>
+
+		<script src="libs/image_adjust/CanvasFilter.js"></script>
+		<script src="libs/image_adjust/CanvasImage.js"></script>
+		<script src="libs/image_adjust/VirtualCanvasImage.js"></script>
+		<script src="libs/image_adjust/Grid.js"></script>
+		<script src="libs/image_adjust/TMS.js"></script>
+
+    <script src="libs/image_adjust/image_adjust.js"></script>
+
+		<script src="libs/mobile-jq.js"></script>
 
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
@@ -249,8 +257,8 @@ if(isset($sessIdStr))
             <label for="blue"> Blue </label>
             <input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
 
-            <input type="button" value="Set Filter" onClick="setFilter(this.form)">
-            <input type="button" value="Reset" onClick="resetFilter(this.form)">
+            <input type="button" value="Set Filter" onClick="setFilter(this.form, tms)">
+            <input type="button" value="Reset" onClick="resetFilter(this.form, tms)">
         </form>
 
     </div>
