@@ -6,7 +6,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 session_start();
 
 # The location of the configuration dialog
-$_SESSION['loginConnName'] = 'ayodhya:27017';
+$_SESSION['loginConnName'] = '127.0.0.1:27017';
 $_SESSION['loginDBName'] = 'slideatlas';
 
 // initialize a session
