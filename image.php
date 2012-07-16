@@ -119,8 +119,8 @@ if(isset($sessIdStr))
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<link rel="apple-touch-icon" href="favicon.ico">
-
-		<link rel="stylesheet" href="css/common.css" type="text/css">
+		
+    <link rel="stylesheet" href="css/common.css" type="text/css">
 		<link rel="stylesheet" href="css/image.css" type="text/css">
 
 		<meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0">
@@ -170,11 +170,24 @@ if(isset($sessIdStr))
 
 		<script src="libs/openlayers/openlayers.rotating-2.12.rc7.js"> </script>
 
+    <!-- Scripts required for image adjust -->
+    <script src="libs/image_adjust/pixastic.core.js"></script>
+    <script src="libs/image_adjust/brightness.js"></script>
+    <script src="libs/image_adjust/coloradjust.js"></script>
+
+		<script src="libs/image_adjust/CanvasFilter.js"></script>
+		<script src="libs/image_adjust/CanvasImage.js"></script>
+		<script src="libs/image_adjust/VirtualCanvasImage.js"></script>
+		<script src="libs/image_adjust/Grid.js"></script>
+		<script src="libs/image_adjust/TMS.js"></script>
+
+    <script src="libs/image_adjust/image_adjust.js"></script>
+
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
 		<script src="libs/image.bookmarks.js"></script>
 		<script src="libs/image.follow.js"></script>
-		<script src="libs/operations.js"></script>
+
 		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(
 		hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 	</head>
@@ -201,7 +214,7 @@ if(isset($sessIdStr))
 					<div id="map"></div>
 				</div>
 			</div>
-
+      <div id="progress"> </div>
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
 				<a href="" data-role="button" data-icon="plus" id="plus" data-iconpos="notext"></a>
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>
@@ -215,8 +228,32 @@ if(isset($sessIdStr))
 				<img src="img/k-logo-64.png" alt="Kitware, Inc.">
 			</div><!-- /image content -->
 
-			<!-- footer -->
-			<div data-role="footer" class="ui-grid-b">
+      <div>
+        <form id="settings" action="" method="get">
+            <label for="brightness"> Brightness </label>
+            <input name="brightness" id="brightness" type='range' min='-100' max='100' value='-50' data-mini="true" /> 
+
+            <label for="contrast"> Contrast </label>
+            <input name= "contrast" id="contrast" type='range' min='-100' max='100' value='0' step='any' data-mini="true" />  
+
+            <label for="red"> Red </label>
+            <input name= "red" id="red" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <label for="green"> Green </label>
+            <input name= "green" id="green" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <label for="blue"> Blue </label>
+            <input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+
+            <input type="button" value="Set Filter" onClick="setFilter(this.form, tms)">
+            <input type="button" value="Reset" onClick="resetFilter(this.form, tms)">
+        </form>
+
+    </div>
+
+			<!-- Footer content -->
+			<div data-role="footer" data-position="fixed" class="ui-grid-b">
+>>>>>>> viewer
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<a data-role="button"<?php if(is_null($prevImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="<?php echo($prevImg_href);?>">Previous</a>
 					<a data-role="button"<?php if(is_null($nextImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="<?php echo($nextImg_href);?>">Next</a>
