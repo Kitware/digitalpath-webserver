@@ -253,7 +253,7 @@ if(isset($sessIdStr))
     </div>
 
 			<!-- Footer content -->
-			<div data-role="footer" data-position="fixed" class="ui-grid-b">
+			<div data-role="footer" data-position="fixed" data-fullscreen="false"  data-disable-page-zoom="true"  data-tap-toggle="false" class="ui-grid-b">
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<a data-role="button"<?php if(is_null($prevImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="<?php echo($prevImg_href);?>">Previous</a>
 					<a data-role="button"<?php if(is_null($nextImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="<?php echo($nextImg_href);?>">Next</a>
