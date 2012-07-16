@@ -19,6 +19,14 @@
 	z-index: 1001;
 	font-size:11px;
 	}
+#settings
+	{
+	position: absolute;
+	top: 82px;
+	right: 10px;
+	z-index: 1001;
+	font-size:11px;
+	}
 #copyright
 	{
 	position: absolute;
@@ -33,8 +41,6 @@
 	{
 	padding: 0px !important;
 	}
-
-
 
 
 

@@ -58,7 +58,7 @@ $(document).ready(function()
 
 	map.init()
 	bookmarks.init();
-	init_operations(); //TODO: review this
+	// init_operations(); //TODO: review this
 	follow.init();
 
 }); // END $(document).ready(function()

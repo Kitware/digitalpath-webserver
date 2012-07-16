@@ -389,7 +389,7 @@ OpenLayers.Tile.CanvasImage = OpenLayers.Class(OpenLayers.Tile, {
         
         if (this.backBufferTile) {
             // store the new image as backbuffer
-            this.setBackBuffer(context.image);
+            this.setBackBuffer(image);
         }   
         this.isLoading = false; 
         this.events.triggerEvent("loadend"); 
