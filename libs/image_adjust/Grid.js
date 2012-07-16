@@ -988,7 +988,9 @@ OpenLayers.Layer.Grid = OpenLayers.Class(OpenLayers.Layer.HTTPRequest, {
      * {<Boolean>} True, if the layer uses a supported transition effect.
      */
     usesTransition: function() {
-        return (OpenLayers.Util.indexOf(this.SUPPORTED_TRANSITIONS, this.transitionEffect) != -1);
+        return true;
+        //   return (OpenLayers.Util.indexOf(this.SUPPORTED_TRANSITIONS, this.transitionEffect) != -1);
+      
     },
     
     /**
@@ -1088,3 +1090,70 @@ OpenLayers.Layer.Grid.ONECANVASPERLAYER = 2;
  * {Integer} Constant used to render every tile in its own canvas element.
  */
 OpenLayers.Layer.Grid.ONECANVASPERTILE = 4;
+
+    /**
+     * Method: clone
+     *
+     * Parameters:
+     * obj - {<OpenLayers.Tile>} The tile to be cloned
+     *
+     * Returns:
+     * {<OpenLayers.Tile>} An exact clone of this <OpenLayers.Tile>
+     */
+    OpenLayers.Tile.prototype.clone = function (obj) {
+        if (obj == null) {
+            obj = new OpenLayers.Tile(this.layer, 
+                                      this.position, 
+                                      this.bounds, 
+                                      this.url, 
+                                      this.size);
+        } 
+        
+        // catch any randomly tagged-on properties
+        OpenLayers.Util.applyDefaults(obj, this);
+        
+        return obj;
+    };
+
+    OpenLayers.Tile.Image.prototype.clone =   function (obj) {
+        if (obj == null) {
+            obj = new OpenLayers.Tile.Image(this.layer, 
+                                            this.position, 
+                                            this.bounds, 
+                                            this.url, 
+                                            this.size);        
+        } 
+        
+        //pick up properties from superclass
+        obj = OpenLayers.Tile.prototype.clone.apply(this, [obj]);
+        
+        //dont want to directly copy the image div
+        obj.imgDiv = null;
+            
+        
+        return obj;
+    };
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -111,7 +111,8 @@ if(isset($sessIdStr))
 		<meta charset="UTF-8">
 		<title>Slide Atlas</title>
 
-		<script src="libs/jquery/jquery-1.7.2.min.js"></script>
+		<!-- script src="libs/jquery/jquery-1.7.1.min.js"></script-->
+		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 		<script src="libs/jquery.mobile/jquery.mobile-1.1.0.min.js"></script>
 		<link rel="stylesheet" href="libs/jquery.mobile/jquery.mobile-1.1.0.min.css">
 
@@ -253,7 +254,6 @@ if(isset($sessIdStr))
 
 			<!-- Footer content -->
 			<div data-role="footer" data-position="fixed" class="ui-grid-b">
->>>>>>> viewer
 				<div class="ui-block-a" data-role="controlgroup" data-type="horizontal">
 					<a data-role="button"<?php if(is_null($prevImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-l" data-iconpos="left" data-ajax="false" href="<?php echo($prevImg_href);?>">Previous</a>
 					<a data-role="button"<?php if(is_null($nextImg_href)) echo(' class="ui-disabled"');?> data-icon="arrow-r" data-iconpos="right" data-ajax="false" href="<?php echo($nextImg_href);?>">Next</a>

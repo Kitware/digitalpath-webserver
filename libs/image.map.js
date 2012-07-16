@@ -9,13 +9,14 @@ from PHP:
 	sessionName
 */
 
+var tms;
+
 var map = (function() // Revealing Module Pattern
 	{
 	var pub = {};
 
 	// Private properties
 	var mapObject;
-	var tms;
 	var rotationDegree;
 
 	// Public registration methods
@@ -249,12 +250,12 @@ var map = (function() // Revealing Module Pattern
 				updateRotation();
 				}
 			tms.redraw(true);
-			mapObject.pan(1,1);
 			}
 		else
 			{
 			mapObject.zoomTo(0);
-			mapObject.pan(1,1);
+      tms.clearGrid();
+      tms.redraw();
 			}
 		}
 
@@ -384,7 +385,12 @@ var map = (function() // Revealing Module Pattern
 				'isBaseLayer': true
 			}
 			); // END OpenLayers.Layer.TMS
-		tms.transitionEffect = 'resize'; // TODO: some other Tween too?
+		// tms.transitionEffect = 'resize'; // TODO: some other Tween too?
+		//
+    tms.canvasAsync = false;
+    tms.useCanvas = OpenLayers.Layer.Grid.ONECANVASPERTILE;
+    tms.buffer = 0;
+    tms.canvasFilter = filter;
 		//add the tiles to the map
 		map.addLayer(tms);
 
@@ -406,7 +412,9 @@ var map = (function() // Revealing Module Pattern
 
 		var zoom = mapObject.getZoom(); // TODO: move this to startup view
 		mapObject.zoomToMaxExtent();
+    // mapObject.zoomTo(0);
 
+    tms.redraw();
 		set_startup_view();
 		}; // END init
 
