@@ -168,7 +168,7 @@ if(isset($sessIdStr))
 		<script src="libs/jquery-css-transform.js" type="text/javascript"></script>
 		<script src="libs/jquery-animate-css-rotate-scale.js" type="text/javascript"></script>
 
-		<script src="libs/openlayers/openlayers.rotating-2.12.rc7.js"> </script>
+		<script src="libs/openlayers/openlayers.rotating-2.12.js"> </script>
 
     <!-- Scripts required for image adjust -->
     <script src="libs/image_adjust/pixastic.core.js"></script>
