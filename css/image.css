@@ -1,7 +1,7 @@
 #navigation
 	{
 	position: absolute;
-	bottom: 70px;
+	bottom: 100px;
 	right: 10px;
 	z-index: 1000;
 	}
@@ -14,7 +14,7 @@
 #logo
 	{
 	position: absolute;
-	bottom: 82px;
+	bottom: 122px;
 	left: 10px;
 	z-index: 1001;
 	font-size:11px;
@@ -22,7 +22,8 @@
 #settings
 	{
 	position: absolute;
-	top: 82px;
+	top: 122px;
+  width:350px;
 	right: 10px;
 	z-index: 1001;
 	font-size:11px;
@@ -30,7 +31,7 @@
 #copyright
 	{
 	position: absolute;
-	bottom: 67px;
+	bottom: 100px;
 	left: 10px;
 	z-index: 1001;
 	font-size:11px;
