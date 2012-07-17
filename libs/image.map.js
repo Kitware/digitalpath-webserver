@@ -276,6 +276,7 @@ var map = (function() // Revealing Module Pattern
 			// as we calculated for outerHeight(true), but set height()
 			mapcontentDiv.height(idealContentHeight);
 			mapcontainerDiv.height(idealContentHeight);
+			$("#mappage").height(idealContentHeight);
 			}
 
 		// map div must be large enough to fill the corners of mapcontainer when the map div is rotated 45 degrees
