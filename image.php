@@ -120,8 +120,8 @@ if(isset($sessIdStr))
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<link rel="apple-touch-icon" href="favicon.ico">
-		
-    <link rel="stylesheet" href="css/common.css" type="text/css">
+
+		<link rel="stylesheet" href="css/common.css" type="text/css">
 		<link rel="stylesheet" href="css/image.css" type="text/css">
 
 		<meta name="viewport" content="minimum-scale=1.0, maximum-scale=1.0">
@@ -171,10 +171,10 @@ if(isset($sessIdStr))
 
 		<script src="libs/openlayers/openlayers.rotating-2.12.js"> </script>
 
-    <!-- Scripts required for image adjust -->
-    <script src="libs/image_adjust/pixastic.core.js"></script>
-    <script src="libs/image_adjust/brightness.js"></script>
-    <script src="libs/image_adjust/coloradjust.js"></script>
+		<!-- Scripts required for image adjust -->
+		<script src="libs/image_adjust/pixastic.core.js"></script>
+		<script src="libs/image_adjust/brightness.js"></script>
+		<script src="libs/image_adjust/coloradjust.js"></script>
 
 		<script src="libs/image_adjust/CanvasFilter.js"></script>
 		<script src="libs/image_adjust/CanvasImage.js"></script>
@@ -182,7 +182,7 @@ if(isset($sessIdStr))
 		<script src="libs/image_adjust/Grid.js"></script>
 		<script src="libs/image_adjust/TMS.js"></script>
 
-    <script src="libs/image_adjust/image_adjust.js"></script>
+		<script src="libs/image_adjust/image_adjust.js"></script>
 
 		<script src="libs/image.js"></script>
 		<script src="libs/image.map.js"></script>
@@ -215,7 +215,7 @@ if(isset($sessIdStr))
 					<div id="map"></div>
 				</div>
 			</div>
-      <div id="progress"> </div>
+			<div id="progress"></div>
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
 				<a href="" data-role="button" data-icon="plus" id="plus" data-iconpos="notext"></a>
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>
@@ -229,28 +229,27 @@ if(isset($sessIdStr))
 				<img src="img/k-logo-64.png" alt="Kitware, Inc.">
 			</div><!-- /image content -->
 
-      <div>
-        <form id="settings" action="" method="get">
-            <label for="brightness"> Brightness </label>
-            <input name="brightness" id="brightness" type='range' min='-100' max='100' value='-50' data-mini="true" /> 
+			<div>
+				<form id="settings" action="" method="get">
+					<label for="brightness"> Brightness </label>
+					<input name="brightness" id="brightness" type='range' min='-100' max='100' value='-50' data-mini="true" />
 
-            <label for="contrast"> Contrast </label>
-            <input name= "contrast" id="contrast" type='range' min='-100' max='100' value='0' step='any' data-mini="true" />  
+					<label for="contrast"> Contrast </label>
+					<input name= "contrast" id="contrast" type='range' min='-100' max='100' value='0' step='any' data-mini="true" />
 
-            <label for="red"> Red </label>
-            <input name= "red" id="red" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+					<label for="red"> Red </label>
+					<input name= "red" id="red" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />
 
-            <label for="green"> Green </label>
-            <input name= "green" id="green" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+					<label for="green"> Green </label>
+					<input name= "green" id="green" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />
 
-            <label for="blue"> Blue </label>
-            <input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />  
+					<label for="blue"> Blue </label>
+					<input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />
 
-            <input type="button" value="Set Filter" onClick="setFilter(this.form, tms)">
-            <input type="button" value="Reset" onClick="resetFilter(this.form, tms)">
-        </form>
-
-    </div>
+					<input type="button" value="Set Filter" onClick="setFilter(this.form, tms)">
+					<input type="button" value="Reset" onClick="resetFilter(this.form, tms)">
+				</form>
+			</div>
 
 			<!-- Footer content -->
 			<div data-role="footer" data-position="fixed" data-fullscreen="false"  data-disable-page-zoom="true"  data-tap-toggle="false" class="ui-grid-b">

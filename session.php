@@ -108,7 +108,7 @@ catch (Exception $e)
 
 								if($imgExtension != 'ppt' && $imgExtension != 'pdf' && $imgExtension != 'wmv' && $imgExtension != 'mp4' && $imgExtension != 'm4v')
 									{
-									$imgExtension = 'file';	
+									$imgExtension = 'file';
 									}
 
 								echo '<li><a data-ajax="false" rel="external" href="attachment.php?id=' , $sessImgId, '">';
@@ -121,7 +121,7 @@ catch (Exception $e)
 					<?php
 						}
 					?>
-				 
+
 				<div id="banner">
 					<h2>List of images</h2>
 				</div>
