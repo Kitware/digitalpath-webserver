@@ -1,7 +1,7 @@
 #navigation
 	{
 	position: absolute;
-	bottom: 100px;
+	bottom: 70px;
 	right: 10px;
 	z-index: 1000;
 	}
@@ -20,11 +20,11 @@
 	}
 #logo
 	{
-	bottom: 122px;
+	bottom: 82px;
 	}
 #copyright
 	{
-	bottom: 100px;
+	bottom: 67px;
 	}
 
 #settings
