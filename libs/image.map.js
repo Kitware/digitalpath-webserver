@@ -190,6 +190,11 @@ var map = (function() // Revealing Module Pattern
 		var stri = rotationDegree + 'deg';
 		$('#map').animate({rotate: stri}, 0); // TODO: review this
 		mapObject.events.triggerEvent("moveend");
+		labelLayers = mapObject.getLayersByName("TextLabels");
+		for(var i = 0, len_i = labelLayers.length; i < len_i; i++)
+			{
+			labelLayers[i].redraw();
+			}
 		}
 
 	function get_my_url(bounds) // TODO: can this be done faster by bitshifting / divide by 2?
