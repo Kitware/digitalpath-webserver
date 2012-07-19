@@ -245,8 +245,8 @@ if(isset($sessIdStr))
 					<label for="blue"> Blue </label>
 					<input name= "blue" id="blue" type='range' min='-100' max='100' value='00' step='any' data-mini="true" />
 
-					<input type="button" value="Set Filter" onClick="setFilter(this.form, tms)">
-					<input type="button" value="Reset" onClick="resetFilter(this.form, tms)">
+					<input type="button" value="Set Filter" onClick="setFilter(this.form, map.getTmsLayer())">
+					<input type="button" value="Reset" onClick="resetFilter(this.form, map.getTmsLayer())">
 				</form>
 			</div>
 
