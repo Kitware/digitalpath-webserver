@@ -408,7 +408,6 @@ labelLayer.events.on({
 						$("<a/>")
 							.on("vclick", {bookmarkNum: i}, onClickSelectBookmarkButton)
 							.attr({
-								"data-role": "button",
 								"data-theme": "c"
 								})
 							.text("Toggle visibility")
