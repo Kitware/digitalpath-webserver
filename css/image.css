@@ -1,7 +1,7 @@
 #navigation
 	{
 	position: absolute;
-	bottom: 100px;
+	bottom: 70px;
 	right: 10px;
 	z-index: 1000;
 	}
@@ -11,28 +11,28 @@
 	padding: 7px 6px 7px 8px;
 	}
 
-#logo
+#logo,#copyright
 	{
 	position: absolute;
-	bottom: 122px;
 	left: 10px;
 	z-index: 1001;
 	font-size:11px;
 	}
+#logo
+	{
+	bottom: 82px;
+	}
+#copyright
+	{
+	bottom: 67px;
+	}
+
 #settings
 	{
 	position: absolute;
 	top: 122px;
-  width:350px;
+	width:350px;
 	right: 10px;
-	z-index: 1001;
-	font-size:11px;
-	}
-#copyright
-	{
-	position: absolute;
-	bottom: 100px;
-	left: 10px;
 	z-index: 1001;
 	font-size:11px;
 	}
