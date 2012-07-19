@@ -387,7 +387,7 @@ var map = (function() // Revealing Module Pattern
 				'isBaseLayer': true
 			}
 			); // END OpenLayers.Layer.TMS
-		// tms.transitionEffect = 'resize'; // TODO: some other Tween too?
+		tms.transitionEffect = 'resize'; // TODO: some other Tween too?
 
 		//TODO: move this to image_adjust.js?
 		tms.canvasAsync = false;
