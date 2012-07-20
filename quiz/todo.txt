@@ -1,0 +1,11 @@
+Get two images diced to files.
+Get viewer to display the two images side by side. 
+
+
+
+Rotate camera
+Overview window.
+Two windows next to eachother.
+Annotations (arrows)
+Text Annotations
+
