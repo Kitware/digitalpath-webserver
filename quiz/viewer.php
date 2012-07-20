@@ -169,11 +169,19 @@ var EVENT_MANAGER;
 </head> 
  
  
-<body onload="webGLStart();"> 
+<body> 
+	
     <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
     <br/> 
     <input type="checkbox" id="fast" checked /> Fast  
     <br/> 
+	
+	<script type="text/javascript">
+		webGLStart();
+		
+		var origin = <?php echo json_encode($img['origin']); ?>;
+		var spacing = <?php echo json_encode($img['spacing']); ?>;
+	</script>
 	
 	<?php
 		//var_dump($img);
@@ -185,7 +193,10 @@ var EVENT_MANAGER;
 			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
 			var text = <?php echo json_encode($annotation['title']); ?>;
 			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			VIEWER1.AddAnnotation(coord, text, color);
+			var pos = [];
+			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
+			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
+			VIEWER1.AddAnnotation(pos, text, color);
 			</script>
 			<?php
 			}
