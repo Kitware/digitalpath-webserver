@@ -4,9 +4,9 @@
 
 $m = new Mongo();
 //$d = $m.selectDB("database");
-$c = $m->selectDB("demo")->selectCollection("images");
+$c = $m->selectDB("database")->selectCollection("images");
 
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
+$img = $c->findOne(array('_id'=>'4ecb20134834a302ac000001'));
 
 ?>
 
@@ -19,7 +19,6 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script src="js/jquery-1.5.1.min.js"></script>
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script> 
 <script type="text/javascript" src="webgl-utils.js"></script> 
-<script type="text/javascript" src="init.js"></script> 
 <script type="text/javascript" src="camera.js"></script> 
 <script type="text/javascript" src="view.js"></script> 
 <script type="text/javascript" src="tile.js"></script> 
@@ -119,7 +118,21 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript"> 
  
 var CANVAS;
+var gl;
 var EVENT_MANAGER;
+
+
+    function initGL(canvas) {
+        try {
+            gl = canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch (e) {
+        }
+        if (!gl) {
+            alert("Could not initialise WebGL, sorry :-(");
+        }
+    }
 
 
     function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
@@ -137,8 +150,8 @@ var EVENT_MANAGER;
         initOutlineBuffers();
         initImageTileBuffers();
 
-        GL.clearColor(0.9, 0.9, 0.9, 1.0);
-        GL.enable(GL.DEPTH_TEST);
+        gl.clearColor(0.9, 0.9, 0.9, 1.0);
+        gl.enable(gl.DEPTH_TEST);
  
         CANVAS.onmousedown = handleMouseDown;
         document.onmouseup = handleMouseUp;
@@ -149,6 +162,18 @@ var EVENT_MANAGER;
  
         eventuallyRender();
     }
+	
+	function addAnnotations(){
+		<?php
+		
+		foreach($img['bookmarks'] as $annotation){
+			VIEWER1.AddAnnotation($annotation['annotation']['points'],
+									$annotation['title'],
+									$annotation['annotation']['color']);
+		}
+		
+		?>
+	}
  
 </script> 
  
@@ -156,37 +181,15 @@ var EVENT_MANAGER;
 </head> 
  
  
-<body> 
-	
+<body onload="webGLStart();"> 
     <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <br/> 
+    <input type="checkbox" id="fast" checked /> Fast  
+    <br/> 
 	
-	<script type="text/javascript">
-		webGLStart();
-		
-		var origin = <?php echo json_encode($img['origin']); ?>;
-		var spacing = <?php echo json_encode($img['spacing']); ?>;
+	<script type="text/javascript" >
+		addAnnotations();
 	</script>
-	
-	<?php
-		//var_dump($img);
-		//exit;
-		foreach($img['bookmarks'] as $annotation){
-			if($annotation['annotation']['type']=='pointer'){
-			?>
-			<script>
-			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-			var text = <?php echo json_encode($annotation['title']); ?>;
-			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			var pos = [];
-			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-			VIEWER1.AddAnnotation(pos, text, color);
-			</script>
-			<?php
-			}
-		}
-		
-	?>
 
 </body> 
  

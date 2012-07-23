@@ -1,15 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-
-$m = new Mongo();
-//$d = $m.selectDB("database");
-$c = $m->selectDB("demo")->selectCollection("images");
-
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
-
-?>
-
 <html> 
  
 <head> 
@@ -27,6 +17,9 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript" src="shape.js"></script> 
 <script type="text/javascript" src="arrow.js"></script> 
 <script type="text/javascript" src="circle.js"></script> 
+<script type="text/javascript" src="arrowWidget.js"></script> 
+<script type="text/javascript" src="circleWidget.js"></script> 
+<script type="text/javascript" src="textWidget.js"></script> 
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
 <script type="text/javascript" src="main.js"></script> 
@@ -84,8 +77,6 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
     }
 </script> 
 
-
-
 <script id="shader-text-fs" type="x-shader/x-fragment">
     precision mediump float;
 
@@ -128,6 +119,22 @@ var EVENT_MANAGER;
     function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
     function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
 
+    function NewArrow() {
+      //alert("New Arrow");
+      // When the arrow button is pressed, create the widget.
+      VIEWER1.Widget = new ArrowWidget(VIEWER1);
+    }
+
+    function NewCircle() {
+      // When the circle button is pressed, create the widget.
+      VIEWER1.Widget = new CircleWidget(VIEWER1);
+    }
+
+    function NewText() {
+      // When the text button is pressed, create the widget.
+      VIEWER1.Widget = new TextWidget(VIEWER1);
+    }
+
     function webGLStart() {
         CANVAS = document.getElementById("viewer-canvas");
         initGL(CANVAS);
@@ -159,35 +166,31 @@ var EVENT_MANAGER;
 <body> 
 	
     <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <br/> 
+
+    <table border="1">
+	<tr>
+            <td>
+                <img src="Arrow.gif" id="arrow" type="button" onclick="NewArrow();" />
+            </td>
+            <td>
+                <img src="Circle.gif" id="arrow" type="button" onclick="NewCircle();" />
+            </td>
+            <td>
+                <img src="Text.gif" id="text" type="button" onclick="NewText();" />
+            </td>
+	</tr>
+    </table>
+
+    <br/> 
 	
 	<script type="text/javascript">
 		webGLStart();
 		
-		var origin = <?php echo json_encode($img['origin']); ?>;
-		var spacing = <?php echo json_encode($img['spacing']); ?>;
+		var origin = [9663763,7643791.5,0];
+		var spacing = [226.17269405242,227.53127170139,0];
 	</script>
-	
-	<?php
-		//var_dump($img);
-		//exit;
-		foreach($img['bookmarks'] as $annotation){
-			if($annotation['annotation']['type']=='pointer'){
-			?>
-			<script>
-			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-			var text = <?php echo json_encode($annotation['title']); ?>;
-			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			var pos = [];
-			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-			VIEWER1.AddAnnotation(pos, text, color);
-			</script>
-			<?php
-			}
-		}
-		
-	?>
-
+			
 </body> 
  
 </html> 

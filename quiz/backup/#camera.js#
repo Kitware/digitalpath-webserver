@@ -148,12 +148,12 @@ Camera.prototype.AddPoint = function (x, y, z) {
 
 Camera.prototype.CreateBuffer = function () {
     if (this.Buffer != null) {
-	GL.deleteBuffer(this.Buffer);
+	gl.deleteBuffer(this.Buffer);
     }
-    this.Buffer = GL.createBuffer();
-    GL.bindBuffer(GL.ARRAY_BUFFER, this.Buffer);
-    GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(this.Points), 
-                  GL.STATIC_DRAW);
+    this.Buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.Buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.Points), 
+                  gl.STATIC_DRAW);
 }
 
 // Getting rid of this.
@@ -195,12 +195,12 @@ Camera.prototype.Draw = function (overviewCam, viewport) {
 
 
     program = polyProgram;
-    GL.useProgram(program);
-    GL.uniform3f(program.colorUniform, 0.9, 0.0, 0.9);
+    gl.useProgram(program);
+    gl.uniform3f(program.colorUniform, 0.9, 0.0, 0.9);
 
-    GL.viewport(viewport[0],viewport[1],viewport[2],viewport[3]);
+    gl.viewport(viewport[0],viewport[1],viewport[2],viewport[3]);
     mat4.identity(pMatrix);
-    GL.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(program.pMatrixUniform, false, pMatrix);
 
     var viewFrontZ = overviewCam.ZRange[0]+0.001;
 
@@ -213,12 +213,12 @@ Camera.prototype.Draw = function (overviewCam, viewport) {
     mvMatrix[0] = 2*rx/orx;
     mvMatrix[5] = 2*ry/ory;
 
-    GL.bindBuffer(GL.ARRAY_BUFFER, squareOutlinePositionBuffer);
-    GL.vertexAttribPointer(program.vertexPositionAttribute, 
+    gl.bindBuffer(gl.ARRAY_BUFFER, squareOutlinePositionBuffer);
+    gl.vertexAttribPointer(program.vertexPositionAttribute, 
     			   squareOutlinePositionBuffer.itemSize, 
-    			   GL.FLOAT, false, 0, 0);    
-    GL.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
-    GL.drawArrays(GL.LINE_STRIP, 0, squareOutlinePositionBuffer.numItems);
+    			   gl.FLOAT, false, 0, 0);    
+    gl.uniformMatrix4fv(program.mvMatrixUniform, false, mvMatrix);
+    gl.drawArrays(gl.LINE_STRIP, 0, squareOutlinePositionBuffer.numItems);
 }
 
 

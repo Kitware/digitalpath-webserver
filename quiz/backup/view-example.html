@@ -1,14 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-
-$m = new Mongo();
-//$d = $m.selectDB("database");
-$c = $m->selectDB("demo")->selectCollection("images");
-
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
-
-?>
 
 <html> 
  
@@ -29,7 +20,6 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript" src="circle.js"></script> 
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
-<script type="text/javascript" src="main.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
@@ -117,21 +107,37 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 
 
 <script type="text/javascript"> 
- 
-var CANVAS;
-var EVENT_MANAGER;
+    var VIEW1;
+    var VIEW2;
 
+    // readme ==================================================================
+    // I was trying to have multiple views each with its own canvas.
+    // There were too many globals to finish this.  This file does
+    // demonstrate using a simple view (without interaction).
+    // I think I am just going to use the root tile image for the slide sorter
+    // instead.  I can always grab an image from a canvas too.
 
-    function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
-    function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
-    function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
-    function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
-    function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
+    function initViews() {
+        //4e695114587718175c000006
+        //4e6ec90183ff8d11c8000001
+        //4ecb20134834a302ac000001
+        var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
+        //var source2 = new Cache("
+        VIEW1 = new View([0,0, 300,300], source1);
+        VIEW1.Camera.ComputeMatrix();
+        //VIEW2 = new View([0,0, 300,300], source2);
+        //VIEW2.Camera.ComputeMatrix();
+    }
+
+    function draw() {
+        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+        // This just changes the camera based on the current time.
+        VIEW1.DrawTiles();	
+    }
 
     function webGLStart() {
-        CANVAS = document.getElementById("viewer-canvas");
-        initGL(CANVAS);
-        EVENT_MANAGER = new EventManager(CANVAS);
+        var canvas = document.getElementById("viewer-canvas");
+        initGL(canvas);
         initViews();
         initShaderPrograms();
         initOutlineBuffers();
@@ -139,13 +145,6 @@ var EVENT_MANAGER;
 
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         GL.enable(GL.DEPTH_TEST);
- 
-        CANVAS.onmousedown = handleMouseDown;
-        document.onmouseup = handleMouseUp;
-        document.onmousemove = handleMouseMove;
-
-        document.onkeydown = handleKeyDown;
-        document.onkeyup = handleKeyUp;
  
         eventuallyRender();
     }
@@ -158,36 +157,18 @@ var EVENT_MANAGER;
  
 <body> 
 	
-    <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <canvas id="viewer-canvas" style="border: none;" width="300" height="300"></canvas> 
+    <br/> 
+    <input type="checkbox" id="fast" checked /> Fast  
+    <br/> 
 	
 	<script type="text/javascript">
 		webGLStart();
 		
-		var origin = <?php echo json_encode($img['origin']); ?>;
-		var spacing = <?php echo json_encode($img['spacing']); ?>;
+		var origin = [9663763,7643791.5,0];
+		var spacing = [226.17269405242,227.53127170139,0];
 	</script>
 	
-	<?php
-		//var_dump($img);
-		//exit;
-		foreach($img['bookmarks'] as $annotation){
-			if($annotation['annotation']['type']=='pointer'){
-			?>
-			<script>
-			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-			var text = <?php echo json_encode($annotation['title']); ?>;
-			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			var pos = [];
-			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-			VIEWER1.AddAnnotation(pos, text, color);
-			</script>
-			<?php
-			}
-		}
-		
-	?>
-
 </body> 
  
 </html> 
