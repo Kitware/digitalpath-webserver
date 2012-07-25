@@ -2,11 +2,13 @@
 
 <?php
 
+$id = $_GET['id'];
+
 $m = new Mongo();
 //$d = $m.selectDB("database");
 $c = $m->selectDB("demo")->selectCollection("images");
 
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
+$img = $c->findOne(array('_id'=>new MongoId($id)));
 
 ?>
 
@@ -29,7 +31,6 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript" src="circle.js"></script> 
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
-<script type="text/javascript" src="main.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
@@ -120,6 +121,30 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
  
 var CANVAS;
 var EVENT_MANAGER;
+var VIEWER1;
+
+    function initViews(id) {
+        //VIEWER = new Viewer(CANVAS,
+        //                    [0,0,GL.viewportWidth, GL.viewportHeight],
+        //                    source);
+
+        //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
+        var source1 = new Cache("http://localhost:81/tile.php?image="+id+"&name=");
+        VIEWER1 = new Viewer([0,0, 1000,700], source1);
+
+        EVENT_MANAGER.AddViewer(VIEWER1);
+
+        //VIEWER1.AddAnnotation([10000, 10000], "Annotation1", [1.0,0.2,0.2]);
+        //VIEWER1.AddAnnotation([12000, 11000], "Annotation2", [0,1,0.2]);
+        
+    }
+
+    function draw() {
+        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+        // This just changes the camera based on the current time.
+        VIEWER1.Animate();
+        VIEWER1.Draw();	
+    }
 
 
     function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
@@ -128,11 +153,11 @@ var EVENT_MANAGER;
     function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
     function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
 
-    function webGLStart() {
+    function webGLStart(id) {
         CANVAS = document.getElementById("viewer-canvas");
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
-        initViews();
+        initViews(id);
         initShaderPrograms();
         initOutlineBuffers();
         initImageTileBuffers();
@@ -158,10 +183,10 @@ var EVENT_MANAGER;
  
 <body> 
 	
-    <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
 	
 	<script type="text/javascript">
-		webGLStart();
+		webGLStart(<?php echo json_encode($id);?>);
 		
 		var origin = <?php echo json_encode($img['origin']); ?>;
 		var spacing = <?php echo json_encode($img['spacing']); ?>;

@@ -1,0 +1,62 @@
+
+
+.container {
+	margin-right: auto;
+	margin-left: auto;
+	width: 1120px;
+	height: 650px;
+	background-color: #0000ff;
+}
+
+table {
+	float: right;
+}
+
+img {
+	float:left;
+	width: 100px;
+	height: 100px;
+}
+
+.question {
+	height: 100px;
+	width: 250px;
+	margin: 10px;
+	background-color:#00ff00;
+}
+
+.questionlist {
+	width: 290px;
+	height: 100%;
+	overflow-y: scroll;
+	float:left;
+}
+
+.table {
+	width: 830px;
+	height: 100%;
+	overflow-y: scroll;
+	float: right;
+}
+
+.qelement {
+	width: 250px;
+	height: 100px;
+	margin: 10px;
+	float:left;
+	background-color: #ff0000;
+}
+
+.orgtable {
+	float:right;
+	height:100px;
+	width:20px;
+}
+
+.orgelement {
+	border:1px solid black;
+	width:18px;
+	height:18px;
+	overflow:hidden;
+	background-color:#00ffff;
+}
