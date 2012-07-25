@@ -6,6 +6,7 @@ function Shape() {
     this.Orientation = 0.0; // in degrees, counter clockwise, 0 is left
     this.Origin = [10000,10000]; // Anchor in world coordinates.
     this.FixedSize = true;
+    this.LineWidth = 0; // Line width has to be in same coordiantes as points.
 };
 
 Shape.prototype.destructor=function() {
@@ -35,9 +36,6 @@ Shape.prototype.Draw = function (view) {
     GL.vertexAttribPointer(program.vertexPositionAttribute, 
                            this.VertexPositionBuffer.itemSize, 
                            GL.FLOAT, false, 0, 0);     // Texture coordinates
-    // Cell Connectivity
-    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
-    
     // Local view.
     GL.viewport(view.Viewport[0], view.Viewport[1], 
                 view.Viewport[2], view.Viewport[3]);
@@ -91,6 +89,9 @@ Shape.prototype.Draw = function (view) {
     if (this.FillColor != undefined) {
 	GL.uniform3f(program.colorUniform, this.FillColor[0], 
 		     this.FillColor[1], this.FillColor[2]);
+	// Cell Connectivity
+	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
+    
 	GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, 
 			GL.UNSIGNED_SHORT,0);
     }
@@ -98,7 +99,14 @@ Shape.prototype.Draw = function (view) {
     if (this.OutlineColor != undefined) {
 	GL.uniform3f(program.colorUniform, this.OutlineColor[0], 
 		     this.OutlineColor[1], this.OutlineColor[2]);
-	GL.drawArrays(GL.LINE_STRIP, 0, this.VertexPositionBuffer.numItems);
+	if (this.LineWidth == 0) {
+	    GL.drawArrays(GL.LINE_STRIP, 0, this.VertexPositionBuffer.numItems);
+	} else {
+	    // Cell Connectivity
+	    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.LineCellBuffer);
+	    GL.drawElements(GL.TRIANGLES, this.LineCellBuffer.numItems, 
+			    GL.UNSIGNED_SHORT,0);
+	}
     }
 }
 

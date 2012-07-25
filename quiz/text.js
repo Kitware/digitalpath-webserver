@@ -194,56 +194,63 @@ Text.prototype.UpdateBuffers = function() {
     // 128 for power of 2, but 98 to top of characters.
     var top = 98.0 / 128.0; // Top texture coordinate value
     var charLeft = 0;
+    var charBottom = 0;
     var ptId = 0;
 
     for (var i = 0; i < this.String.length; ++i) {
 	var idx = this.String.charCodeAt(i);
-	var port = ASCII_LOOKUP[idx];
-	// Convert to texture coordinate values.
-	var tLeft =   port[0] / 1024.0;
-	var tRight = (port[0]+port[2]) / 1024.0;
-	var tBottom = port[1] / 512.0;
-	var tTop =   (port[1]+port[3]) / 512.0;
-	// To place verticies
-	var charRight = charLeft + port[2]*this.Size / 98.0;
-	var charTop = port[3]*this.Size / 98.0;
-
-	// Make 4 points, We could share points.
-	textureCoordData.push(tLeft);
-	textureCoordData.push(tBottom);
-	vertexPositionData.push(charLeft);
-	vertexPositionData.push(0.0);
-	vertexPositionData.push(0.0);
-	
-	textureCoordData.push(tRight);
-	textureCoordData.push(tBottom);
-	vertexPositionData.push(charRight);
-	vertexPositionData.push(0.0);
-	vertexPositionData.push(0.0);
-	
-	textureCoordData.push(tLeft);
-	textureCoordData.push(tTop);
-	vertexPositionData.push(charLeft);
-	vertexPositionData.push(charTop);
-	vertexPositionData.push(0.0);
-	
-	textureCoordData.push(tRight);
-	textureCoordData.push(tTop);
-	vertexPositionData.push(charRight);
-	vertexPositionData.push(charTop);
-	vertexPositionData.push(0.0);
-
-	charLeft = charRight;
-	
-	// Now create the cell.    
-	cellData.push(0 + ptId);
-	cellData.push(1 + ptId);
-	cellData.push(2 + ptId);
-	
-	cellData.push(2 + ptId);
-	cellData.push(1 + ptId);
-	cellData.push(3 + ptId);
-	ptId += 4;
+	if (idx == 10) { // newline
+	    charLeft = 0;
+	    //charBottom += 20;
+	    charBottom -= this.Size;
+	} else {
+	    var port = ASCII_LOOKUP[idx];
+	    // Convert to texture coordinate values.
+	    var tLeft =   port[0] / 1024.0;
+	    var tRight = (port[0]+port[2]) / 1024.0;
+	    var tBottom = port[1] / 512.0;
+	    var tTop =   (port[1]+port[3]) / 512.0;
+	    // To place verticies
+	    var charRight = charLeft + port[2]*this.Size / 98.0;
+	    var charTop = charBottom + port[3]*this.Size / 98.0;
+	    
+	    // Make 4 points, We could share points.
+	    textureCoordData.push(tLeft);
+	    textureCoordData.push(tBottom);
+	    vertexPositionData.push(charLeft);
+	    vertexPositionData.push(charBottom);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tRight);
+	    textureCoordData.push(tBottom);
+	    vertexPositionData.push(charRight);
+	    vertexPositionData.push(charBottom);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tLeft);
+	    textureCoordData.push(tTop);
+	    vertexPositionData.push(charLeft);
+	    vertexPositionData.push(charTop);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tRight);
+	    textureCoordData.push(tTop);
+	    vertexPositionData.push(charRight);
+	    vertexPositionData.push(charTop);
+	    vertexPositionData.push(0.0);
+	    
+	    charLeft = charRight;
+	    
+	    // Now create the cell.    
+	    cellData.push(0 + ptId);
+	    cellData.push(1 + ptId);
+	    cellData.push(2 + ptId);
+	    
+	    cellData.push(2 + ptId);
+	    cellData.push(1 + ptId);
+	    cellData.push(3 + ptId);
+	    ptId += 4;
+	}
     }
 
     this.VertexTextureCoordBuffer = GL.createBuffer();

@@ -20,6 +20,8 @@ CircleWidget.prototype.HandleMouseUp = function(event) {
 }
 
 CircleWidget.prototype.HandleMouseMove = function(event) {
+    var viewport = this.Viewer.GetViewport();
+    var cam = this.Viewer.MainView.Camera;
     if (this.Circle === undefined) {
 	// Wait to create this until the first move event.
 	this.Circle = new Circle();
@@ -29,6 +31,7 @@ CircleWidget.prototype.HandleMouseMove = function(event) {
 	this.Circle.Origin = [0,0];
 	this.Circle.OutlineColor = [0.0, 0.0, 0.0];
 	this.Circle.Radius = 200;
+	this.Circle.LineWidth =  5.0*cam.Height/viewport[3];
 	this.Viewer.AddShape(this.Circle);
 	this.Origin = [0,0];
     }
@@ -36,8 +39,6 @@ CircleWidget.prototype.HandleMouseMove = function(event) {
     var x = event.MouseX;
     var y = event.MouseY;
 
-    var viewport = this.Viewer.GetViewport();
-    var cam = this.Viewer.MainView.Camera;
     if (event.MouseDown) {
 	var dx = x-this.Origin[0];
 	var dy = y-this.Origin[1];

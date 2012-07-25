@@ -29,7 +29,6 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript" src="circle.js"></script> 
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
-<script type="text/javascript" src="main.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
@@ -120,13 +119,27 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
  
 var CANVAS;
 var EVENT_MANAGER;
-
+var VIEWER1;
 
     function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
     function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
     function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
     function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
     function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
+
+    function initViews() {
+        var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
+        VIEWER1 = new Viewer([0,0, 1400,1000], source1);
+        EVENT_MANAGER.AddViewer(VIEWER1);
+	//VIEWER1.AddAnnotation([10000, 10000], "Annotation1", [1.0,0.2,0.2]);
+    }
+
+    function draw() {
+        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+        // This just changes the camera based on the current time.
+        VIEWER1.Animate();
+        VIEWER1.Draw();	
+    }
 
     function webGLStart() {
         CANVAS = document.getElementById("viewer-canvas");

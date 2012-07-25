@@ -1,15 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-
-$m = new Mongo();
-//$d = $m.selectDB("database");
-$c = $m->selectDB("demo")->selectCollection("images");
-
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
-
-?>
-
 <html> 
  
 <head> 
@@ -26,9 +16,11 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
 <script type="text/javascript" src="text.js"></script> 
 <script type="text/javascript" src="shape.js"></script> 
 <script type="text/javascript" src="arrow.js"></script> 
+<script type="text/javascript" src="arrowWidget.js"></script> 
 <script type="text/javascript" src="circle.js"></script> 
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
+<script type="text/javascript" src="main.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
@@ -119,7 +111,7 @@ $img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
  
 var CANVAS;
 var EVENT_MANAGER;
-var VIEWER1;
+
 
     function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
     function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
@@ -127,19 +119,12 @@ var VIEWER1;
     function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
     function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
 
-    function initViews() {
-        var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
-        VIEWER1 = new Viewer([0,0, 1400,1000], source1);
-        EVENT_MANAGER.AddViewer(VIEWER1);
-	//VIEWER1.AddAnnotation([10000, 10000], "Annotation1", [1.0,0.2,0.2]);
+    function NewArrow() {
+      //alert("New Arrow");
+      // When the arrow button is pressed, create the widget.
+      VIEWER1.Widget = new ArrowWidget(VIEWER1);
     }
 
-    function draw() {
-        GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
-        // This just changes the camera based on the current time.
-        VIEWER1.Animate();
-        VIEWER1.Draw();	
-    }
 
     function webGLStart() {
         CANVAS = document.getElementById("viewer-canvas");
@@ -172,35 +157,20 @@ var VIEWER1;
 <body> 
 	
     <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <br/> 
+    <input type="checkbox" id="fast" checked /> Fast  
+
+    <img src="Arrow.jpg" id="arrow" type="button" onclick="NewArrow();" />
+
+    <br/> 
 	
 	<script type="text/javascript">
 		webGLStart();
 		
-		var origin = <?php echo json_encode($img['origin']); ?>;
-		var spacing = <?php echo json_encode($img['spacing']); ?>;
+		var origin = [9663763,7643791.5,0];
+		var spacing = [226.17269405242,227.53127170139,0];
 	</script>
-	
-	<?php
-		//var_dump($img);
-		//exit;
-		foreach($img['bookmarks'] as $annotation){
-			if($annotation['annotation']['type']=='pointer'){
-			?>
-			<script>
-			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-			var text = <?php echo json_encode($annotation['title']); ?>;
-			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			var pos = [];
-			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-			VIEWER1.AddAnnotation(pos, text, color);
-			</script>
-			<?php
-			}
-		}
-		
-	?>
-
+			
 </body> 
  
 </html> 
