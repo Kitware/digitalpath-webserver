@@ -2,11 +2,13 @@
 
 <?php
 
+$id = $_GET['id'];
+
 $m = new Mongo();
 //$d = $m.selectDB("database");
 $c = $m->selectDB("demo")->selectCollection("images");
 
-$img = $c->findOne(array('_id'=>new MongoId('4ecb20134834a302ac000001')));
+$img = $c->findOne(array('_id'=>new MongoId($id)));
 
 ?>
 
@@ -121,17 +123,20 @@ var CANVAS;
 var EVENT_MANAGER;
 var VIEWER1;
 
-    function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
-    function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
-    function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
-    function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
-    function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
+    function initViews(id) {
+        //VIEWER = new Viewer(CANVAS,
+        //                    [0,0,GL.viewportWidth, GL.viewportHeight],
+        //                    source);
 
-    function initViews() {
-        var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
-        VIEWER1 = new Viewer([0,0, 1400,1000], source1);
+        //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
+        var source1 = new Cache("http://localhost:81/tile.php?image="+id+"&name=");
+        VIEWER1 = new Viewer([0,0, 1000,700], source1);
+
         EVENT_MANAGER.AddViewer(VIEWER1);
-	//VIEWER1.AddAnnotation([10000, 10000], "Annotation1", [1.0,0.2,0.2]);
+
+        //VIEWER1.AddAnnotation([10000, 10000], "Annotation1", [1.0,0.2,0.2]);
+        //VIEWER1.AddAnnotation([12000, 11000], "Annotation2", [0,1,0.2]);
+        
     }
 
     function draw() {
@@ -141,11 +146,18 @@ var VIEWER1;
         VIEWER1.Draw();	
     }
 
-    function webGLStart() {
+
+    function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
+    function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
+    function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
+    function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
+    function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
+
+    function webGLStart(id) {
         CANVAS = document.getElementById("viewer-canvas");
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
-        initViews();
+        initViews(id);
         initShaderPrograms();
         initOutlineBuffers();
         initImageTileBuffers();
@@ -171,10 +183,10 @@ var VIEWER1;
  
 <body> 
 	
-    <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
 	
 	<script type="text/javascript">
-		webGLStart();
+		webGLStart(<?php echo json_encode($id);?>);
 		
 		var origin = <?php echo json_encode($img['origin']); ?>;
 		var spacing = <?php echo json_encode($img['spacing']); ?>;
