@@ -199,7 +199,7 @@ Text.prototype.UpdateBuffers = function() {
 
     for (var i = 0; i < this.String.length; ++i) {
 	var idx = this.String.charCodeAt(i);
-	if (idx == 10) { // newline
+	if (idx == 10 || idx == 13) { // newline
 	    charLeft = 0;
 	    //charBottom += 20;
 	    charBottom -= this.Size;
