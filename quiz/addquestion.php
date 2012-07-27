@@ -18,8 +18,7 @@ $lastindex=0;
 }
 
 $c2->insert(array(
-	'imageid' => new MongoId($label),
-	'index' => ($lastindex+1)
+	'imageid' => new MongoId($label)
 	));
 
 header('Location: lessonmaker.php');

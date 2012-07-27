@@ -37,41 +37,82 @@ Step 4: Find the
 		<title>Lesson Maker</title>
 		
 		<link rel="stylesheet" type="text/css" href="lessonmaker.css" />
+        
+        <link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
+		<script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
+		<script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
+        <style>
+            #sortable {list-style-type: none; margin: 10; padding:0}
+            #sortable 
+        </style>
+        <script type="text/javascript">
+            function update() {
+                var result = $('#sortable').sortable('toArray');
+            }
+            $(function() {
+                $("#sortable").sortable();
+                $("#sortable").disableSelection();
+            });
+            /*$(function() {
+                $('ul#sortable').sortable({
+                start: function(event, ui) {
+                    var start_pos = ui.item.index();
+                    ui.item.data('start_pos', start_pos);
+                    <?php $c2->insert(array(
+                            'index' => ?>ui.item.index()<?php
+                            ));?>
+                },
+                update: function(event, ui) {
+                    var end_pos = $(ui.item).index();
+                    alert(end_pos);
+                }
+                });
+            });*/
+            
+            $("div.qelement").click(function() {
+                var currentid = $(this).attr('id');
+                $('ul').html().append(
+                <li class="ui-state-default">
+					<a href="viewer.php?id="+currentid+"" >
+					<img src="http://localhost:81/tile.php?image="+currentid+"&name=t.jpg" />
+					</a>
+					Text
+				</li>
+                );
+                var currentindex = $('li').last().index();
+                <?php $c2->insert(array(
+                        'index' => ?>currentindex<?php ,
+                        'imageid' => ?>currentid<?php
+                        ));?>
+            }
+        </script>
 	</head>
 	
 	<body>
 		<div class="container">
-			<div class="questionlist">
+            <button action="Javascript:update();" />
+			<ul id="sortable">
 				<?php
 				foreach($questions as $q){
 					?>
-					<div class="question" >
+					<li class="ui-state-default" id="<?php echo $q['_id']; ?>">
 						<a href="viewer.php?id=<?php echo $q['imageid'];?>" >
 						<img src="http://localhost:81/tile.php?image=<?php echo $q['imageid'];?>&name=t.jpg" />
 						</a>
-						<div class="orgtable">
-							<a href="firstquestion.php?label=<?php echo $q['imageid'];?>" ><div class="orgelement" >1</div></a>
-							<a href="previousquestion.php?label=<?php echo $q['imageid'];?>" ><div class="orgelement" >^</div></a>
-							<a href="removequestion.php?label=<?php echo $q['imageid'];?>" ><div class="orgelement" >X</div></a>
-							<a href="nextquestion.php?label=<?php echo $q['imageid'];?>" ><div class="orgelement" >v</div></a>
-							<a href="lastquestion.php?label=<?php echo $q['imageid'];?>" ><div class="orgelement" >L</div></a>
-						</div>
 						Text
-					</div>
+					</li>
 					<?php
 				}
 				?>
-			</div>
+			</ul>
 			<div class="table">
 				<?php
 				foreach($img as $i){
 					?>
-					<a href="addquestion.php?label=<?php echo $i['_id'];?>" >
-					<div class="qelement" >
+					<div class="qelement" id="<?php echo $i['_id'];?>" >
 						<img src="http://localhost:81/tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
 						Text
 					</div>
-					</a>
 					<?php
 				}
 				?>
