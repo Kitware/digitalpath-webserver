@@ -2,25 +2,28 @@
 
 <?php
 
-$label = $_GET['label'];
+//header('Location: lessonmaker.php');
+
+$imgid = $_GET['image'];
+$index = $_GET['index'];
 
 $m = new Mongo();
 $d = $m->selectDB("demo");
 $c2 = $d->selectCollection("lesson");
+$c3 = $d->selectCollection("questions");
 
-$cursor = $c2->find()->sort(array('index'=>-1))->limit(1);
-foreach($cursor as $obj){
-	$lastindex = $obj['index'];
-}
+$id = new MongoId();
 
-if(!$lastindex){
-$lastindex=0;
-}
+$c3->insert(array(
+        'imageid'=>$imgid,
+        '_id'=>$id
+        ));
 
 $c2->insert(array(
-	'imageid' => new MongoId($label)
-	));
-
-header('Location: lessonmaker.php');
+        'index'=>$index,
+        'qid'=>$id
+        ));
+        
+echo $id;
 
 ?>

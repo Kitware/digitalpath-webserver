@@ -6,27 +6,26 @@ $m = new Mongo();
 $d = $m->selectDB("demo");
 $c1 = $d->selectCollection("images");
 $c2 = $d->selectCollection("lesson");
+$c3 = $d->selectCollection("questions");
 
 $img = $c1->find();
-$questions = $c2->find()->sort(array("index"=>1));
+$qlist = $c2->find()->sort(array("index"=>1));
 
 /*
-To embed the thumbnails correctly:
-Step 1: Find the correct image ID - CHECK.
-Step 2: Bind the correct image ID into the URL - CHECK.
-Step 3: Bind the image ID into the correct URL - CHECK.
-
-To execute the removequestion function correctly:
-Step 1: Find the correct value for the imageid field - CHECK.
-Step 2: Pass it to the removequestion.php page in the correct manner - CHECK.
-Step 3: Retrieve it using $_GET correctly - CHECK.
-Step 4: Run the correct query on the database - 
-
-To execute the previousquestion function correctly:
-Step 1: Find the correct imageid - CHECK.
-Step 2: Pass it into the URL - CHECK.
-Step 3: Find the image - CHECK.
-Step 4: Find the
+DOCUMENTATION:
+Collection 'lesson':
+    'index'
+    'qid'
+Collection 'questions':
+    '_id' - question ID
+    'imageid'
+    'qtext'
+    array(
+        choice 1 text
+        choice 2 text
+        choice 3 text
+        ...
+        )
 */
 
 ?>
@@ -43,68 +42,67 @@ Step 4: Find the
 		<script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
         <style>
             #sortable {list-style-type: none; margin: 10; padding:0}
-            #sortable 
         </style>
         <script type="text/javascript">
-            function update() {
-                var result = $('#sortable').sortable('toArray');
+
+        function saveLesson () {
+            var result = $('#sortable').sortable('toArray');
+            for(var i=0; i<result.length; i++){
+                $.ajax({url:"assignindex.php?index="+i+"&qid="+result[i]});
             }
+        }
+
+        $(document).ready(function() {
             $(function() {
                 $("#sortable").sortable();
                 $("#sortable").disableSelection();
             });
-            /*$(function() {
+            $(function() {
                 $('ul#sortable').sortable({
-                start: function(event, ui) {
-                    var start_pos = ui.item.index();
-                    ui.item.data('start_pos', start_pos);
-                    <?php $c2->insert(array(
-                            'index' => ?>ui.item.index()<?php
-                            ));?>
-                },
+                /*start: function(event, ui) {
+                    alert("start");
+                },*/
                 update: function(event, ui) {
                     var end_pos = $(ui.item).index();
                     alert(end_pos);
                 }
                 });
-            });*/
+            });
             
-            $("div.qelement").click(function() {
+            $(".qelement").click(function() {
                 var currentid = $(this).attr('id');
-                $('ul').html().append(
-                <li class="ui-state-default">
-					<a href="viewer.php?id="+currentid+"" >
-					<img src="http://localhost:81/tile.php?image="+currentid+"&name=t.jpg" />
-					</a>
-					Text
-				</li>
-                );
-                var currentindex = $('li').last().index();
-                <?php $c2->insert(array(
-                        'index' => ?>currentindex<?php ,
-                        'imageid' => ?>currentid<?php
-                        ));?>
-            }
+                var currentindex = $('li').last().index()+1;
+                $.ajax({url:"addquestion.php?image="+currentid+"&index="+currentindex, success:function(qid){
+                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
+                        currentid+'" ><img src="http://localhost:81/tile.php?image='+
+                        currentid+'&name=t.jpg" /></a>Text</li>';
+                    $('ul').append(liststring);
+                }});
+            });
+        
+            // Populate the lesson questions.
+            $.ajax({url:"getquestions.php", success:function(qidList){
+                var obj = jQuery.parseJSON(qidList);
+                for (var i = 0; i < obj.length; ++i) {
+                    var qid = obj[i]._id.$id;
+                    var imageId = obj[i].imageid;
+                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
+                        imageId+'" ><img src="http://localhost:81/tile.php?image='+
+                        imageId+'&name=t.jpg" /></a>Text</li>';
+                    $('ul').append(liststring);    
+                }
+            }});            
+        });
         </script>
 	</head>
 	
 	<body>
 		<div class="container">
-            <button action="Javascript:update();" />
-			<ul id="sortable">
-				<?php
-				foreach($questions as $q){
-					?>
-					<li class="ui-state-default" id="<?php echo $q['_id']; ?>">
-						<a href="viewer.php?id=<?php echo $q['imageid'];?>" >
-						<img src="http://localhost:81/tile.php?image=<?php echo $q['imageid'];?>&name=t.jpg" />
-						</a>
-						Text
-					</li>
-					<?php
-				}
-				?>
-			</ul>
+            <div class="qlist" >
+            <button onclick="saveLesson();" style="width:100%;" >Save</button>
+                <ul id="sortable">
+                </ul>
+            </div>
 			<div class="table">
 				<?php
 				foreach($img as $i){

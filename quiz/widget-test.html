@@ -4,6 +4,9 @@
  
 <head> 
 <title>Connectome Viewer</title> 
+
+<link rel="stylesheet" type="text/css" href="viewer.css" />
+
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
  
 <script src="js/jquery-1.5.1.min.js"></script>
@@ -158,7 +161,7 @@ var VIEWER1;
         EVENT_MANAGER = new EventManager(CANVAS);
     
         var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
-        VIEWER1 = new Viewer([0,0, 1400,1000], source1);
+        VIEWER1 = new Viewer([0,0, 900,700], source1);
 
         EVENT_MANAGER.AddViewer(VIEWER1);
 
@@ -217,7 +220,9 @@ var VIEWER1;
  
 <body> 
 	
-    <canvas id="viewer-canvas" style="border: none;" width="1400" height="1000"></canvas> 
+    <div class="container" >
+    <div class="viewer" >
+    <canvas id="viewer-canvas" style="border: none;" width="900" height="700"></canvas> 
     <br/> 
 
     <table border="1">
@@ -245,6 +250,11 @@ var VIEWER1;
 		var origin = [9663763,7643791.5,0];
 		var spacing = [226.17269405242,227.53127170139,0];
 	</script>
+    </div>
+    <div class="form" >
+    
+    </div>
+    </div>
 			
 </body> 
  

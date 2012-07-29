@@ -5,8 +5,8 @@
 $id = $_GET['id'];
 
 $m = new Mongo();
-//$d = $m.selectDB("database");
-$c = $m->selectDB("demo")->selectCollection("images");
+$d = $m.selectDB("demo");
+$c = $d->selectCollection("images");
 
 $img = $c->findOne(array('_id'=>new MongoId($id)));
 
@@ -16,6 +16,7 @@ $img = $c->findOne(array('_id'=>new MongoId($id)));
  
 <head> 
 <title>Connectome Viewer</title> 
+
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
  
 <script src="js/jquery-1.5.1.min.js"></script>
@@ -130,7 +131,7 @@ var VIEWER1;
 
         //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
         var source1 = new Cache("http://localhost:81/tile.php?image="+id+"&name=");
-        VIEWER1 = new Viewer([0,0, 1000,700], source1);
+        VIEWER1 = new Viewer([0,0, 900,700], source1);
 
         EVENT_MANAGER.AddViewer(VIEWER1);
 
@@ -181,37 +182,56 @@ var VIEWER1;
 </head> 
  
  
-<body> 
+<body>
+    <div class="container" >
+    <div class="viewer" >
+        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
 	
-    <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
-	
-	<script type="text/javascript">
-		webGLStart(<?php echo json_encode($id);?>);
+        <script type="text/javascript">
+            webGLStart(<?php echo json_encode($id);?>);
 		
-		var origin = <?php echo json_encode($img['origin']); ?>;
-		var spacing = <?php echo json_encode($img['spacing']); ?>;
-	</script>
+            var origin = <?php echo json_encode($img['origin']); ?>;
+            var spacing = <?php echo json_encode($img['spacing']); ?>;
+        </script>
 	
-	<?php
-		//var_dump($img);
-		//exit;
-		foreach($img['bookmarks'] as $annotation){
-			if($annotation['annotation']['type']=='pointer'){
-			?>
-			<script>
-			var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-			var text = <?php echo json_encode($annotation['title']); ?>;
-			var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-			var pos = [];
-			pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-			pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-			VIEWER1.AddAnnotation(pos, text, color);
-			</script>
+        <?php
+            //var_dump($img);
+            //exit;
+            foreach($img['bookmarks'] as $annotation){
+                if($annotation['annotation']['type']=='pointer'){
+                ?>
+                <script>
+                var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
+                var text = <?php echo json_encode($annotation['title']); ?>;
+                var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
+                var pos = [];
+                pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
+                pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
+                VIEWER1.AddAnnotation(pos, text, color);
+                </script>
+                <?php
+                }
+            }
+		
+        ?>
+    </div>
+    <div class="form" >
+        <form method="post" action="encodequestion.php?label=<?php echo $label; ?>&add=1" >
+			Question:<br />
+			<textarea name="question" value="<?php echo $q['qtext'];?>" ></textarea><br /><br />
 			<?php
-			}
-		}
-		
-	?>
+			while($choice < $numchoices){
+                //
+				echo $choice+1;?>: <input type="text" name="answers[]" value="<?php if(isset($q['choices'])){echo $q['choices'][$choice];}?>" /><br />
+                <?php $choice = $choice + 1;
+            } ?>
+			<input type="submit" value="Add answer choice" /><br /><br />
+		</form>
+        
+        <textarea id="question" ></textarea><br /><br />
+        
+    </div>
+    </div>
 
 </body> 
  

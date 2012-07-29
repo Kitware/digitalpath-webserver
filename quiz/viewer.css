@@ -1,0 +1,18 @@
+
+
+.container {
+    width:1200px;
+    height:900px;
+}
+
+.viewer {
+    width:900px;
+    height:100%;
+    overflow:hidden;
+}
+
+.form {
+    width:300px;
+    height:100%;
+    overflow-y:scroll;
+}
