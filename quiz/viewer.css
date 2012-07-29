@@ -1,18 +1,23 @@
 
 
 .container {
-    width:1200px;
-    height:900px;
+    width:1210px;
+    height:700px;
+    margin-right:auto;
+    margin-left:auto;
 }
 
 .viewer {
     width:900px;
     height:100%;
     overflow:hidden;
+    float:left;
 }
 
 .form {
     width:300px;
     height:100%;
     overflow-y:scroll;
+    float:right;
+    background-color:#0000ff;
 }

@@ -17,13 +17,13 @@ Collection 'lesson':
     'index'
     'qid'
 Collection 'questions':
-    '_id' - question ID
+    '_id' - question ID.  MONGOID
     'imageid'
     'qtext'
-    array(
-        choice 1 text
-        choice 2 text
-        choice 3 text
+    array 'choices'(
+        choice 1 text,
+        choice 2 text,
+        choice 3 text,
         ...
         )
 */
@@ -74,7 +74,7 @@ Collection 'questions':
                 var currentindex = $('li').last().index()+1;
                 $.ajax({url:"addquestion.php?image="+currentid+"&index="+currentindex, success:function(qid){
                     var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
-                        currentid+'" ><img src="http://localhost:81/tile.php?image='+
+                        qid+'" ><img src="http://localhost:81/tile.php?image='+
                         currentid+'&name=t.jpg" /></a>Text</li>';
                     $('ul').append(liststring);
                 }});
@@ -87,11 +87,11 @@ Collection 'questions':
                     var qid = obj[i]._id.$id;
                     var imageId = obj[i].imageid;
                     var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
-                        imageId+'" ><img src="http://localhost:81/tile.php?image='+
+                        qid+'" ><img src="http://localhost:81/tile.php?image='+
                         imageId+'&name=t.jpg" /></a>Text</li>';
                     $('ul').append(liststring);    
                 }
-            }});            
+            }});
         });
         </script>
 	</head>

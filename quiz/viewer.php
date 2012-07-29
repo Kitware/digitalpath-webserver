@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 
-<?php
 
-$id = $_GET['id'];
 
-$m = new Mongo();
-$d = $m.selectDB("demo");
-$c = $d->selectCollection("images");
-
-$img = $c->findOne(array('_id'=>new MongoId($id)));
-
-?>
 
 <html> 
  
 <head> 
+
+
 <title>Connectome Viewer</title> 
+
+<link rel="stylesheet" type="text/css" href="viewer.css" />
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
  
-<script src="js/jquery-1.5.1.min.js"></script>
+<script src="js/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script> 
 <script type="text/javascript" src="webgl-utils.js"></script> 
 <script type="text/javascript" src="init.js"></script> 
@@ -34,6 +29,30 @@ $img = $c->findOne(array('_id'=>new MongoId($id)));
 <script type="text/javascript" src="cache.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
+
+<?php
+$qid = $_GET['id'];
+
+$m = new Mongo();
+$d = $m->selectDb("demo");
+$c = $d->selectCollection("questions");
+
+$mongo_question = $c->findOne(array('_id'=>new MongoId($qid)));
+$image_collection = $d->selectCollection("images");
+$mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_question['imageid'])));
+?>
+
+<script type="text/javascript">
+    var QUESTION = <?php echo json_encode($mongo_question);?>;
+    var IMAGE = <?php echo json_encode($mongo_image);?>;
+	// These globals are used in the viewer javascript.  I need to get rid of them.	
+    var origin = IMAGE.origin;
+    var spacing = IMAGE.spacing;
+    // Could there be a problem with body not loaded yet?
+    //$('body').data('ID', QUESTION.imageid);
+</script>
+
+
 
 
 
@@ -118,19 +137,21 @@ $img = $c->findOne(array('_id'=>new MongoId($id)));
 
 
 
+
+
 <script type="text/javascript"> 
  
 var CANVAS;
 var EVENT_MANAGER;
 var VIEWER1;
 
-    function initViews(id) {
+    function initViews() {
         //VIEWER = new Viewer(CANVAS,
         //                    [0,0,GL.viewportWidth, GL.viewportHeight],
         //                    source);
 
         //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
-        var source1 = new Cache("http://localhost:81/tile.php?image="+id+"&name=");
+        var source1 = new Cache("http://localhost:81/tile.php?image="+QUESTION.imageid+"&name=");
         VIEWER1 = new Viewer([0,0, 900,700], source1);
 
         EVENT_MANAGER.AddViewer(VIEWER1);
@@ -154,11 +175,11 @@ var VIEWER1;
     function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
     function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
 
-    function webGLStart(id) {
+    function webGLStart() {
         CANVAS = document.getElementById("viewer-canvas");
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
-        initViews(id);
+        initViews();
         initShaderPrograms();
         initOutlineBuffers();
         initImageTileBuffers();
@@ -175,6 +196,54 @@ var VIEWER1;
  
         eventuallyRender();
     }
+    
+    
+    //********************************************************
+    
+    
+    function addanswer() {
+            var questionchoices = [];
+            var questiontext = document.getElementById("qtext").value;
+            
+            var numAnswers = $('.answer').length;
+            
+            for(var i=0; i < numAnswers; i++){
+                questionchoices[i] = $('.answer')[i].value;
+            }
+            
+            var imgid = $("body").data("ID");
+            
+            $.post("setquestion.php?qid="+imgid, {qtext:questiontext, choices:questionchoices});
+            
+            var liststring = '1: <input type="text" class="answer" /><br />';
+            $('#choicelist').append(liststring); 
+        }
+        
+        function savequestion() {
+            var questionchoices = [];
+            var questiontext = document.getElementById("qtext").value;
+            
+            var numAnswers = $('.answer').length;
+            
+            for(var i=0; i < numAnswers; i++){
+                questionchoices[i] = $('.answer')[i].value;
+            }
+            
+            var imgid = $("body").data("ID");
+            $.post("setquestion.php?qid="+imgid, {qtext:questiontext, choices:questionchoices});
+            
+            window.location = "lessonmaker.php";
+        }
+    
+    $(document).ready(function() {
+            if (QUESTION.choices) {
+                document.getElementById("qtext").innerHTML = QUESTION.qtext;
+                for (var i = 0; i < QUESTION.choices.length; ++i) {
+                    var liststring = i+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><br />';
+                    $('#choicelist').append(liststring);    
+                }
+            }            
+    });
  
 </script> 
  
@@ -182,57 +251,27 @@ var VIEWER1;
 </head> 
  
  
-<body>
+<body onload="webGLStart();">
+
+    <script>
+        $('body').data({'ID': '<?php echo $qid; ?>'});
+    </script>
     <div class="container" >
     <div class="viewer" >
         <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
-	
-        <script type="text/javascript">
-            webGLStart(<?php echo json_encode($id);?>);
-		
-            var origin = <?php echo json_encode($img['origin']); ?>;
-            var spacing = <?php echo json_encode($img['spacing']); ?>;
-        </script>
-	
-        <?php
-            //var_dump($img);
-            //exit;
-            foreach($img['bookmarks'] as $annotation){
-                if($annotation['annotation']['type']=='pointer'){
-                ?>
-                <script>
-                var coord = <?php echo json_encode($annotation['annotation']['points']); ?>;
-                var text = <?php echo json_encode($annotation['title']); ?>;
-                var color = <?php echo json_encode($annotation['annotation']['color']); ?>;
-                var pos = [];
-                pos[0] = (coord[0][0]-origin[0])/(2*spacing[0]);
-                pos[1] = -(coord[0][1]-origin[1])/(2*spacing[1]);
-                VIEWER1.AddAnnotation(pos, text, color);
-                </script>
-                <?php
-                }
-            }
-		
-        ?>
     </div>
     <div class="form" >
-        <form method="post" action="encodequestion.php?label=<?php echo $label; ?>&add=1" >
-			Question:<br />
-			<textarea name="question" value="<?php echo $q['qtext'];?>" ></textarea><br /><br />
-			<?php
-			while($choice < $numchoices){
-                //
-				echo $choice+1;?>: <input type="text" name="answers[]" value="<?php if(isset($q['choices'])){echo $q['choices'][$choice];}?>" /><br />
-                <?php $choice = $choice + 1;
-            } ?>
-			<input type="submit" value="Add answer choice" /><br /><br />
-		</form>
-        
-        <textarea id="question" ></textarea><br /><br />
-        
+        <textarea id="qtext" ></textarea><br /><br />
+        <div id="choicelist" >
+        </div>
+        <br />
+        <button id="addanswer" onclick="addanswer();" >Add Answer Choice</button><br />
+        <button id="savequestion" onclick="savequestion();" >Save Question</button>
     </div>
     </div>
-
+    
+    
+    
 </body> 
  
 </html> 

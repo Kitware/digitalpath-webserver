@@ -9,16 +9,14 @@ $d = $m->selectDB("demo");
 $c2 = $d->selectCollection("lesson");
 $c3 = $d->selectCollection("questions");
 
-$id = new MongoId();
+$question = $c3->findOne(array('qid'=>$id));
+$qarray = array();
 
-$cursor = $c2->find(array(), array())->sort(array('index'=>1));
-$question = $c3->findOne(
-$qidArray = array();
+array_push($qarray, $question['qtext']);
 
-foreach($cursor as $q){
-    $question = $c3->findOne(array("_id"=>new MongoId($q['qid'])));
-    array_push($qidArray, $question);
+foreach($question['choices'] as $q){
+    array_push($qarray, $q);
 }
         
-echo json_encode($qidArray);
+echo json_encode($qarray);
 ?>
