@@ -3,27 +3,23 @@
 <?php
 
 //header('Location: lessonmaker.php');
-
+$lessonid = $_GET['lid'];
 $imgid = $_GET['image'];
-$index = $_GET['index'];
 
 $m = new Mongo();
 $d = $m->selectDB("demo");
-$c2 = $d->selectCollection("lesson");
+$c2 = $d->selectCollection("lessons");
 $c3 = $d->selectCollection("questions");
 
 $id = new MongoId();
 
 $c3->insert(array(
         'imageid'=>$imgid,
-        '_id'=>$id
-        ));
-
-$c2->insert(array(
-        'index'=>$index,
         'qid'=>$id
         ));
+
+$c2->update(array('_id'=>new MongoId($lessonid)), array('$push'=>array('questions'=>$id)), true);
         
-echo $id;
+echo json_encode($id);
 
 ?>

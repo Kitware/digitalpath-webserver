@@ -7,6 +7,17 @@ function CircleWidget (viewer) {
     this.Viewer = viewer;
 }
 
+CircleWidget.prototype.Serialize = function() {
+    if(this.Circle === undefined){ return null; }
+    var obj = new Object();
+    obj.type = "circle";
+    obj.origin = this.Circle.Origin;
+    obj.outlinecolor = this.Circle.OutlineColor;
+    obj.radius = this.Circle.Radius;
+    obj.linewidth = this.Circle.LineWidth;
+    return obj;
+}
+
 CircleWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 

@@ -12,6 +12,19 @@ function ArrowWidget (viewer) {
     this.Viewer = viewer;
 }
 
+ArrowWidget.prototype.Serialize = function() {
+    if(this.Arrow === undefined){ return null; }
+    var obj = new Object();
+    obj.type = "arrow";
+    obj.origin = this.Arrow.Origin;
+	obj.fillcolor = this.Arrow.FillColor;
+	obj.outlinecolor = this.Arrow.OutlineColor;
+	obj.length = this.Arrow.Length;
+	obj.width = this.Arrow.Width;
+    obj.orientation = this.Arrow.Orientation;
+    return obj;
+}
+
 ArrowWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 
@@ -32,7 +45,7 @@ ArrowWidget.prototype.HandleMouseMove = function(event) {
 	this.Arrow.SetFillColor([0.0, 0.0, 0.0]);
 	this.Arrow.OutlineColor = [1.0, 1.0, 1.0];
 	this.Arrow.Length = 50;
-	this.Arrow.width = 8;
+	this.Arrow.Width = 8;
 	this.Viewer.AddShape(this.Arrow);
 	// Note: If the user clicks before the mouse is in the
 	// canvas, this will behave odd.

@@ -92,8 +92,6 @@ function Text() {
     this.String = ",./<>?[]\{}|`-=~!@#$%^&*()_+";
 };
 
-
-
 Text.prototype.destructor=function() {
     // Get rid of the buffers?
 }

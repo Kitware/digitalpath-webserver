@@ -14,7 +14,7 @@ $return = $_GET['add'];
 
 $m = new Mongo();
 $d = $m->selectDB("demo");
-$c = $d->selectCollection('lesson');
+$c = $d->selectCollection('lessons');
 
 $c->update(array('imageid'=>new MongoId($label)), array('$set'=>array('qtext'=>$qtext,)), true);
 $c->update(array('imageid'=>new MongoId($label)), array('$set'=>array('choices'=>$choices)), true);

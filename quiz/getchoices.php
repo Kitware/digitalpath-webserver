@@ -6,7 +6,7 @@ $id = $_GET['id'];
 
 $m = new Mongo();
 $d = $m->selectDB("demo");
-$c2 = $d->selectCollection("lesson");
+$c2 = $d->selectCollection("lessons");
 $c3 = $d->selectCollection("questions");
 
 $question = $c3->findOne(array('qid'=>$id));
