@@ -3,8 +3,10 @@ function Circle() {
     Shape.call(this);
     this.Radius = 10; // Radius in pixels
     this.Origin = [10000,10000]; // Center in world coordinates.
+    this.OutlineColor = [0,0,0];
 };
 Circle.prototype = new Shape;
+
 
 
 Circle.prototype.destructor=function() {

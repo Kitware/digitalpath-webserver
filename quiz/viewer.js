@@ -196,13 +196,18 @@ Viewer.prototype.HandleMouseDown = function(x, y) {
 Viewer.prototype.HandleMouseUp = function(event) {
     // Forward the events to the widget if one is active.
     if (this.Widget != null) {
-	if (this.Widget.HandleMouseUp(event) == false) {
-	    this.Widget = null;
-	}
+        if (this.Widget.HandleMouseUp(event) == false) {
+            if(this.AnnotationCallback != undefined) {
+                this.AnnotationCallback(this.Widget);
+            }
+            this.Widget = null;
+        }
 	return;
     }
    
 }
+
+
 
 Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
     // Many shapes, widgets and interactors will need the mouse in world coodinates.

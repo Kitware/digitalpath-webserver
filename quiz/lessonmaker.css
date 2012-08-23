@@ -3,7 +3,7 @@
 .container {
 	margin-right: auto;
 	margin-left: auto;
-	width: 1120px;
+	width: 1130px;
 	height: 650px;
 	background-color: #0000ff;
 }
@@ -24,6 +24,7 @@ li {
 	width: 250px;
 	margin: 10px;
 	background-color:#00ff00;
+    overflow-x:hidden;
 }
 
 ul {
@@ -41,7 +42,7 @@ ul {
 }
 
 .table {
-	width: 830px;
+	width: 840px;
 	height: 100%;
 	overflow-y: scroll;
 	float: right;
@@ -53,4 +54,11 @@ ul {
 	margin: 10px;
 	float:left;
 	background-color: #ff0000;
+    overflow-x:hidden;
 }
+
+.del, .add {
+    float:right;
+    margin:8px;
+}
+

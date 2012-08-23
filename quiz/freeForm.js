@@ -47,39 +47,40 @@ FreeForm.prototype.UpdateBuffers = function() {
 	    edgeNormals.push([-y/mag,x/mag]);
 	}
 
-	var half = this.LineWidth / 2.0;
-	// 4 corners per point
-	var dx = edgeNormals[0][0]*half;
-	var dy = edgeNormals[0][1]*half;
-	vertexPositionData.push(this.Points[0][0] - dx);
-	vertexPositionData.push(this.Points[0][1] - dy);
-	vertexPositionData.push(0.0);
-	vertexPositionData.push(this.Points[0][0] + dx);
-	vertexPositionData.push(this.Points[0][1] + dy);
-	vertexPositionData.push(0.0);
-	for (var i = 1; i < end; ++i) {
-	    vertexPositionData.push(this.Points[i][0] - dx);
-	    vertexPositionData.push(this.Points[i][1] - dy);
-	    vertexPositionData.push(0.0);
-	    vertexPositionData.push(this.Points[i][0] + dx);
-	    vertexPositionData.push(this.Points[i][1] + dy);
-	    vertexPositionData.push(0.0);
-	    dx = edgeNormals[i][0]*half;
-	    dy = edgeNormals[i][1]*half;
-	    vertexPositionData.push(this.Points[i][0] - dx);
-	    vertexPositionData.push(this.Points[i][1] - dy);
-	    vertexPositionData.push(0.0);
-	    vertexPositionData.push(this.Points[i][0] + dx);
-	    vertexPositionData.push(this.Points[i][1] + dy);
-	    vertexPositionData.push(0.0);
-	}
-	vertexPositionData.push(this.Points[end][0] - dx);
-	vertexPositionData.push(this.Points[end][1] - dy);
-	vertexPositionData.push(0.0);
-	vertexPositionData.push(this.Points[end][0] + dx);
-	vertexPositionData.push(this.Points[end][1] + dy);
-	vertexPositionData.push(0.0);
-
+    if(end > 0){
+        var half = this.LineWidth / 2.0;
+        // 4 corners per point
+        var dx = edgeNormals[0][0]*half;
+        var dy = edgeNormals[0][1]*half;
+        vertexPositionData.push(this.Points[0][0] - dx);
+        vertexPositionData.push(this.Points[0][1] - dy);
+        vertexPositionData.push(0.0);
+        vertexPositionData.push(this.Points[0][0] + dx);
+        vertexPositionData.push(this.Points[0][1] + dy);
+        vertexPositionData.push(0.0);
+        for (var i = 1; i < end; ++i) {
+            vertexPositionData.push(this.Points[i][0] - dx);
+            vertexPositionData.push(this.Points[i][1] - dy);
+            vertexPositionData.push(0.0);
+            vertexPositionData.push(this.Points[i][0] + dx);
+            vertexPositionData.push(this.Points[i][1] + dy);
+            vertexPositionData.push(0.0);
+            dx = edgeNormals[i][0]*half;
+            dy = edgeNormals[i][1]*half;
+            vertexPositionData.push(this.Points[i][0] - dx);
+            vertexPositionData.push(this.Points[i][1] - dy);
+            vertexPositionData.push(0.0);
+            vertexPositionData.push(this.Points[i][0] + dx);
+            vertexPositionData.push(this.Points[i][1] + dy);
+            vertexPositionData.push(0.0);
+        }
+        vertexPositionData.push(this.Points[end][0] - dx);
+        vertexPositionData.push(this.Points[end][1] - dy);
+        vertexPositionData.push(0.0);
+        vertexPositionData.push(this.Points[end][0] + dx);
+        vertexPositionData.push(this.Points[end][1] + dy);
+        vertexPositionData.push(0.0);
+    }
 	// Generate the triangles for a thick line
 	for (var i = 0; i < end; ++i) {
 	    lineCellData.push(0 + 4*i);

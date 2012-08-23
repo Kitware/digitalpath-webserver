@@ -20,6 +20,18 @@ function TextWidget (viewer) {
     this.CursorLocation = 0;
 }
 
+TextWidget.prototype.Serialize = function() {
+    if(this.Text === undefined){ return null; }
+    var obj = new Object();
+    obj.type = "text";
+    obj.color = this.Text.Color;
+    obj.size = this.Text.Size;
+    obj.anchor = this.Text.Anchor;
+    obj.position = this.Text.Position;
+    obj.string = this.Text.String;
+    return obj;
+}
+
 TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
     if (this.State != TEXT_WIDGET_TYPING) {
 	return;

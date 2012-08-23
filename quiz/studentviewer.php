@@ -10,7 +10,7 @@
 
 <title>Connectome Viewer</title> 
 
-<link rel="stylesheet" type="text/css" href="viewer.css" />
+<link rel="stylesheet" type="text/css" href="studentviewer.css" />
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
  
@@ -36,13 +36,23 @@
 <script type="text/javascript" src="eventManager.js"></script> 
 
 <?php
-$qid = $_GET['id'];
+$lessonid = $_GET['id'];
+$index = $_GET['index'];
+
+if(isset($_COOKIE[''+$lessonid+$index])){
+    $cookie = $_COOKIE[''+$lessonid+$index];
+}
 
 $m = new Mongo();
 $d = $m->selectDb("demo");
-$c = $d->selectCollection("questions");
+$c1 = $d->selectCollection("questions");
+$c2 = $d->selectCollection("lessons");
 
-$mongo_question = $c->findOne(array('qid'=>new MongoId($qid)));
+$lesson = $c2->findOne(array('_id'=>new MongoId($lessonid)));
+
+$qid = $lesson['questions'][$index];
+
+$mongo_question = $c1->findOne(array('qid'=>$qid));
 $image_collection = $d->selectCollection("images");
 $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_question['imageid'])));
 
@@ -79,14 +89,17 @@ setquestion.php
 
 ?>
 
-<script type="text/javascript">
-    var QUESTION = <?php echo json_encode($mongo_question);?>;
-    var IMAGE = <?php echo json_encode($mongo_image);?>;
-	// These globals are used in the viewer javascript.  I need to get rid of them.	
-    var origin = IMAGE.origin;
-    var spacing = IMAGE.spacing;
-    // Could there be a problem with body not loaded yet?
-    //$('body').data('ID', QUESTION.imageid);
+<script type="text/javascript" >
+
+var LESSON = <?php echo json_encode($lesson); ?>;
+var QUESTION = <?php echo json_encode($mongo_question);?>;
+var IMAGE = <?php echo json_encode($mongo_image);?>;
+// These globals are used in the viewer javascript.  I need to get rid of them.	
+var origin = IMAGE.origin;
+var spacing = IMAGE.spacing;
+// Could there be a problem with body not loaded yet?
+//$('body').data('ID', QUESTION.imageid);
+
 </script>
 
 <script id="shader-poly-fs" type="x-shader/x-fragment">
@@ -162,6 +175,12 @@ setquestion.php
 var CANVAS;
 var EVENT_MANAGER;
 var VIEWER1;
+
+var LESSON;
+var QUESTION;
+var IMAGE;
+
+var cookie;
 
     function initViews() {
         //VIEWER = new Viewer(CANVAS,
@@ -270,10 +289,7 @@ var VIEWER1;
     }
     
     
-    
-    
-    
-    function NewArrow() {
+    /*function NewArrow() {
       //alert("New Arrow");
       // When the arrow button is pressed, create the widget.
       //alert("CLICK!");
@@ -293,38 +309,14 @@ var VIEWER1;
     function NewFreeForm() {
       // When the text button is pressed, create the widget.
       VIEWER1.Widget = new FreeFormWidget(VIEWER1);
-    }
-    
-    
+    }*/
     
     
     
     //********************************************************
     
-    function saveConstants() {
-        var questionchoices = [];
-        var questiontext = document.getElementById("qtext").value;
-        var questiontitle = document.getElementById("title").value;
-        
-        var numAnswers = $('.answer').length;
-    
-        for(var i=0; i < numAnswers; i++){
-            questionchoices[i] = $('.answer')[i].value;
-        }
-        
-        var qid = QUESTION.qid.$id;
-        var cam = VIEWER1.MainView.Camera;
-        var camValues = {'roll':cam.Roll, 'fp':cam.FocalPoint, 'height':cam.Height};
-        
-        var correct = findChecked();
-        
-        correct = correct + '';
-        
-        $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct});
-    }
-    
     function findChecked(){
-        var span = document.getElementById("choicelist");
+        var span = document.getElementById("form");
         var inputs = span.getElementsByTagName("input");
         var radios = [];
         for (var i = 0; i < inputs.length; ++i){
@@ -338,38 +330,57 @@ var VIEWER1;
             }
         }
         
-        return 0;
+        return -1;
     }
     
-    function addanswer() {
-        saveConstants();
-        
-        var numAnswers = $('.answer').length;
-        var liststring = (numAnswers+1)+': <input type="text" class="answer" /><input type="radio" name="correct" >Correct?</input><br />';
-        $('#choicelist').append(liststring); 
-    }
-    
-    function savequestion() {
-        saveConstants();
-        //window.location = "lessonmaker.php";
+    function saveAnswer(){
+        var loc = findChecked();
+        $.ajax({url:"saveanswer.php?lid="+LESSON._id.$id+"&index=<?php echo $index;?>&checked="+loc, success:function(){
+            var success='<span style="color:#0000ff;">Saved!</span><br />';
+            $('#form').append(success);
+        }});
     }
     
     $(document).ready(function() {
-        if (QUESTION.choices) {
-            document.getElementById("qtext").innerHTML = QUESTION.qtext;
-            document.getElementById("title").innerHTML = QUESTION.title;
-            for (var i = 0; i < QUESTION.choices.length; ++i) {
-                var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
-                if(QUESTION.correct == (i+'')){
-                    liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-                }
-                $('#choicelist').append(liststring);    
-            }
+        
+        var liststring = '';
+        
+        var index = <?php echo $index; ?>;
+        
+        if(index > 0){
+            $('#prev').append('<a href="studentviewer.php?id='+LESSON._id.$id+'$index='+(index-1)+'">Previous Question</a>');
         }
-        else {
-            var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-            $('#choicelist').append(liststring);
+        
+        if(index < LESSON.questions.length-1){
+            $('#next').append('<a href="studentviewer.php?id='+LESSON._id.$id+'$index='+(index+1)+'">Next Question</a>');
         }
+        
+        liststring = liststring +
+            '<h4>'+QUESTION.title+'</h4><br /><br />'+
+            '#'+index+':<br />'+
+            QUESTION.qtext+'<br /><br />';
+        
+        for(var i=0; i<QUESTION.choices.length; i++){
+            liststring = liststring+'<input type="radio" name="choices" id="choice'+i+'" value="'+QUESTION.choices[i]+'" />'+QUESTION.choices[i]+'<br />';
+        }
+        
+        liststring = liststring+'<button id="saveanswer" >Save Question</button>';
+        
+        $("#form").append(liststring);
+        
+        $('#saveanswer').click(function(){
+            saveAnswer();
+        });
+        
+        if(<?php echo json_encode(isset($cookie));?>){
+            cookie = <?php echo json_encode($cookie);?>;
+            alert(cookie);
+        }
+        
+        if(cookie && cookie != -1){
+            $('#choice'+cookie).attr('checked', 'checked');
+        }
+        
     });
  
 </script> 
@@ -380,35 +391,21 @@ var VIEWER1;
  
 <body onload="webGLStart();">
     <div class="container" >
-    <div class="viewer" >
-        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
-        <table border="1">
-            <tr>
-                <td>
-                    <img src="Arrow.gif" id="arrow" type="button" onclick="NewArrow();" />
-                </td>
-                <td>
-                    <img src="Circle.gif" id="arrow" type="button" onclick="NewCircle();" />
-                </td>
-                <td>
-                    <img src="FreeForm.gif" id="text" type="button" onclick="NewFreeForm();" />
-                </td>
-                <td>
-                    <img src="Text.gif" id="text" type="button" onclick="NewText();" />
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="form" >
-        Title:<br />
-        <textarea id="title" ></textarea><br />
-        Question:<br />
-        <textarea id="qtext" ></textarea><br /><br />
-        <button id="addanswer" onclick="addanswer();" >Add Answer Choice</button><br />
-        <button id="savequestion" onclick="savequestion();" >Save Question</button><br />
-        Answers:<br />
-        <div id="choicelist" >
+    <div class="header" >
+        <div style="float:left;width:75px;height:100%;" id="prev" >
+            <!-- Previous Question link -->
         </div>
+        <div style="float:left;width:1060px;height:100%;" id="dir" >
+        Site map and links
+        </div>
+        <div style="float:right;width:75px;height:100%;" id="next" >
+            <!-- Next Question link -->
+        </div>
+    </div>
+    <div class="viewer" >
+        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas>
+    </div>
+    <div id="form" >
     </div>
     </div>
     
