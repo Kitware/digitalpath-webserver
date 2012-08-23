@@ -104,3 +104,35 @@ Circle.prototype.UpdateBuffers = function() {
     }
 
 }
+
+Circle.prototype.HandleMouseMove = function(event, dx, dy) {
+    var x = event.MouseX;
+    var y = event.MouseY;
+    // change dx and dy to vector from center of circle.
+    if (this.FixedSize) {
+	dx = event.MouseX - this.Origin[0];
+	dy = event.MouseY - this.Origin[1];
+    } else {
+	dx = event.MouseWorldX - this.Origin[0];
+	dy = event.MouseWorldY - this.Origin[1];
+    }
+
+    var d = Math.sqrt(dx*dx + dy*dy)/this.Radius;
+    var highlight = false;
+    var lineWidth = this.LineWidth / this.Radius;
+    
+    if (this.FillColor == undefined) { // Circle 
+	if ((d < (1.05+lineWidth) && d > 0.95)  || d < (0.02+lineWidth)) {
+	    highlight = true;
+	}
+    } else { // Disk
+	if (d < (1.05+lineWidth) && d > (0.1+lineWidth) || d < lineWidth) {
+	    highlight = true;
+	}
+    }
+    if ((highlight && ! this.Highlight) || ( ! highlight && this.Highlight)) {
+	this.Highlight = highlight;
+	eventuallyRender();
+    }
+    return this.Highlight;
+}

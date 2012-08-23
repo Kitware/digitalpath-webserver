@@ -64,7 +64,7 @@ Collection 'questions':
                 },*/
                 update: function(event, ui) {
                     var end_pos = $(ui.item).index();
-                    alert(end_pos);
+                    //alert(end_pos);
                 }
                 });
             });
@@ -73,7 +73,7 @@ Collection 'questions':
                 var currentid = $(this).attr('id');
                 var currentindex = $('li').last().index()+1;
                 $.ajax({url:"addquestion.php?image="+currentid+"&index="+currentindex, success:function(qid){
-                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
+                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="widget-test.php?id='+
                         currentid+'" ><img src="http://localhost:81/tile.php?image='+
                         currentid+'&name=t.jpg" /></a>Text</li>';
                     $('ul').append(liststring);
@@ -86,7 +86,7 @@ Collection 'questions':
                 for (var i = 0; i < obj.length; ++i) {
                     var qid = obj[i]._id.$id;
                     var imageId = obj[i].imageid;
-                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="viewer.php?id='+
+                    var liststring = '<li class="ui-state-default" id='+qid+'><a href="widget-test.php?id='+
                         imageId+'" ><img src="http://localhost:81/tile.php?image='+
                         imageId+'&name=t.jpg" /></a>Text</li>';
                     $('ul').append(liststring);    

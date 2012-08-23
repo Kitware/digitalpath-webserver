@@ -1,27 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-
-$label = $_GET['label'];//The image ID
-$numchoices = $_GET['numchoices'];
-
-if(!$numchoices){
-	$numchoices = 1;
-}
-
-$m = new Mongo();
-$d = $m->selectDb("demo");
-$c = $d->selectCollection("lesson");
-
-$q = $c->findOne(array('imageid'=>new MongoId($label)));
-//Find the image.  If there is a question associated with it, we can display it.
-
-
-
-$choice = 0;
-
-?>
-
 <html> 
  
 <head> 
@@ -31,7 +9,7 @@ $choice = 0;
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
  
-<script src="js/jquery-1.5.1.min.js"></script>
+<script src="../libs/jquery/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script> 
 <script type="text/javascript" src="webgl-utils.js"></script> 
 <script type="text/javascript" src="init.js"></script> 
@@ -52,6 +30,17 @@ $choice = 0;
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
+
+<?php 
+   $id = $_GET['id'];
+   if ( ! $id) {
+     $id = "4e6ec90183ff8d11c8000001";
+   }
+?>
+
+<script type="text/javascript"> 
+  var IMAGE_ID = "<?php echo $id?>";
+</script>
 
 
 <script id="shader-poly-fs" type="x-shader/x-fragment">
@@ -157,6 +146,15 @@ var VIEWER1;
     
     
     function NewArrow() {
+      var obj = new Object();
+      obj.Question = "How do you create a blank object";
+      obj.Answers = [];
+      obj.Answers.push("Just start using it.");
+      obj.Answers.push("I do not know.");
+      jsonObj = JSON.stringify(obj);
+      alert(jsonObj);
+
+
       //alert("New Arrow");
       // When the arrow button is pressed, create the widget.
       VIEWER1.Widget = new ArrowWidget(VIEWER1);
@@ -182,7 +180,8 @@ var VIEWER1;
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
     
-        var source1 = new Cache("http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=");
+        var imageRoot= "http://localhost:81/tile.php?image="+IMAGE_ID+"&name="; 
+        var source1 = new Cache(imageRoot);
         VIEWER1 = new Viewer([0,0, 900,700], source1);
 
         EVENT_MANAGER.AddViewer(VIEWER1);
@@ -242,7 +241,7 @@ var VIEWER1;
  
 <body> 
 	
-    <div class="container" >
+  <div class="container" >
     <div class="viewer" >
     <canvas id="viewer-canvas" style="border: none;" width="900" height="700"></canvas> 
     <br/> 
@@ -273,20 +272,7 @@ var VIEWER1;
 		var spacing = [226.17269405242,227.53127170139,0];
 	</script>
     </div>
-    <div class="form" >
-        <form method="post" action="encodequestion.php?label=<?php echo $label; ?>&add=1" >
-			Question:<br />
-			<textarea name="question" value="<?php echo $q['qtext'];?>" ></textarea><br /><br />
-			<?php
-			while($choice < $numchoices){
-                //
-				echo $choice+1;?>: <input type="text" name="answers[]" value="<?php if(isset($q['choices'])){echo $q['choices'][$choice];}?>" /><br />
-                <?php $choice = $choice + 1;
-            } ?>
-			<input type="submit" value="Add answer choice" />
-		</form>
-    </div>
-    </div>
+  </div>
 			
 </body> 
  

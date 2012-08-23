@@ -3,13 +3,6 @@
 <?php
 
 $id = $_GET['id'];
-
-$m = new Mongo();
-$d = $m.selectDB("demo");
-$c = $d->selectCollection("images");
-
-$img = $c->findOne(array('_id'=>new MongoId($id)));
-
 ?>
 
 <html> 

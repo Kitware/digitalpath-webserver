@@ -7,6 +7,8 @@ function Shape() {
     this.Origin = [10000,10000]; // Anchor in world coordinates.
     this.FixedSize = true;
     this.LineWidth = 0; // Line width has to be in same coordiantes as points.
+    this.Highlight = false;
+    this.HighlightColor = [1.0, 1.0, 0.0];
 };
 
 Shape.prototype.destructor=function() {
@@ -85,10 +87,17 @@ Shape.prototype.Draw = function (view) {
     this.Matrix[13] = y;
     GL.uniformMatrix4fv(program.mvMatrixUniform, false, this.Matrix);
 
+
     // Fill color
     if (this.FillColor != undefined) {
-	GL.uniform3f(program.colorUniform, this.FillColor[0], 
-		     this.FillColor[1], this.FillColor[2]);
+
+	if (this.Highlight) {
+	    GL.uniform3f(program.colorUniform, this.HighlightColor[0], 
+			 this.HighlightColor[1], this.HighlightColor[2]);
+	} else {
+	    GL.uniform3f(program.colorUniform, this.FillColor[0], 
+			 this.FillColor[1], this.FillColor[2]);
+	}
 	// Cell Connectivity
 	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
     
@@ -97,8 +106,13 @@ Shape.prototype.Draw = function (view) {
     }
     // Outline.
     if (this.OutlineColor != undefined) {
-	GL.uniform3f(program.colorUniform, this.OutlineColor[0], 
+	if (this.Highlight) {
+	    GL.uniform3f(program.colorUniform, this.HighlightColor[0], 
+			 this.HighlightColor[1], this.HighlightColor[2]);
+	} else {
+	    GL.uniform3f(program.colorUniform, this.OutlineColor[0], 
 		     this.OutlineColor[1], this.OutlineColor[2]);
+	}
 	if (this.LineWidth == 0) {
 	    GL.drawArrays(GL.LINE_STRIP, 0, this.VertexPositionBuffer.numItems);
 	} else {
@@ -170,6 +184,10 @@ Shape.prototype.HexDigitToInt = function (hex) {
     return 0.0;
 }
 
+Shape.prototype.HandleMouseMove = function(event, dx,dy) {
+    // superclass does nothing
+    return false;
+}
 
 //Shape.prototype.UpdateBuffers = function() {
     //    // The superclass does not implement this method.

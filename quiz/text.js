@@ -196,12 +196,13 @@ Text.prototype.UpdateBuffers = function() {
     var charLeft = 0;
     var charBottom = 0;
     var ptId = 0;
+    this.PixelBounds = [0,0,0,this.Size];
+
 
     for (var i = 0; i < this.String.length; ++i) {
 	var idx = this.String.charCodeAt(i);
 	if (idx == 10 || idx == 13) { // newline
 	    charLeft = 0;
-	    //charBottom += 20;
 	    charBottom -= this.Size;
 	} else {
 	    var port = ASCII_LOOKUP[idx];
@@ -214,6 +215,12 @@ Text.prototype.UpdateBuffers = function() {
 	    var charRight = charLeft + port[2]*this.Size / 98.0;
 	    var charTop = charBottom + port[3]*this.Size / 98.0;
 	    
+	    // Accumulate bounds;
+	    if (this.PixelBounds[0] > charBottom) {this.PixelBounds[0] = charBottom;}
+	    if (this.PixelBounds[1] < charTop)    {this.PixelBounds[1] = charTop;}
+	    if (this.PixelBounds[2] > charLeft) {this.PixelBounds[2] = charLeft;}
+	    if (this.PixelBounds[3] < charRight) {this.PixelBounds[3] = charRight;}
+
 	    // Make 4 points, We could share points.
 	    textureCoordData.push(tLeft);
 	    textureCoordData.push(tBottom);
@@ -270,4 +277,12 @@ Text.prototype.UpdateBuffers = function() {
     GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
     this.CellBuffer.itemSize = 1;
     this.CellBuffer.numItems = cellData.length;
+}
+
+Text.prototype.HandleMouseMove = function(event, dx,dy) {
+    // convert the position to screen pixel coordinates.
+    viewer = event.CurrentViewer;
+    var screenPixelPoint = viewer.WorldPointToScreenPixelPoint(this. ..................
+
+    return false;
 }

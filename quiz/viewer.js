@@ -205,6 +205,23 @@ Viewer.prototype.HandleMouseUp = function(event) {
 }
 
 Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
+    // Many shapes, widgets and interactors will need the mouse in world coodinates.
+    var x = event.MouseX;
+    var y = event.MouseY;
+    var viewport = this.GetViewport();
+    var cam = this.MainView.Camera;
+    x = x - viewport[0];
+    y = y - viewport[1];
+    // Compute world point from inverse overview camera.
+    x = x/viewport[2];
+    y = y/viewport[3];
+    x = (x*2.0 - 1.0)*cam.Matrix[15];
+    y = (y*2.0 - 1.0)*cam.Matrix[15];
+    var m = cam.Matrix;
+    var det = m[0]*m[5] - m[1]*m[4];
+    event.MouseWorldX = ((x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det);
+    event.MouseWorldY = ((y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det);
+    
     // Forward the events to the widget if one is active.
     if (this.Widget != null) {
 	this.Widget.HandleMouseMove(event);
@@ -212,8 +229,17 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
     }
    
     if ( ! event.MouseDown) {
+	// Give the shapes a chance to react to the mose over them.
+	// They will change color to indicate they can be selected or modified.
+	for (var i = 0; i < this.ShapeList.length; ++i) {
+	    if (this.ShapeList[i].HandleMouseMove(event, dx, dy)) {
+		// Only one shape can be active at a time.
+		return;
+	    }
+	}
 	return;
     }
+
     var x = event.MouseX;
     var y = event.MouseY;
     var shiftKeyPressed = event.ShiftKeyPressed;
