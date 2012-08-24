@@ -1,10 +1,15 @@
 
 
+body {
+    background-color: #BCD2EE;
+}
+
 .container {
     width:1210px;
     height:775px;
     margin-right:auto;
     margin-left:auto;
+    background-color:#ffffff;
 }
 
 .viewer {
@@ -19,11 +24,12 @@
     height:700px;
     overflow-y:scroll;
     float:right;
-    background-color:#00ff00;
+    background-color:#0198e1;
 }
 
 .header {
-    height:75px;
+    height:73px;
     width:100%;
-    background-color:#ffff00;
+    background-color:#0198e1;
+    border: 1px solid black;
 }

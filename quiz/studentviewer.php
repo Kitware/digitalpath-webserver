@@ -39,10 +39,6 @@
 $lessonid = $_GET['id'];
 $index = $_GET['index'];
 
-if(isset($_COOKIE[''+$lessonid+$index])){
-    $cookie = $_COOKIE[''+$lessonid+$index];
-}
-
 $m = new Mongo();
 $d = $m->selectDb("demo");
 $c1 = $d->selectCollection("questions");
@@ -180,8 +176,6 @@ var LESSON;
 var QUESTION;
 var IMAGE;
 
-var cookie;
-
     function initViews() {
         //VIEWER = new Viewer(CANVAS,
         //                    [0,0,GL.viewportWidth, GL.viewportHeight],
@@ -245,6 +239,8 @@ var cookie;
                         circle.FixedSize = false;
                         circle.UpdateBuffers();
                         VIEWER1.AddShape(circle);
+                        break;
+                    case "freeform":
                         break;
                 }
             }
@@ -335,10 +331,14 @@ var cookie;
     
     function saveAnswer(){
         var loc = findChecked();
-        $.ajax({url:"saveanswer.php?lid="+LESSON._id.$id+"&index=<?php echo $index;?>&checked="+loc, success:function(){
-            var success='<span style="color:#0000ff;">Saved!</span><br />';
-            $('#form').append(success);
-        }});
+        var index = <?php echo $index; ?>;
+        var msg='<span style="color:#';
+        if(loc == QUESTION.correct){
+            msg += '00ff00" >Correct!</span><br />';
+        } else {
+            msg += 'ff0000" >Incorrect!</span><br />';
+        }
+        $('#form').append(msg);
     }
     
     $(document).ready(function() {
@@ -348,11 +348,11 @@ var cookie;
         var index = <?php echo $index; ?>;
         
         if(index > 0){
-            $('#prev').append('<a href="studentviewer.php?id='+LESSON._id.$id+'$index='+(index-1)+'">Previous Question</a>');
+            $('#prev').append('<a href="studentviewer.php?id='+LESSON._id.$id+'&index='+(index-1)+'">Previous Question</a>');
         }
         
         if(index < LESSON.questions.length-1){
-            $('#next').append('<a href="studentviewer.php?id='+LESSON._id.$id+'$index='+(index+1)+'">Next Question</a>');
+            $('#next').append('<a href="studentviewer.php?id='+LESSON._id.$id+'&index='+(index+1)+'">Next Question</a>');
         }
         
         liststring = liststring +
@@ -364,22 +364,13 @@ var cookie;
             liststring = liststring+'<input type="radio" name="choices" id="choice'+i+'" value="'+QUESTION.choices[i]+'" />'+QUESTION.choices[i]+'<br />';
         }
         
-        liststring = liststring+'<button id="saveanswer" >Save Question</button>';
+        liststring = liststring+'<button id="saveanswer" >Submit Answer</button>';
         
         $("#form").append(liststring);
         
         $('#saveanswer').click(function(){
             saveAnswer();
         });
-        
-        if(<?php echo json_encode(isset($cookie));?>){
-            cookie = <?php echo json_encode($cookie);?>;
-            alert(cookie);
-        }
-        
-        if(cookie && cookie != -1){
-            $('#choice'+cookie).attr('checked', 'checked');
-        }
         
     });
  

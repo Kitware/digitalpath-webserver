@@ -227,6 +227,21 @@ var VIEWER1;
                         circle.UpdateBuffers();
                         VIEWER1.AddShape(circle);
                         break;
+                    case "freeform":
+                        var ff = new FreeForm();
+                        ff.FixedSize = false;
+                        ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+                        ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+                        ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+                        ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+                        ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+                        ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
+                        for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
+                            ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
+                            ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
+                        }
+                        VIEWER1.AddShape(ff);
+                        break;
                 }
             }
         }
@@ -286,6 +301,20 @@ var VIEWER1;
     }
 
     function NewText() {
+        //var text = prompt("Annotation text:");
+        
+        //$("#dialog").dialog('destroy');
+        /*$(function() {
+            $("#dialog").dialog();
+            $("#dialog").attr("title", "Annotation text:")
+            .html("<p><textarea name=\"TextMessage\" rows=\"10\" cols=\"72\" /><br /><input type=\"submit\" value=\"Submit\" /></p>");
+            
+            $("#dialog").dialog({
+                height: 420,
+                width: 650,
+                modal: true
+            });
+        });*/
       // When the text button is pressed, create the widget.
       VIEWER1.Widget = new TextWidget(VIEWER1);
     }
@@ -412,7 +441,8 @@ var VIEWER1;
     </div>
     </div>
     
-    
+    <div id="dialog" >
+    </div>
     
 </body> 
  
