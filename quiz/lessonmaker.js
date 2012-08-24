@@ -47,6 +47,7 @@ function saveLesson () {
 function deleteQuestion(id) {
     $.ajax({url:"removequestion.php?id="+id+"&lid="+LESSONID, success:function(){
         saveLesson();
+        window.location.reload(true);
     }});
 }
 
