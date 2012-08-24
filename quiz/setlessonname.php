@@ -9,6 +9,6 @@ $m = new Mongo();
 $d = $m->selectDb("demo");
 $c = $d->selectCollection("lessons");
 
-$c->update(array('_id'=>new MongoId($lessonid)), array('name'=>$name), true);
+$c->update(array('_id'=>new MongoId($lessonid)), array('$set'=>array('name'=>$name)), true);
 
 ?>

@@ -100,6 +100,9 @@ will be passed to other webpages, including lessonmaker.php.
         
     </script>
     <style type="text/css" >
+        body {
+            background-color: #BCD2EE;
+        }
         #container {
             width: 1220px;
             height: 700px;
@@ -107,14 +110,14 @@ will be passed to other webpages, including lessonmaker.php.
             overflow-x: hidden;
             margin-left: auto;
             margin-right: auto;
-            background-color: #0000ff;
+            background-color:#0198e1;
         }
         .lessonindicator {
             width: 220px;
             height: 50px;
             margin: 10px;
             float: left;
-            background-color:#ffff00;
+            background-color: #00eeee;
             word-wrap:break-word;
         }
         button {

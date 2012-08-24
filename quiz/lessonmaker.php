@@ -206,7 +206,7 @@ Collection 'questions':
                             <img src="http://localhost:81/tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
                         </a>
                         <button type="button" class="add" onclick="addquestion('<?php echo $i['_id'];?>');" >Add</button>
-                        <?php echo substr($i['_id'], 0, 10);?>
+                        <?php echo substr($i['name'], 0, 10);?>
 					</div>
 					<?php
 				}

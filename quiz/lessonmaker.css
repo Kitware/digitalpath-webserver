@@ -1,11 +1,15 @@
 
 
+body {
+    background-color: #BCD2EE;
+}
+
 .container {
 	margin-right: auto;
 	margin-left: auto;
 	width: 1130px;
 	height: 650px;
-	background-color: #0000ff;
+	background-color:#0198e1;
 }
 
 table {
@@ -23,7 +27,7 @@ li {
 	height: 100px;
 	width: 250px;
 	margin: 10px;
-	background-color:#00ff00;
+	background-color: #00eeee;
     overflow-x:hidden;
 }
 
@@ -53,7 +57,7 @@ ul {
 	height: 100px;
 	margin: 10px;
 	float:left;
-	background-color: #ff0000;
+	background-color: #00eeee;
     overflow-x:hidden;
 }
 
