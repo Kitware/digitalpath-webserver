@@ -42,6 +42,7 @@ function init(lessonId){
 function saveLesson () {
     var result = $('#sortable').sortable('toArray');
     $.post("assignindex.php", {qlist:result, lid:LESSONID});
+    window.location.reload(true);
 }
 
 function deleteQuestion(id) {

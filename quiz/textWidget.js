@@ -33,21 +33,6 @@ TextWidget.prototype.Serialize = function() {
 }
 
 TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
-    if (this.State != TEXT_WIDGET_TYPING) {
-	return;
-    }
-    if ((keyCode >= 20 && keyCode <= 125) || keyCode == 13) {
-	// All key code seem to be capitals.  Compensate with shift modifier.
-	if (keyCode >= 65 && keyCode <= 90 && ! shift) {
-	    keyCode += 32;
-	}
-	var c = String.fromCharCode(keyCode);
-	// I am hacking in a cursor with the I character.
-	// The last character is always I.
-	this.Text.String = this.Text.String.substr(0,this.CursorLocation++) + c + "I";
-	this.Text.UpdateBuffers();
-	eventuallyRender();
-    }
 }
 
 TextWidget.prototype.HandleMouseDown = function(x, y) {
