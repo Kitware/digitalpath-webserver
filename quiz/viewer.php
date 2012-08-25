@@ -13,8 +13,11 @@
 <link rel="stylesheet" type="text/css" href="viewer.css" />
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
- 
-<script src="js/js/jquery-1.7.2.min.js"></script>
+
+<link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
+
 <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script> 
 <script type="text/javascript" src="webgl-utils.js"></script> 
 <script type="text/javascript" src="init.js"></script> 
@@ -301,24 +304,16 @@ var VIEWER1;
     }
 
     function NewText() {
-        //var text = prompt("Annotation text:");
-        
-        //$("#dialog").dialog('destroy');
-        /*$(function() {
-            $("#dialog").dialog();
-            $("#dialog").attr("title", "Annotation text:")
-            .html("<p><textarea name=\"TextMessage\" rows=\"10\" cols=\"72\" /><br /><input type=\"submit\" value=\"Submit\" /></p>");
-            
-            $("#dialog").dialog({
-                height: 420,
-                width: 650,
-                modal: true
-            });
-        });*/
-      // When the text button is pressed, create the widget.
-      VIEWER1.Widget = new TextWidget(VIEWER1);
+        $("#dialog-form").dialog("open");
     }
-
+    
+    function NewTextCallBack() {
+      VIEWER1.Widget = new TextWidget(VIEWER1);
+      VIEWER1.Widget.Text.String = document.getElementById("textwidgetcontent").value;
+	  VIEWER1.Widget.Text.UpdateBuffers();
+	  eventuallyRender();
+    }
+    
     function NewFreeForm() {
       // When the text button is pressed, create the widget.
       VIEWER1.Widget = new FreeFormWidget(VIEWER1);
@@ -399,6 +394,25 @@ var VIEWER1;
             var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
             $('#choicelist').append(liststring);
         }
+        
+        $("#dialog-form").dialog({
+            autoOpen:false,
+            height:200,
+            width:350,
+            modal:true,
+            buttons:{
+                OK: function() {
+                    NewTextCallBack();
+                    $(this).dialog("close");
+                }
+            },
+            
+            close: function() {
+				$("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+			}
+            
+        });
+        
     });
  
 </script> 
@@ -441,7 +455,12 @@ var VIEWER1;
     </div>
     </div>
     
-    <div id="dialog" >
+    <div id="dialog-form" title="Create new user" >
+        <form>
+            <fieldset>
+                <textarea id="textwidgetcontent" rows="2" cols="20" ></textarea>
+            </fieldset>
+        </form>
     </div>
     
 </body> 

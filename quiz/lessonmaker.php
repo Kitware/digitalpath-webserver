@@ -118,77 +118,7 @@ Collection 'questions':
             #sortable {list-style-type: none; margin: 10; padding:0}
         </style>
         <script type="text/javascript" src="lessonmaker.js"></script>
-        <!--<script type="text/javascript">
-
-        function saveLesson () {
-            var result = $('#sortable').sortable('toArray');
-            for(var i=0; i<result.length; i++){
-                $.ajax({url:"assignindex.php?index="+i+"&qid="+result[i]});
-            }
-        }
-        
-        function deleteQuestion(id) {
-            alert("button clicked");
-            $('li#'+id).remove();
-            $.ajax({url:"removequestion.php?id="+id});
-            saveLesson();
-        }
-        
-        $(document).ready(function() {
-            $(function() {
-                $("#sortable").sortable();
-                $("#sortable").disableSelection();
-            });
-            $(function() {
-                $('ul#sortable').sortable({
-                //start: function(event, ui) {
-                //    saveLesson();
-                //}
-                update: function(event, ui) {
-                    saveLesson();
-                }
-                });
-            });
-            
-            $(".qelement").click(function() {
-                var imageid = $(this).attr('id');
-                var newindex = $('li').last().index()+1;
-                //qid is a new, unique question id
-                $.ajax({url:"addquestion.php?image="+imageid+"&index="+newindex, success:function(qid){
-                    var liststring =
-                        '<li class="ui-state-default" id="'+qid+'">'+
-                            '<a href="viewer.php?id='+qid+'" >'+
-                                '<img src="http://localhost:81/tile.php?image='+imageid+'&name=t.jpg" />'+
-                            '</a>'+
-                            '<button type="button" class="del" onclick="deleteQuestion(\''+qid+'\');" >X</button>'+
-                            'Slide'+
-                        '</li>';
-                    $('ul').append(liststring);
-                    saveLesson();
-                }});
-            });
-            
-            // Populate the lesson questions.
-            $.ajax({url:"getquestions.php", success:function(qidList){
-                var obj = jQuery.parseJSON(qidList);
-                for (var i = 0; i < obj.length; ++i) {
-                    var qid = obj[i].qid.$id;
-                    var imageId = obj[i].imageid;
-                    var liststring =
-                        '<li class="ui-state-default" id="'+qid+'">'+
-                            '<a href="viewer.php?id='+qid+'" >'+
-                                '<img src="http://localhost:81/tile.php?image='+imageId+'&name=t.jpg" />'+
-                            '</a>'+
-                            '<button type="button" class="del" onclick="deleteQuestion(\''+qid+'\');" >X</button>'+
-                            'Slide'+
-                        '</li>';
-                    $('ul').append(liststring);
-                }
-            }});
-            
-        });
-        </script>-->
-	</head>
+    </head>
 	
 	<body onload='init(<?php echo json_encode($lessonid);?>);'>
 		<div class="container">
