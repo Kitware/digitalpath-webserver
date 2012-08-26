@@ -6,7 +6,7 @@ body {
 
 .container {
     width:1210px;
-    height:775px;
+    height:700px;
     margin-right:auto;
     margin-left:auto;
     background-color:#ffffff;
@@ -17,6 +17,8 @@ body {
     height:100%;
     overflow:hidden;
     float:left;
+    z-index:20;
+    position:relative;
 }
 
 .form {
@@ -25,4 +27,20 @@ body {
     overflow-y:scroll;
     float:right;
     background-color:#0198e1;
+}
+
+#annotbuttons {
+    z-index:10;
+    height:45px;
+    top: 630px;
+    left: 10px;
+    position:absolute;
+}
+
+#zoombuttons {
+    z-index:10;
+    height:45px;
+    top: 630px;
+    left: 650px;
+    position:absolute;
 }

@@ -414,6 +414,26 @@ var VIEWER1;
         //window.location = "lessonmaker.php";
     }
     
+    function zoomIn() {
+        if (VIEWER1.ZoomTarget > 0.9 / (1 << 5)) {
+            VIEWER1.ZoomTarget *= 0.5;
+	    VIEWER1.TranslateTarget[0] = VIEWER1.MainView.Camera.FocalPoint[0];
+	    VIEWER1.TranslateTarget[1] = VIEWER1.MainView.Camera.FocalPoint[1];
+            VIEWER1.AnimateLast = new Date().getTime();
+            VIEWER1.AnimateDuration = 200.0;
+            eventuallyRender();
+        }
+    }
+    
+    function zoomOut() {
+        VIEWER1.ZoomTarget *= 2;
+	VIEWER1.TranslateTarget[0] = VIEWER1.MainView.Camera.FocalPoint[0];
+	VIEWER1.TranslateTarget[1] = VIEWER1.MainView.Camera.FocalPoint[1];
+        VIEWER1.AnimateLast = new Date().getTime();
+        VIEWER1.AnimateDuration = 200.0;
+        eventuallyRender();
+    }
+    
     $(document).ready(function() {
         if (QUESTION.choices) {
             document.getElementById("qtext").innerHTML = QUESTION.qtext;
@@ -469,7 +489,7 @@ var VIEWER1;
     <div class="container" >
     <div class="viewer" >
         <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
-        <table border="1">
+        <table border="1" id="annotbuttons">
             <tr>
                 <td>
                     <img src="Arrow.gif" id="arrow" type="button" onclick="NewArrow();" />
@@ -483,6 +503,14 @@ var VIEWER1;
                 <td>
                     <img src="Text.gif" id="text" type="button" onclick="NewText();" />
                 </td>
+            </tr>
+        </table>
+        <table border="1" id="zoombuttons" >
+            <tr>
+                <td type="button" onclick="zoomIn();" style="width:20px;height:20px;background-color:white;text-align:center;" >+</td>
+            </tr>
+            <tr>
+                <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
             </tr>
         </table>
     </div>
