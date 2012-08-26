@@ -303,25 +303,61 @@ var VIEWER1;
       VIEWER1.Widget = new CircleWidget(VIEWER1);
     }
 
-    function NewText() {
-        $("#dialog-form").dialog("open");
-    }
-    
-    function NewTextCallBack() {
-      VIEWER1.Widget = new TextWidget(VIEWER1);
-      VIEWER1.Widget.Text.String = document.getElementById("textwidgetcontent").value;
-	  VIEWER1.Widget.Text.UpdateBuffers();
-	  eventuallyRender();
-    }
-    
     function NewFreeForm() {
       // When the text button is pressed, create the widget.
       VIEWER1.Widget = new FreeFormWidget(VIEWER1);
     }
     
+    function NewText() {
+      // For debugging
+      //var t = new Text();
+      //t.Position = [6000,6000];
+      //t.Color = [0,0,0];
+      //t.String = "Hello\nWorld";
+      //t.UpdateBuffers();
+      //VIEWER1.AddShape(t);
+      // Just open the dialog, and let it take over.
+      // The text is created when the apply button is pressed.
+      $("#text-properties-dialog").dialog("open");
+    }
+        
+    function TextPropertyDialogApply() {
+      var string = document.getElementById("textwidgetcontent").value;
+      var widget = VIEWER1.ActiveWidget;
+      if (widget == null) {
+        // This is a new widget.
+        var widget = new TextWidget(VIEWER1, string);
+        VIEWER1.WidgetList.push(widget);
+      } else {
+        widget.Text.String = string;
+        widget.Text.UpdateBuffers();
+        widget.SetActive(false);
+      }
+      eventuallyRender();
+      if (widget.AnnotationCallback != undefined) {
+        // DEBUG: Do not save annotations (I have no easy way of deleting).
+        //VIEWER1.Widget..AnnotationCallback(this.Widget);
+        // I am going to have to save the modified states (modified by widget) someplace else.
+        // Maybe keep a modified flag.
+      }
+    }
+  
+    function TextPropertyDialogCancel() {
+      var widget = VIEWER1.ActiveWidget;
+      if (widget != null) {
+        widget.SetActive(false);
+      }
+    }
     
-    
-    
+    function TextPropertyDialogDelete() {
+      var widget = VIEWER1.ActiveWidget;
+      if (widget != null) {
+        VIEWER1.ActiveWidget = null;
+        // We need to remove an item from a list.  I do not know the syntax.
+        // shape list and widget list.
+      }
+    }    
+
     
     //********************************************************
     
@@ -395,14 +431,22 @@ var VIEWER1;
             $('#choicelist').append(liststring);
         }
         
-        $("#dialog-form").dialog({
+        $("#text-properties-dialog").dialog({
             autoOpen:false,
             height:200,
             width:350,
             modal:true,
             buttons:{
-                OK: function() {
-                    NewTextCallBack();
+                Cancel: function() {
+                    TextPropertyDialogCancel();
+                    $(this).dialog("close");
+                },
+                Delete: function() {
+                    TextPropertyDialogDelete();
+                    $(this).dialog("close");
+                },
+                Apply: function() {
+                    TextPropertyDialogApply();
                     $(this).dialog("close");
                 }
             },
@@ -455,7 +499,7 @@ var VIEWER1;
     </div>
     </div>
     
-    <div id="dialog-form" title="Create new user" >
+    <div id="text-properties-dialog" title="Create new user" >
         <form>
             <fieldset>
                 <textarea id="textwidgetcontent" rows="2" cols="20" ></textarea>

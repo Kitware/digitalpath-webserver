@@ -14,53 +14,53 @@ Circle.prototype.destructor=function() {
 }
 
 Circle.prototype.UpdateBuffers = function() {
-    var vertexPositionData = [];
-    var cellData = [];
-    var lineCellData = [];
-    var numEdges = Math.floor(this.Radius/2)+10;
-    // NOTE: numEdges logic will not work in world coordinates.
-    // Limit numEdges to 180 to mitigate this issue.
-    if (numEdges > 50 || ! this.FixedSize ) {
-	numEdges = 50;
+  var vertexPositionData = [];
+  var cellData = [];
+  var lineCellData = [];
+  var numEdges = Math.floor(this.Radius/2)+10;
+  // NOTE: numEdges logic will not work in world coordinates.
+  // Limit numEdges to 180 to mitigate this issue.
+  if (numEdges > 50 || ! this.FixedSize ) {
+    numEdges = 50;
+  }
+
+  this.Matrix = mat4.create();
+  mat4.identity(this.Matrix);
+
+  if (this.LineWidth == 0) {
+    for (var i = 0; i <= numEdges; ++i) {
+      var theta = i*2*3.14159265359/numEdges;
+      vertexPositionData.push(this.Radius*Math.cos(theta));
+      vertexPositionData.push(this.Radius*Math.sin(theta));
+      vertexPositionData.push(0.0);
+    }
+	
+    // Now create the triangles    
+    // It would be nice to have a center point, 
+    // but this would mess up the outline.
+    for (var i = 2; i < numEdges; ++i) {
+      cellData.push(0);
+      cellData.push(i-1);
+      cellData.push(i);
     }
 
-    this.Matrix = mat4.create();
-    mat4.identity(this.Matrix);
-
-    if (this.LineWidth == 0) {
-	for (var i = 0; i <= numEdges; ++i) {
-	    var theta = i*2*3.14159265359/numEdges;
-	    vertexPositionData.push(this.Radius*Math.cos(theta));
-	    vertexPositionData.push(this.Radius*Math.sin(theta));
-	    vertexPositionData.push(0.0);
-	}
-	
-	// Now create the triangles    
-	// It would be nice to have a center point, 
-	// but this would mess up the outline.
-	for (var i = 2; i < numEdges; ++i) {
-	    cellData.push(0);
-	    cellData.push(i-1);
-	    cellData.push(i);
-	}
-
-	this.VertexPositionBuffer = GL.createBuffer();
-	GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
-	GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
-	this.VertexPositionBuffer.itemSize = 3;
-	this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
-	
-	this.CellBuffer = GL.createBuffer();
-	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
-	GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
-	this.CellBuffer.itemSize = 1;
-	this.CellBuffer.numItems = cellData.length;
-    } else {
-	//var minRad = this.Radius - (this.LineWidth/2.0);
-	//var maxRad = this.Radius + (this.LineWidth/2.0);
-	var minRad = this.Radius;
-	var maxRad = this.Radius + this.LineWidth;
-	for (var i = 0; i <= numEdges; ++i) {
+    this.VertexPositionBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
+    GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
+    this.VertexPositionBuffer.itemSize = 3;
+    this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
+    
+    this.CellBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
+    GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
+    this.CellBuffer.itemSize = 1;
+    this.CellBuffer.numItems = cellData.length;
+  } else {
+    //var minRad = this.Radius - (this.LineWidth/2.0);
+    //var maxRad = this.Radius + (this.LineWidth/2.0);
+    var minRad = this.Radius;
+    var maxRad = this.Radius + this.LineWidth;
+    for (var i = 0; i <= numEdges; ++i) {
 	    var theta = i*2*3.14159265359/numEdges;
 	    vertexPositionData.push(minRad*Math.cos(theta));
 	    vertexPositionData.push(minRad*Math.sin(theta));
@@ -68,73 +68,72 @@ Circle.prototype.UpdateBuffers = function() {
 	    vertexPositionData.push(maxRad*Math.cos(theta));
 	    vertexPositionData.push(maxRad*Math.sin(theta));
 	    vertexPositionData.push(0.0);
-	}
-	this.VertexPositionBuffer = GL.createBuffer();
-	GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
-	GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
-	this.VertexPositionBuffer.itemSize = 3;
-	this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
+    }
+    this.VertexPositionBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
+    GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
+    this.VertexPositionBuffer.itemSize = 3;
+    this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
 
-	// Now create the fill triangles    
-	// It would be nice to have a center point, 
-	// but this would mess up the outline.
-	for (var i = 2; i < numEdges; ++i) {
+    // Now create the fill triangles    
+    // It would be nice to have a center point, 
+    // but this would mess up the outline.
+    for (var i = 2; i < numEdges; ++i) {
 	    cellData.push(0);
 	    cellData.push((i-1)*2);
 	    cellData.push(i*2);
-	}
-	this.CellBuffer = GL.createBuffer();
-	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
-	GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
-	this.CellBuffer.itemSize = 1;
-	this.CellBuffer.numItems = cellData.length;
+    }
+    this.CellBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
+    GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
+    this.CellBuffer.itemSize = 1;
+    this.CellBuffer.numItems = cellData.length;
 
-	// Now the thick line
-	for (var i = 0; i < numEdges; ++i) {
+    // Now the thick line
+    for (var i = 0; i < numEdges; ++i) {
 	    lineCellData.push(0 + i*2);
 	    lineCellData.push(1 + i*2);
 	    lineCellData.push(2 + i*2);
 	    lineCellData.push(1 + i*2);
 	    lineCellData.push(3 + i*2);
 	    lineCellData.push(2 + i*2);
-	}
-	this.LineCellBuffer = GL.createBuffer();
-	GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.LineCellBuffer);
-	GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(lineCellData), GL.STATIC_DRAW);
-	this.LineCellBuffer.itemSize = 1;
-	this.LineCellBuffer.numItems = lineCellData.length;
     }
-
+    this.LineCellBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.LineCellBuffer);
+    GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(lineCellData), GL.STATIC_DRAW);
+    this.LineCellBuffer.itemSize = 1;
+    this.LineCellBuffer.numItems = lineCellData.length;
+  }
 }
 
 Circle.prototype.HandleMouseMove = function(event, dx, dy) {
-    var x = event.MouseX;
-    var y = event.MouseY;
-    // change dx and dy to vector from center of circle.
-    if (this.FixedSize) {
-	dx = event.MouseX - this.Origin[0];
-	dy = event.MouseY - this.Origin[1];
-    } else {
-	dx = event.MouseWorldX - this.Origin[0];
-	dy = event.MouseWorldY - this.Origin[1];
-    }
+  var x = event.MouseX;
+  var y = event.MouseY;
+  // change dx and dy to vector from center of circle.
+  if (this.FixedSize) {
+    dx = event.MouseX - this.Origin[0];
+    dy = event.MouseY - this.Origin[1];
+  } else {
+    dx = event.MouseWorldX - this.Origin[0];
+    dy = event.MouseWorldY - this.Origin[1];
+  }
 
-    var d = Math.sqrt(dx*dx + dy*dy)/this.Radius;
-    var highlight = false;
-    var lineWidth = this.LineWidth / this.Radius;
-    
-    if (this.FillColor == undefined) { // Circle 
-	if ((d < (1.05+lineWidth) && d > 0.95)  || d < (0.02+lineWidth)) {
-	    highlight = true;
-	}
-    } else { // Disk
-	if (d < (1.05+lineWidth) && d > (0.1+lineWidth) || d < lineWidth) {
-	    highlight = true;
-	}
+  var d = Math.sqrt(dx*dx + dy*dy)/this.Radius;
+  var highlight = false;
+  var lineWidth = this.LineWidth / this.Radius;
+  
+  if (this.FillColor == undefined) { // Circle 
+    if ((d < (1.05+lineWidth) && d > 0.95)  || d < (0.02+lineWidth)) {
+      highlight = true;
     }
-    if ((highlight && ! this.Highlight) || ( ! highlight && this.Highlight)) {
-	this.Highlight = highlight;
-	eventuallyRender();
+  } else { // Disk
+    if (d < (1.05+lineWidth) && d > (0.1+lineWidth) || d < lineWidth) {
+	    highlight = true;
     }
-    return this.Highlight;
+  }
+  if ((highlight && ! this.Highlight) || ( ! highlight && this.Highlight)) {
+    this.Highlight = highlight;
+    eventuallyRender();
+  }
+  return this.Highlight;
 }

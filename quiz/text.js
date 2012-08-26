@@ -67,119 +67,129 @@ var ASCII_LOOKUP =
 //var TEXT_IMAGE;
 
 function GetTextureLoadedFunction (text) {
-    return function () {text.HandleLoadedTexture();}
+  return function () {text.HandleLoadedTexture();}
 }
 
 function Text() {
-    // All text objects sare the same texture map.
-    //if (TEXT_TEXTURE == undefined ) {
-    //}
-    this.Texture = GL.createTexture();
-    this.Image = new Image();
-    this.Image.onload = GetTextureLoadedFunction(this); 
-    // This starts the loading.
-    this.Image.src = "letters.gif";
+  // All text objects sare the same texture map.
+  //if (TEXT_TEXTURE == undefined ) {
+  //}
+  this.Texture = GL.createTexture();
+  this.Image = new Image();
+  this.Image.onload = GetTextureLoadedFunction(this); 
+  // This starts the loading.
+  this.Image.src = "letters.gif";
 
-    this.Color = [0.5, 1.0, 1.0];
-    this.Size = 30; // Height in pixels
-    // In pixel(text) coordinate system
-    this.Anchor = [0,0];
-    // Position of the anchor in the world coordinate system.
-    this.Position = [100,100];
+  this.Color = [0.5, 1.0, 1.0];
+  this.Size = 30; // Height in pixels
+  // The anchor point and position are the same point.
+  // Position is in world coordinates.
+  // Anchor is in pixel coordinates of text (buffers).  
+  // In pixel(text) coordinate system
+  this.Anchor = [0,0];
+  // Position of the anchor in the world coordinate system.
+  this.Position = [100,100];
 
-    //this.String = "Hello World";
-    //this.String = "0123456789";
-    this.String = ",./<>?[]\{}|`-=~!@#$%^&*()_+";
+  this.Active = false;
+  
+  //this.String = "Hello World";
+  //this.String = "0123456789";
+  this.String = ",./<>?[]\{}|-=~!@#$%^&*()_+";
+
+  this.PixelBounds = [0,0,0,0];
 };
 
 Text.prototype.destructor=function() {
-    // Get rid of the buffers?
+  // Get rid of the buffers?
 }
 
 Text.prototype.HandleLoadedTexture = function() {
-    //var texture = TEXT_TEXTURE;
-    var texture = this.Texture;
-    GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
-    GL.bindTexture(GL.TEXTURE_2D, texture);
-    GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.Image);
-    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
-    GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR_MIPMAP_NEAREST);
-    GL.generateMipmap(GL.TEXTURE_2D); 
-    GL.bindTexture(GL.TEXTURE_2D, null);
+  //var texture = TEXT_TEXTURE;
+  var texture = this.Texture;
+  GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
+  GL.bindTexture(GL.TEXTURE_2D, texture);
+  GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.Image);
+  GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
+  GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR_MIPMAP_NEAREST);
+  GL.generateMipmap(GL.TEXTURE_2D); 
+  GL.bindTexture(GL.TEXTURE_2D, null);
 }
 
 Text.prototype.Draw = function (view) {
-    if (this.Matrix == undefined) {
-	this.UpdateBuffers();
-	this.Matrix = mat4.create();
-	mat4.identity(this.Matrix);
-    }
+  if (this.Matrix == undefined) {
+    this.UpdateBuffers();
+    this.Matrix = mat4.create();
+    mat4.identity(this.Matrix);
+  }
 
-    var program = textProgram;
+  var program = textProgram;
 
-    GL.useProgram(program);
+  GL.useProgram(program);
 
-    //ZERO,ONE,SRC_COLOR,ONE_MINUS_SRC_COLOR,ONE_MINUS_DST_COLOR,
-    //SRC_ALPHA,ONE_MINUS_SRC_ALPHA,
-    //DST_ALPHA,ONE_MINUS_DST_ALHPA,GL_SRC_ALPHA_SATURATE
-    //GL.blendFunc(GL.SRC_ALPHA, GL.ONE);
-    GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-    GL.enable(GL.BLEND);
-    //GL.disable(GL.DEPTH_TEST);
+  //ZERO,ONE,SRC_COLOR,ONE_MINUS_SRC_COLOR,ONE_MINUS_DST_COLOR,
+  //SRC_ALPHA,ONE_MINUS_SRC_ALPHA,
+  //DST_ALPHA,ONE_MINUS_DST_ALHPA,GL_SRC_ALPHA_SATURATE
+  //GL.blendFunc(GL.SRC_ALPHA, GL.ONE);
+  GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+  GL.enable(GL.BLEND);
+  //GL.disable(GL.DEPTH_TEST);
 
-    // These are the same for every tile.
-    // Vertex points (shifted by tiles matrix)
-    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
-    // Needed for outline ??? For some reason, DrawOutline did not work
-    // without this call first.
-    GL.vertexAttribPointer(program.vertexPositionAttribute, 
-                           this.VertexPositionBuffer.itemSize, 
-                           GL.FLOAT, false, 0, 0);     // Texture coordinates
-    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexTextureCoordBuffer);
-    GL.vertexAttribPointer(program.textureCoordAttribute, 
-                           this.VertexTextureCoordBuffer.itemSize, 
-                           GL.FLOAT, false, 0, 0);
-    // Cell Connectivity
-    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
-    
-    // Color of text
+  // These are the same for every tile.
+  // Vertex points (shifted by tiles matrix)
+  GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
+  // Needed for outline ??? For some reason, DrawOutline did not work
+  // without this call first.
+  GL.vertexAttribPointer(program.vertexPositionAttribute, 
+                         this.VertexPositionBuffer.itemSize, 
+                         GL.FLOAT, false, 0, 0);     // Texture coordinates
+  GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexTextureCoordBuffer);
+  GL.vertexAttribPointer(program.textureCoordAttribute, 
+                         this.VertexTextureCoordBuffer.itemSize, 
+                         GL.FLOAT, false, 0, 0);
+  // Cell Connectivity
+  GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
+  
+  // Color of text
+  if (this.Active) {
+    GL.uniform3f(program.colorUniform, 1.0, 1.0, 0.0);
+  } else {
     GL.uniform3f(program.colorUniform, this.Color[0], this.Color[1], this.Color[2]);
+  }
+  // Draw characters.
+  GL.viewport(view.Viewport[0], view.Viewport[1], 
+              view.Viewport[2], view.Viewport[3]);
 
-    // Draw characters.
-    GL.viewport(view.Viewport[0], view.Viewport[1], 
-                view.Viewport[2], view.Viewport[3]);
+  var viewFrontZ = view.Camera.ZRange[0]+0.01; 
 
-    var viewFrontZ = view.Camera.ZRange[0]+0.01; 
+  // Lets use the camera to change coordinate system to pixels.
+  // TODO: Put this camera in the view or viewer to avoid creating one each render.
+  var camMatrix = mat4.create();
+  mat4.identity(camMatrix);
+  camMatrix[0] = 2.0 / view.Viewport[2];
+  camMatrix[12] = -1.0;
+  camMatrix[5] = 2.0 / view.Viewport[3];
+  camMatrix[13] = -1.0;
+  camMatrix[14] = viewFrontZ; // In front of everything (no depth buffer anyway).
+  GL.uniformMatrix4fv(program.pMatrixUniform, false, camMatrix);
 
-    // Lets use the camera to change coordinate system to pixels.
-    // TODO: Put this camera in the view or viewer to avoid creating one each render.
-    var camMatrix = mat4.create();
-    mat4.identity(camMatrix);
-    camMatrix[0] = 2.0 / view.Viewport[2];
-    camMatrix[12] = -1.0;
-    camMatrix[5] = 2.0 / view.Viewport[3];
-    camMatrix[13] = -1.0;
-    camMatrix[14] = viewFrontZ; // In front of everything (no depth buffer anyway).
-    GL.uniformMatrix4fv(program.pMatrixUniform, false, camMatrix);
+  // Place the anchor of the text.
+  // First transform the world anchor to view.
+  var m = view.Camera.Matrix;
+  var x = (this.Position[0]*m[0] + this.Position[1]*m[4] + m[12])/m[15];
+  var y = (this.Position[0]*m[1] + this.Position[1]*m[5] + m[13])/m[15];
+  // convert view to pixels (view coordinate ssytem).
+  x = view.Viewport[2]*(0.5*(x+1.0));
+  y = view.Viewport[3]*(0.5*(y+1.0));
+  // Translate the anchor to x,y
+  this.Matrix[12] = x - this.Anchor[0];
+  this.Matrix[13] = y - this.Anchor[1];
+  GL.uniformMatrix4fv(program.mvMatrixUniform, false, this.Matrix);
 
-    // Place the anchor of the text.
-    // First transform the world anchor to view.
-    var m = view.Camera.Matrix;
-    var x = (this.Position[0]*m[0] + this.Position[1]*m[4] + m[12])/m[15];
-    var y = (this.Position[0]*m[1] + this.Position[1]*m[5] + m[13])/m[15];
-    // convert view to pixels (view coordinate ssytem).
-    x = view.Viewport[2]*(0.5*(x+1.0));
-    y = view.Viewport[3]*(0.5*(y+1.0));
-    // Translate the anchor to x,y
-    this.Matrix[12] = x - this.Anchor[0];
-    this.Matrix[13] = y - this.Anchor[1];
-    GL.uniformMatrix4fv(program.mvMatrixUniform, false, this.Matrix);
+  GL.activeTexture(GL.TEXTURE0);
+  GL.bindTexture(GL.TEXTURE_2D, this.Texture);
+  GL.uniform1i(program.samplerUniform, 0);
 
-    GL.activeTexture(GL.TEXTURE0);
-    GL.bindTexture(GL.TEXTURE_2D, this.Texture);
-    GL.uniform1i(program.samplerUniform, 0);
-
-    GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, GL.UNSIGNED_SHORT,0);
+  GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, GL.UNSIGNED_SHORT,0);
 }
 
 
@@ -195,7 +205,6 @@ Text.prototype.UpdateBuffers = function() {
     var charBottom = 0;
     var ptId = 0;
     this.PixelBounds = [0,0,0,this.Size];
-
 
     for (var i = 0; i < this.String.length; ++i) {
 	var idx = this.String.charCodeAt(i);
@@ -214,10 +223,10 @@ Text.prototype.UpdateBuffers = function() {
 	    var charTop = charBottom + port[3]*this.Size / 98.0;
 	    
 	    // Accumulate bounds;
-	    if (this.PixelBounds[0] > charBottom) {this.PixelBounds[0] = charBottom;}
-	    if (this.PixelBounds[1] < charTop)    {this.PixelBounds[1] = charTop;}
-	    if (this.PixelBounds[2] > charLeft) {this.PixelBounds[2] = charLeft;}
-	    if (this.PixelBounds[3] < charRight) {this.PixelBounds[3] = charRight;}
+	    if (this.PixelBounds[0] > charLeft)   {this.PixelBounds[0] = charLeft;}
+	    if (this.PixelBounds[1] < charRight)  {this.PixelBounds[1] = charRight;}
+	    if (this.PixelBounds[2] > charBottom) {this.PixelBounds[2] = charBottom;}
+	    if (this.PixelBounds[3] < charTop)    {this.PixelBounds[3] = charTop;}
 
 	    // Make 4 points, We could share points.
 	    textureCoordData.push(tLeft);
@@ -280,7 +289,7 @@ Text.prototype.UpdateBuffers = function() {
 Text.prototype.HandleMouseMove = function(event, dx,dy) {
     // convert the position to screen pixel coordinates.
     viewer = event.CurrentViewer;
-    var screenPixelPoint = viewer.WorldPointToScreenPixelPoint(this. ..................
+    //var screenPixelPoint = viewer.WorldPointToScreenPixelPoint(this. ..................
 
     return false;
 }

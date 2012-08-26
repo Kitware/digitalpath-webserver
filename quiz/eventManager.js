@@ -49,6 +49,7 @@ EventManager.prototype.ChooseViewer = function() {
 }
 
 EventManager.prototype.HandleMouseDown = function(event) {
+    this.SystemEvent = event;
     // Translate to coordinate of canvas
     // Change origin to lower left.
     this.MouseX = event.clientX-this.Canvas.offsetLeft;
@@ -62,6 +63,7 @@ EventManager.prototype.HandleMouseDown = function(event) {
 }
 
 EventManager.prototype.HandleMouseUp = function(event) {
+    this.SystemEvent = event;
     this.MouseDown = false;
     this.MouseX = event.clientX-this.Canvas.offsetLeft;
     this.MouseY = this.Canvas.height - (event.clientY-this.Canvas.offsetTop);
@@ -74,6 +76,7 @@ EventManager.prototype.HandleMouseUp = function(event) {
 
 // Forward even to view.
 EventManager.prototype.HandleMouseMove = function(event) {
+    this.SystemEvent = event;
     this.LastMouseX = this.MouseX;
     this.LastMouseY = this.MouseY;
     // Translate to coordinate of canvas
@@ -91,6 +94,7 @@ EventManager.prototype.HandleMouseMove = function(event) {
 //------------- Keys ---------------
 
 EventManager.prototype.HandleKeyDown = function(event) { 
+    this.SystemEvent = event;
     if (event.keyCode == 16) {
         // Shift key modifier.
         this.ShiftKeyPressed = true;
@@ -104,6 +108,7 @@ EventManager.prototype.HandleKeyDown = function(event) {
 }
 
 EventManager.prototype.HandleKeyUp = function(event) {
+    this.SystemEvent = event;
     if (event.keyCode == 16) {
         // Shift key modifier.
         this.ShiftKeyPressed = false;
