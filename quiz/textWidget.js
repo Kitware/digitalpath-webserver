@@ -204,7 +204,8 @@ TextWidget.prototype.SetActive = function(flag) {
 }
 
 TextWidget.prototype.ShowPropertiesDialog = function () {
-  $("#textwidgetcontent").value = this.Text.String;       
+  var ta = document.getElementById("textwidgetcontent");
+  ta.value = this.Text.String;       
   $("#text-properties-dialog").dialog("open");
 }    
 

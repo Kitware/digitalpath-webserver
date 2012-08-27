@@ -40,7 +40,7 @@ body {
 #zoombuttons {
     z-index:10;
     height:45px;
-    top: 630px;
-    left: 650px;
+    top: 640px;
+    left: 840px;
     position:absolute;
 }

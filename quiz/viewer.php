@@ -434,6 +434,28 @@ var VIEWER1;
         eventuallyRender();
     }
     
+    function rotateRight() {
+        // Rotate
+        // Origin in the center.
+        // GLOBAL GL will use view's viewport instead.
+        var cx = x - (this.MainView.Viewport[2]*0.5);
+        var cy = y - (this.MainView.Viewport[3]*0.5);
+        // GLOBAL views will go away when views handle this.
+        this.MainView.Camera.HandleRoll(cx, cy, dx, dy);
+        this.OverView.Camera.HandleRoll(cx, cy, dx, dy);
+    }
+    
+    function rotateLeft() {
+        // Rotate
+        // Origin in the center.
+        // GLOBAL GL will use view's viewport instead.
+        var cx = x - (this.MainView.Viewport[2]*0.5);
+        var cy = y - (this.MainView.Viewport[3]*0.5);
+        // GLOBAL views will go away when views handle this.
+        this.MainView.Camera.HandleRoll(cx, cy, dx, dy);
+        this.OverView.Camera.HandleRoll(cx, cy, dx, dy);
+    }
+    
     $(document).ready(function() {
         if (QUESTION.choices) {
             document.getElementById("qtext").innerHTML = QUESTION.qtext;
@@ -527,10 +549,10 @@ var VIEWER1;
     </div>
     </div>
     
-    <div id="text-properties-dialog" title="Create new user" >
+    <div id="text-properties-dialog" title="Text Annotation Editor" >
         <form>
             <fieldset>
-                <textarea id="textwidgetcontent" rows="2" cols="20" ></textarea>
+                <textarea id="textwidgetcontent" style="width:100%;height:100%;" ></textarea>
             </fieldset>
         </form>
     </div>
