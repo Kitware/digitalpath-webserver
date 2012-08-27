@@ -37,86 +37,87 @@ EventManager.prototype.AddViewer = function(viewer) {
 }
 
 EventManager.prototype.ChooseViewer = function() {
-    this.CurrentViewer = null;
-    for (var i = 0; i < this.Viewers.length; ++i) {
-	var vport = this.Viewers[i].GetViewport();
-	if (this.MouseX > vport[0] && this.MouseX < vport[0]+vport[2] &&
-	    this.MouseY > vport[1] && this.MouseY < vport[1]+vport[3]) {
-	    this.CurrentViewer = this.Viewers[i];
-	    return;
-	}
+  this.CurrentViewer = null;
+  for (var i = 0; i < this.Viewers.length; ++i) {
+    var vport = this.Viewers[i].GetViewport();
+    if (this.MouseX > vport[0] && this.MouseX < vport[0]+vport[2] &&
+      this.MouseY > vport[1] && this.MouseY < vport[1]+vport[3]) {
+      this.CurrentViewer = this.Viewers[i];
+      return;
     }
+  }
+}
+
+EventManager.prototype.SetMousePositionFromEvent = function(event) {
+  this.SystemEvent = event;
+  // Translate to coordinate of canvas
+  // Change origin to lower left.
+  var xOffset = this.Canvas.offsetLeft + this.Canvas.offsetParent.offsetLeft;
+  var yOffset = this.Canvas.offsetTop + this.Canvas.offsetParent.offsetTop;
+  
+  // There has to be a better way to get the element with scroll bars. (HTML Body element)
+  xOffset -= this.Canvas.parentNode.parentNode.parentNode.scrollLeft;
+  yOffset -= this.Canvas.parentNode.parentNode.parentNode.scrollTop;
+  
+  
+  this.MouseX = event.clientX-xOffset;
+  this.MouseY = this.Canvas.height - (event.clientY-yOffset);
 }
 
 EventManager.prototype.HandleMouseDown = function(event) {
-    this.SystemEvent = event;
-    // Translate to coordinate of canvas
-    // Change origin to lower left.
-    this.MouseX = event.clientX-this.Canvas.offsetLeft;
-    this.MouseY = this.Canvas.height - (event.clientY-this.Canvas.offsetTop);
-    this.MouseDown = true;
+  this.SetMousePositionFromEvent(event);
+  this.MouseDown = true;
 
-    this.ChooseViewer();
-    if (this.CurrentViewer) {
-	this.CurrentViewer.HandleMouseDown(this.MouseX, this.MouseY);
-    }
+  this.ChooseViewer();
+  if (this.CurrentViewer) {
+    this.CurrentViewer.HandleMouseDown(this.MouseX, this.MouseY);
+  }
 }
 
 EventManager.prototype.HandleMouseUp = function(event) {
-    this.SystemEvent = event;
-    this.MouseDown = false;
-    this.MouseX = event.clientX-this.Canvas.offsetLeft;
-    this.MouseY = this.Canvas.height - (event.clientY-this.Canvas.offsetTop);
+  this.SetMousePositionFromEvent(event);
+  this.MouseDown = false;
 
-    this.ChooseViewer();
-    if (this.CurrentViewer) {
-	this.CurrentViewer.HandleMouseUp(this);
-    }
+  this.ChooseViewer();
+  if (this.CurrentViewer) {
+    this.CurrentViewer.HandleMouseUp(this);
+  }
 }
 
 // Forward even to view.
 EventManager.prototype.HandleMouseMove = function(event) {
-    this.SystemEvent = event;
-    this.LastMouseX = this.MouseX;
-    this.LastMouseY = this.MouseY;
-    // Translate to coordinate of canvas
-    // Change origin to lower left.
-    this.MouseX = event.clientX-this.Canvas.offsetLeft;
-    this.MouseY = this.Canvas.height - (event.clientY-this.Canvas.offsetTop);
-    this.ChooseViewer();
-    if (this.CurrentViewer) {
-	var deltaX = this.MouseX - this.LastMouseX;
-	var deltaY = this.MouseY - this.LastMouseY;
-	this.CurrentViewer.HandleMouseMove(this, deltaX, deltaY);
-    }
+  this.LastMouseX = this.MouseX;
+  this.LastMouseY = this.MouseY;
+  this.SetMousePositionFromEvent(event);
+
+  this.ChooseViewer();
+  if (this.CurrentViewer) {
+    var deltaX = this.MouseX - this.LastMouseX;
+    var deltaY = this.MouseY - this.LastMouseY;
+    this.CurrentViewer.HandleMouseMove(this, deltaX, deltaY);
+  }
 }
 
 //------------- Keys ---------------
 
 EventManager.prototype.HandleKeyDown = function(event) { 
-    this.SystemEvent = event;
-    if (event.keyCode == 16) {
-        // Shift key modifier.
-        this.ShiftKeyPressed = true;
-    }
+  this.SetMousePositionFromEvent(event);
+  if (event.keyCode == 16) {
+    // Shift key modifier.
+    this.ShiftKeyPressed = true;
+  }
 
-    this.ChooseViewer();
-    if (this.CurrentViewer) {
-	// All the keycodes seem to be Capitals.  Sent the shift modifier so we can compensate.
-	this.CurrentViewer.HandleKeyPress(event.keyCode, this.ShiftKeyPressed);
-    }
+  this.ChooseViewer();
+  if (this.CurrentViewer) {
+    // All the keycodes seem to be Capitals.  Sent the shift modifier so we can compensate.
+    this.CurrentViewer.HandleKeyPress(event.keyCode, this.ShiftKeyPressed);
+  }
 }
 
 EventManager.prototype.HandleKeyUp = function(event) {
-    this.SystemEvent = event;
-    if (event.keyCode == 16) {
-        // Shift key modifier.
-        this.ShiftKeyPressed = false;
-    }
+  this.SetMousePositionFromEvent(event);
+  if (event.keyCode == 16) {
+    // Shift key modifier.
+    this.ShiftKeyPressed = false;
+  }
 }
-
-
-
-
-
-
