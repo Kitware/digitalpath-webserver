@@ -76,6 +76,33 @@ function Viewer (viewport, cache) {
     this.ActiveWidget = null;
 }
 
+// I am doing a dance because I expect widget SetActive to call this,
+// but this calls widget SetActive.  But remove Acti
+Viewer.prototype.ActivateWidget = function(widget) {
+  if (this.ActiveWidget == widget) {
+    return;
+  }
+  var oldWidget = this.ActiveWidget;
+  this.ActiveWidget = widget;
+  if (oldWidget) {
+    oldWidget.SetActive(false);
+  }
+  if (widget) {
+    widget.SetActive(true);
+  }
+}
+
+// I am doing a dance because I expect widget SetActive to call this,
+// but this calls widget SetActive.  But remove Acti
+Viewer.prototype.DeactivateWidget = function(widget) {
+  if (this.ActiveWidget != widget || widget == null) {
+    // Do nothing if the widget is not active.
+    return;
+  }
+  this.ActiveWidget == null;
+  widget.SetActive(false);
+}
+
 Viewer.prototype.DegToRad = function(degrees) {
   return degrees * Math.PI / 180;
 }
@@ -225,6 +252,10 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
       return; 
     } else {
       // The widget became inactive
+      // Now the text widget SetActive method does this for itself.
+      // This bothers me, but it has merrit.
+      // I do not like this return value either!
+      // We should have only one way for to set this back to null.
       this.ActiveWidget = null;
     }
   }

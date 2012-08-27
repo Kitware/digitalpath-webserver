@@ -193,12 +193,12 @@ TextWidget.prototype.SetActive = function(flag) {
   if (flag) {
     this.State = TEXT_WIDGET_ACTIVE;  
     this.Text.Active = true;
-    this.Viewer.ActiveWidget = this;
+    this.Viewer.ActivateWidget(this);
     eventuallyRender();
   } else {
     this.State = TEXT_WIDGET_WAITING;
     this.Text.Active = false;
-    this.Viewer.ActiveWidget = null;
+    this.Viewer.DeactivateWidget(this);
     eventuallyRender();
   }
 }

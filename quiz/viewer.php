@@ -295,17 +295,17 @@ var VIEWER1;
       //alert("New Arrow");
       // When the arrow button is pressed, create the widget.
       //alert("CLICK!");
-      VIEWER1.Widget = new ArrowWidget(VIEWER1);
+      VIEWER1.ActiveWidget = new ArrowWidget(VIEWER1, true);
     }
 
     function NewCircle() {
       // When the circle button is pressed, create the widget.
-      VIEWER1.Widget = new CircleWidget(VIEWER1);
+      VIEWER1.ActiveWidget = new CircleWidget(VIEWER1);
     }
 
     function NewFreeForm() {
       // When the text button is pressed, create the widget.
-      VIEWER1.Widget = new FreeFormWidget(VIEWER1);
+      VIEWER1.ActiveWidget = new FreeFormWidget(VIEWER1);
     }
     
     function NewText() {
@@ -353,8 +353,13 @@ var VIEWER1;
       var widget = VIEWER1.ActiveWidget;
       if (widget != null) {
         VIEWER1.ActiveWidget = null;
-        // We need to remove an item from a list.  I do not know the syntax.
+        // We need to remove an item from a list.
         // shape list and widget list.
+        var idx = VIEWER1.ShapeList.indexOf(widget.Text);
+        if(idx!=-1) { VIEWER1.ShapeList.splice(idx, 1); }
+        var idx = VIEWER1.WidgetList.indexOf(widget);
+        if(idx!=-1) { VIEWER1.WidgetList.splice(idx, 1); }
+        eventuallyRender();
       }
     }    
 
@@ -519,9 +524,9 @@ var VIEWER1;
                 <td>
                     <img src="Circle.gif" id="arrow" type="button" onclick="NewCircle();" />
                 </td>
-                <td>
+                <!-- <td>
                     <img src="FreeForm.gif" id="text" type="button" onclick="NewFreeForm();" />
-                </td>
+                </td> -->
                 <td>
                     <img src="Text.gif" id="text" type="button" onclick="NewText();" />
                 </td>
