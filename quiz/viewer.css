@@ -44,3 +44,11 @@ body {
     left: 840px;
     position:absolute;
 }
+
+#rotatebuttons {
+    z-index:10;
+    height:45px;
+    top: 640px;
+    left: 430px;
+    position:absolute;
+}

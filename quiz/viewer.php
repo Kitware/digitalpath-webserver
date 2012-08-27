@@ -435,25 +435,19 @@ var VIEWER1;
     }
     
     function rotateRight() {
-        // Rotate
-        // Origin in the center.
-        // GLOBAL GL will use view's viewport instead.
-        var cx = x - (this.MainView.Viewport[2]*0.5);
-        var cy = y - (this.MainView.Viewport[3]*0.5);
-        // GLOBAL views will go away when views handle this.
-        this.MainView.Camera.HandleRoll(cx, cy, dx, dy);
-        this.OverView.Camera.HandleRoll(cx, cy, dx, dy);
+        VIEWER1.MainView.Camera.Roll += Math.PI/12;
+        VIEWER1.OverView.Camera.Roll += Math.PI/12;
+        VIEWER1.MainView.Camera.ComputeMatrix();
+        VIEWER1.OverView.Camera.ComputeMatrix();
+        eventuallyRender();
     }
     
     function rotateLeft() {
-        // Rotate
-        // Origin in the center.
-        // GLOBAL GL will use view's viewport instead.
-        var cx = x - (this.MainView.Viewport[2]*0.5);
-        var cy = y - (this.MainView.Viewport[3]*0.5);
-        // GLOBAL views will go away when views handle this.
-        this.MainView.Camera.HandleRoll(cx, cy, dx, dy);
-        this.OverView.Camera.HandleRoll(cx, cy, dx, dy);
+        VIEWER1.MainView.Camera.Roll -= Math.PI/12;
+        VIEWER1.OverView.Camera.Roll -= Math.PI/12;
+        VIEWER1.MainView.Camera.ComputeMatrix();
+        VIEWER1.OverView.Camera.ComputeMatrix();
+        eventuallyRender();
     }
     
     $(document).ready(function() {
@@ -479,10 +473,6 @@ var VIEWER1;
             width:350,
             modal:true,
             buttons:{
-                Cancel: function() {
-                    TextPropertyDialogCancel();
-                    $(this).dialog("close");
-                },
                 Delete: function() {
                     TextPropertyDialogDelete();
                     $(this).dialog("close");
@@ -493,7 +483,11 @@ var VIEWER1;
                 }
             },
             
-            close: function() {
+            close: function(event,ui) {
+                if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+                    TextPropertyDialogCancel();
+                    $(this).dialog("close");
+                }
 				$("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
 			}
             
@@ -533,6 +527,12 @@ var VIEWER1;
             </tr>
             <tr>
                 <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
+            </tr>
+        </table>
+         <table border="1" id="rotatebuttons" >
+            <tr>
+                <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >R</td>
+                <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >L</td>
             </tr>
         </table>
     </div>
