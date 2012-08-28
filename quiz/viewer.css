@@ -31,7 +31,7 @@ body {
 
 #annotbuttons {
     z-index:10;
-    height:45px;
+    height:40px;
     top: 630px;
     left: 10px;
     position:absolute;
@@ -41,14 +41,14 @@ body {
     z-index:10;
     height:45px;
     top: 640px;
-    left: 840px;
+    left: 860px;
     position:absolute;
 }
 
 #rotatebuttons {
     z-index:10;
     height:45px;
-    top: 640px;
+    top: 645px;
     left: 430px;
     position:absolute;
 }
