@@ -65,12 +65,14 @@ EventManager.prototype.SetMousePositionFromEvent = function(event) {
 }
 
 EventManager.prototype.HandleMouseDown = function(event) {
+  this.LastMouseX = this.MouseX;
+  this.LastMouseY = this.MouseY;
   this.SetMousePositionFromEvent(event);
   this.MouseDown = true;
 
   this.ChooseViewer();
   if (this.CurrentViewer) {
-    this.CurrentViewer.HandleMouseDown(this.MouseX, this.MouseY);
+    this.CurrentViewer.HandleMouseDown(this);
   }
 }
 

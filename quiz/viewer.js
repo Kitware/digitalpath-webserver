@@ -99,7 +99,7 @@ Viewer.prototype.DeactivateWidget = function(widget) {
     // Do nothing if the widget is not active.
     return;
   }
-  this.ActiveWidget == null;
+  this.ActiveWidget = null;
   widget.SetActive(false);
 }
 
@@ -197,14 +197,16 @@ Viewer.prototype.OverViewPlaceCamera = function(x, y) {
     eventuallyRender();
 }
 
-Viewer.prototype.HandleMouseDown = function(x, y) {
+Viewer.prototype.HandleMouseDown = function(event) {
   // Forward the events to the widget if one is active.
   if (this.ActiveWidget != null) {
-    this.ActiveWidget.HandleMouseDown(x,y);
+    this.ActiveWidget.HandleMouseDown(event);
     return;
   }
    
   // Are we in the overview or the main view?
+  var x = event.MouseX;
+  var y = event.MouseY;
   this.OverViewEventFlag = false;
   if (x > this.OverView.Viewport[0] && y > this.OverView.Viewport[1] &&
       x < this.OverView.Viewport[0]+this.OverView.Viewport[2] &&
@@ -231,6 +233,27 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
   // Many shapes, widgets and interactors will need the mouse in world coodinates.
   var x = event.MouseX;
   var y = event.MouseY;
+    
+  var viewport = this.GetViewport();
+  // Convert mouse to viewer coordinate system.
+  // It would be nice to have this before this method.
+  x = x - viewport[0];
+  y = y - viewport[1];
+  // Now we need to convert to world coordinate system
+  this.TipPosition = [x,y];
+  // Convert (x,y) to ???
+  // Compute focal point from inverse overview camera.
+  x = x/viewport[2];
+  y = y/viewport[3];
+  var cam = this.MainView.Camera;
+  x = (x*2.0 - 1.0)*cam.Matrix[15];
+  y = (y*2.0 - 1.0)*cam.Matrix[15];
+  var m = cam.Matrix;
+  var det = m[0]*m[5] - m[1]*m[4];
+  event.MouseWorldX = (x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det;
+  event.MouseWorldY = (y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det;
+  
+  /*
   var viewport = this.GetViewport();
   var cam = this.MainView.Camera;
   x = x - viewport[0];
@@ -242,44 +265,29 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
   y = (y*2.0 - 1.0)*cam.Matrix[15];
   var m = cam.Matrix;
   var det = m[0]*m[5] - m[1]*m[4];
+  // I am not sure where this is used.
   event.MouseWorldX = ((x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det);
   event.MouseWorldY = ((y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det);
+  */
   
   // Forward the events to the widget if one is active.
   if (this.ActiveWidget != null) {
-    if (this.ActiveWidget.HandleMouseMove(event)) {
-      // The widget is still active
-      return; 
-    } else {
-      // The widget became inactive
-      // Now the text widget SetActive method does this for itself.
-      // This bothers me, but it has merrit.
-      // I do not like this return value either!
-      // We should have only one way for to set this back to null.
-      this.ActiveWidget = null;
-    }
+    this.ActiveWidget.HandleMouseMove(event);
+    return;
   }
   
   // See if any widget became active.
   for (var i = 0; i < this.WidgetList.length; ++i) {
     if (this.WidgetList[i].CheckActive(event)) {
-      this.ActiveWidget = this.WidgetList[i];
+      this.ActivateWidget(this.WidgetList[i]);
       return;
     }
   }
   
-  if ( ! event.MouseDown) {
-    // Give the shapes a chance to react to the mose over them.
-    // They will change color to indicate they can be selected or modified.
-    for (var i = 0; i < this.ShapeList.length; ++i) {
-	    if (this.ShapeList[i].HandleMouseMove(event, dx, dy)) {
-      // Only one shape can be active at a time.
-      return;
-	    }
-    }
+  if (event.MouseDown == false) {
     return;
   }
-
+  
   var x = event.MouseX;
   var y = event.MouseY;
   var shiftKeyPressed = event.ShiftKeyPressed;
@@ -363,6 +371,46 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
 
 
 
+// Covert a point from world coordiante system to viewer coordinate system (units pixels).
+Viewer.prototype.ConvertPointWorldToViewer = function(x, y) {
+  var viewport = this.GetViewport();
+  var cam = this.MainView.Camera;
+  var m = cam.Matrix;
+
+  // Convert from world coordinate to view (-1->1);
+  var h = (x*m[3] + y*m[7] + m[15]);
+  var xNew = (x*m[0] + y*m[4] + m[12]) / h;
+  var yNew = (x*m[1] + y*m[5] + m[13]) / h;
+  // Convert from view to screen pixel coordinates.
+  xNew = (xNew + 1.0)*0.5*viewport[2] + viewport[0];
+  yNew = (yNew + 1.0)*0.5*viewport[3] + viewport[1];
+    
+  return [xNew, yNew];
+}   
+
+
+Viewer.prototype.ConvertPointViewerToWorld = function(x, y) {
+  var viewport = this.GetViewport();
+  var cam = this.MainView.Camera;
+
+  // Convert from canvas/pixels to  coordinate system.
+  // It would be nice to have this before this method.
+  x = x - viewport[0];
+  y = y - viewport[1];
+  // Now we need to convert to world coordinate system
+  
+  // Compute focal point from inverse overview camera.
+  x = x/viewport[2];
+  y = y/viewport[3];
+  x = (x*2.0 - 1.0)*cam.Matrix[15];
+  y = (y*2.0 - 1.0)*cam.Matrix[15];
+  var m = cam.Matrix;
+  var det = m[0]*m[5] - m[1]*m[4];
+  var xNew = (x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det;
+  var yNew = (y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det;
+  
+  return [xNew, yNew];
+}
 
 
 
