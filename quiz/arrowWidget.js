@@ -1,8 +1,6 @@
 //==============================================================================
 // This widget will first be setup to define an arrow.
 // Viewer will forward events to the arrow.
-// Return value of the mouse release method will indicate
-// when the handler inactivates. (I do not like this!!!!)
 
 // The arrow has just been created and is following the mouse.
 // I have to differentiate from ARROW_WIDGET_DRAG because
@@ -113,7 +111,7 @@ ArrowWidget.prototype.HandleMouseMove = function(event) {
     this.CheckActive(event);
     return;
   }
-  
+
   if (this.State == ARROW_WIDGET_NEW || this.State == ARROW_WIDGET_DRAG) {
     var viewport = this.Viewer.GetViewport();    
     this.Shape.Origin = this.Viewer.ConvertPointViewerToWorld(x+this.TipOffset[0], y+this.TipOffset[1]);
@@ -132,9 +130,6 @@ ArrowWidget.prototype.HandleMouseMove = function(event) {
   if (this.State == ARROW_WIDGET_WAITING) { 
     this.CheckActive(event);
   }
-  
-  // I do not like having return an unrelated flag (widget still active). Fix this.
-  return true;
 }
 
 ArrowWidget.prototype.CheckActive = function(event) {
