@@ -286,16 +286,14 @@ var VIEWER1;
  
         eventuallyRender();
     }
-    
-    
-    
-    
-    
+
     function NewArrow() {
       //alert("New Arrow");
       // When the arrow button is pressed, create the widget.
       //alert("CLICK!");
-      VIEWER1.ActiveWidget = new ArrowWidget(VIEWER1, true);
+      var widget = new ArrowWidget(VIEWER1, true);
+      VIEWER1.ActiveWidget = widget;
+      VIEWER1.WidgetList.push(widget);
     }
 
     function NewCircle() {
@@ -329,8 +327,8 @@ var VIEWER1;
         var widget = new TextWidget(VIEWER1, string);
         VIEWER1.WidgetList.push(widget);
       } else {
-        widget.Text.String = string;
-        widget.Text.UpdateBuffers();
+        widget.Shape.String = string;
+        widget.Shape.UpdateBuffers();
         widget.SetActive(false);
       }
       eventuallyRender();
@@ -342,20 +340,34 @@ var VIEWER1;
       }
     }
   
-    function TextPropertyDialogCancel() {
+    function ArrowPropertyDialogApply() {
+      var widget = VIEWER1.ActiveWidget;
+      if (widget != null) {
+        widget.SetActive(false);
+      }
+      eventuallyRender();
+      if (widget.AnnotationCallback != undefined) {
+        // DEBUG: Do not save annotations (I have no easy way of deleting).
+        //VIEWER1.Widget..AnnotationCallback(this.Widget);
+        // I am going to have to save the modified states (modified by widget) someplace else.
+        // Maybe keep a modified flag.
+      }
+    }
+
+    function WidgetPropertyDialogCancel() {
       var widget = VIEWER1.ActiveWidget;
       if (widget != null) {
         widget.SetActive(false);
       }
     }
     
-    function TextPropertyDialogDelete() {
+    function WidgetPropertyDialogDelete() {
       var widget = VIEWER1.ActiveWidget;
       if (widget != null) {
         VIEWER1.ActiveWidget = null;
         // We need to remove an item from a list.
         // shape list and widget list.
-        var idx = VIEWER1.ShapeList.indexOf(widget.Text);
+        var idx = VIEWER1.ShapeList.indexOf(widget.Shape);
         if(idx!=-1) { VIEWER1.ShapeList.splice(idx, 1); }
         var idx = VIEWER1.WidgetList.indexOf(widget);
         if(idx!=-1) { VIEWER1.WidgetList.splice(idx, 1); }
@@ -363,7 +375,7 @@ var VIEWER1;
       }
     }    
 
-    
+
     //********************************************************
     
     function saveConstants() {
@@ -456,48 +468,70 @@ var VIEWER1;
     }
     
     $(document).ready(function() {
-        if (QUESTION.choices) {
-            document.getElementById("qtext").innerHTML = QUESTION.qtext;
-            document.getElementById("title").innerHTML = QUESTION.title;
-            for (var i = 0; i < QUESTION.choices.length; ++i) {
-                var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
-                if(QUESTION.correct == (i+'')){
-                    liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-                }
-                $('#choicelist').append(liststring);    
-            }
+      if (QUESTION.choices) {
+        document.getElementById("qtext").innerHTML = QUESTION.qtext;
+        document.getElementById("title").innerHTML = QUESTION.title;
+        for (var i = 0; i < QUESTION.choices.length; ++i) {
+          var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
+          if(QUESTION.correct == (i+'')){
+              liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+          }
+          $('#choicelist').append(liststring);    
         }
-        else {
-            var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-            $('#choicelist').append(liststring);
-        }
+      }
+      else {
+        var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+        $('#choicelist').append(liststring);
+      }
+
+      $("#text-properties-dialog").dialog({
+        autoOpen:false,
+        height:200,
+        width:350,
+        modal:true,
+        buttons:{
+          Delete: function() {
+            WidgetPropertyDialogDelete();
+            $(this).dialog("close");
+          },
+          Apply: function() {
+            TextPropertyDialogApply();
+            $(this).dialog("close");
+          }
+        },
+        close: function(event,ui) {
+          if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+            WidgetPropertyDialogCancel();
+            $(this).dialog("close");
+          }
+          $("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+        }   
+      });
         
-        $("#text-properties-dialog").dialog({
-            autoOpen:false,
-            height:200,
-            width:350,
-            modal:true,
-            buttons:{
-                Delete: function() {
-                    TextPropertyDialogDelete();
-                    $(this).dialog("close");
-                },
-                Apply: function() {
-                    TextPropertyDialogApply();
-                    $(this).dialog("close");
-                }
-            },
-            
-            close: function(event,ui) {
-                if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
-                    TextPropertyDialogCancel();
-                    $(this).dialog("close");
-                }
-				$("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
-			}
-            
-        });
-        
+      $("#arrow-properties-dialog").dialog({
+        autoOpen:false,
+        height:200,
+        width:350,
+        modal:true,
+        buttons:{
+          Delete: function() {
+            WidgetPropertyDialogDelete();
+            $(this).dialog("close");
+          },
+          Apply: function() {
+            ArrowPropertyDialogApply();
+            $(this).dialog("close");
+          }
+        },
+        close: function(event,ui) {
+          if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+            WidgetPropertyDialogCancel();
+            $(this).dialog("close");
+          }
+          //$("#arrowwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+        }   
+      });
+
     });
  
 </script> 
@@ -562,6 +596,14 @@ var VIEWER1;
         </form>
     </div>
     
-</body> 
+    <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
+        <form>
+            <fieldset>
+              <!-- I plan to have a color selector and maybe tip,orientation,length -->
+            </fieldset>
+        </form>
+    </div>
+
+ </body> 
  
 </html> 

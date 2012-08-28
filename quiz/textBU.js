@@ -70,22 +70,16 @@ function GetTextureLoadedFunction (text) {
   return function () {text.HandleLoadedTexture();}
 }
 
-function TextError () {
-  alert("Could not load font");
-}
-
 function Text() {
   // All text objects sare the same texture map.
   //if (TEXT_TEXTURE == undefined ) {
   //}
-  this.TextureLoaded = false;
   this.Texture = GL.createTexture();
   this.Image = new Image();
   this.Image.onload = GetTextureLoadedFunction(this); 
-  //this.Image.onerror = TextError(); // Always fires for some reason.
   // This starts the loading.
   this.Image.src = "letters.gif";
-  
+
   this.Color = [0.5, 1.0, 1.0];
   this.Size = 30; // Height in pixels
   // The anchor point and position are the same point.
@@ -113,20 +107,15 @@ Text.prototype.HandleLoadedTexture = function() {
   //var texture = TEXT_TEXTURE;
   var texture = this.Texture;
   GL.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, true);
-  GL.bindTexture(GL.TEXTURE_2D, texture);
-  GL.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.Image);
-  GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
-  GL.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR_MIPMAP_NEAREST);
-  GL.generateMipmap(GL.TEXTURE_2D); 
-  GL.bindTexture(GL.TEXTURE_2D, null);
-  this.TextureLoaded = true;
-  eventuallyRender();
+  GL.bindTexture(GL.Texture_2D, texture);
+  GL.texImage2D(GL.Texture_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, this.Image);
+  GL.texParameteri(GL.Texture_2D, GL.Texture_MAG_FILTER, GL.LINEAR);
+  GL.texParameteri(GL.Texture_2D, GL.Texture_MIN_FILTER, GL.LINEAR_MIPMAP_NEAREST);
+  GL.generateMipmap(GL.Texture_2D); 
+  GL.bindTexture(GL.Texture_2D, null);
 }
 
 Text.prototype.Draw = function (view) {
-  if (this.TextureLoaded == false) {
-    return;
-  }
   if (this.Matrix == undefined) {
     this.UpdateBuffers();
     this.Matrix = mat4.create();
@@ -154,7 +143,7 @@ Text.prototype.Draw = function (view) {
                          this.VertexPositionBuffer.itemSize, 
                          GL.FLOAT, false, 0, 0);     // Texture coordinates
   GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexTextureCoordBuffer);
-  GL.vertexAttribPointer(program.textureCoordAttribute, 
+  GL.vertexAttribPointer(program.TextureCoordAttribute, 
                          this.VertexTextureCoordBuffer.itemSize, 
                          GL.FLOAT, false, 0, 0);
   // Cell Connectivity
@@ -196,8 +185,8 @@ Text.prototype.Draw = function (view) {
   this.Matrix[13] = y - this.Anchor[1];
   GL.uniformMatrix4fv(program.mvMatrixUniform, false, this.Matrix);
 
-  GL.activeTexture(GL.TEXTURE0);
-  GL.bindTexture(GL.TEXTURE_2D, this.Texture);
+  GL.activeTexture(GL.Texture0);
+  GL.bindTexture(GL.Texture_2D, this.Texture);
   GL.uniform1i(program.samplerUniform, 0);
 
   GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, GL.UNSIGNED_SHORT,0);
@@ -206,95 +195,95 @@ Text.prototype.Draw = function (view) {
 
 
 Text.prototype.UpdateBuffers = function() {
-  // Create a textured quad for each letter.
-  var vertexPositionData = [];
-  var textureCoordData = [];
-  var cellData = [];
-  // 128 for power of 2, but 98 to top of characters.
-  var top = 98.0 / 128.0; // Top texture coordinate value
-  var charLeft = 0;
-  var charBottom = 0;
-  var ptId = 0;
-  this.PixelBounds = [0,0,0,this.Size];
+    // Create a textured quad for each letter.
+    var vertexPositionData = [];
+    var textureCoordData = [];
+    var cellData = [];
+    // 128 for power of 2, but 98 to top of characters.
+    var top = 98.0 / 128.0; // Top texture coordinate value
+    var charLeft = 0;
+    var charBottom = 0;
+    var ptId = 0;
+    this.PixelBounds = [0,0,0,this.Size];
 
-  for (var i = 0; i < this.String.length; ++i) {
-    var idx = this.String.charCodeAt(i);
-    if (idx == 10 || idx == 13) { // newline
-      charLeft = 0;
-      charBottom -= this.Size;
-    } else {
-      var port = ASCII_LOOKUP[idx];
-      // Convert to texture coordinate values.
-      var tLeft =   port[0] / 1024.0;
-      var tRight = (port[0]+port[2]) / 1024.0;
-      var tBottom = port[1] / 512.0;
-      var tTop =   (port[1]+port[3]) / 512.0;
-      // To place verticies
-      var charRight = charLeft + port[2]*this.Size / 98.0;
-      var charTop = charBottom + port[3]*this.Size / 98.0;
-      
-      // Accumulate bounds;
-      if (this.PixelBounds[0] > charLeft)   {this.PixelBounds[0] = charLeft;}
-      if (this.PixelBounds[1] < charRight)  {this.PixelBounds[1] = charRight;}
-      if (this.PixelBounds[2] > charBottom) {this.PixelBounds[2] = charBottom;}
-      if (this.PixelBounds[3] < charTop)    {this.PixelBounds[3] = charTop;}
+    for (var i = 0; i < this.String.length; ++i) {
+	var idx = this.String.charCodeAt(i);
+	if (idx == 10 || idx == 13) { // newline
+	    charLeft = 0;
+	    charBottom -= this.Size;
+	} else {
+	    var port = ASCII_LOOKUP[idx];
+	    // Convert to texture coordinate values.
+	    var tLeft =   port[0] / 1024.0;
+	    var tRight = (port[0]+port[2]) / 1024.0;
+	    var tBottom = port[1] / 512.0;
+	    var tTop =   (port[1]+port[3]) / 512.0;
+	    // To place verticies
+	    var charRight = charLeft + port[2]*this.Size / 98.0;
+	    var charTop = charBottom + port[3]*this.Size / 98.0;
+	    
+	    // Accumulate bounds;
+	    if (this.PixelBounds[0] > charLeft)   {this.PixelBounds[0] = charLeft;}
+	    if (this.PixelBounds[1] < charRight)  {this.PixelBounds[1] = charRight;}
+	    if (this.PixelBounds[2] > charBottom) {this.PixelBounds[2] = charBottom;}
+	    if (this.PixelBounds[3] < charTop)    {this.PixelBounds[3] = charTop;}
 
-      // Make 4 points, We could share points.
-      textureCoordData.push(tLeft);
-      textureCoordData.push(tBottom);
-      vertexPositionData.push(charLeft);
-      vertexPositionData.push(charBottom);
-      vertexPositionData.push(0.0);
-      
-      textureCoordData.push(tRight);
-      textureCoordData.push(tBottom);
-      vertexPositionData.push(charRight);
-      vertexPositionData.push(charBottom);
-      vertexPositionData.push(0.0);
-      
-      textureCoordData.push(tLeft);
-      textureCoordData.push(tTop);
-      vertexPositionData.push(charLeft);
-      vertexPositionData.push(charTop);
-      vertexPositionData.push(0.0);
-      
-      textureCoordData.push(tRight);
-      textureCoordData.push(tTop);
-      vertexPositionData.push(charRight);
-      vertexPositionData.push(charTop);
-      vertexPositionData.push(0.0);
-      
-      charLeft = charRight;
-      
-      // Now create the cell.    
-      cellData.push(0 + ptId);
-      cellData.push(1 + ptId);
-      cellData.push(2 + ptId);
-      
-      cellData.push(2 + ptId);
-      cellData.push(1 + ptId);
-      cellData.push(3 + ptId);
-      ptId += 4;
+	    // Make 4 points, We could share points.
+	    textureCoordData.push(tLeft);
+	    textureCoordData.push(tBottom);
+	    vertexPositionData.push(charLeft);
+	    vertexPositionData.push(charBottom);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tRight);
+	    textureCoordData.push(tBottom);
+	    vertexPositionData.push(charRight);
+	    vertexPositionData.push(charBottom);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tLeft);
+	    textureCoordData.push(tTop);
+	    vertexPositionData.push(charLeft);
+	    vertexPositionData.push(charTop);
+	    vertexPositionData.push(0.0);
+	    
+	    textureCoordData.push(tRight);
+	    textureCoordData.push(tTop);
+	    vertexPositionData.push(charRight);
+	    vertexPositionData.push(charTop);
+	    vertexPositionData.push(0.0);
+	    
+	    charLeft = charRight;
+	    
+	    // Now create the cell.    
+	    cellData.push(0 + ptId);
+	    cellData.push(1 + ptId);
+	    cellData.push(2 + ptId);
+	    
+	    cellData.push(2 + ptId);
+	    cellData.push(1 + ptId);
+	    cellData.push(3 + ptId);
+	    ptId += 4;
+	}
     }
-  }
 
-  this.VertexTextureCoordBuffer = GL.createBuffer();
-  GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexTextureCoordBuffer);
-  GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(textureCoordData), GL.STATIC_DRAW);
-  this.VertexTextureCoordBuffer.itemSize = 2;
-  this.VertexTextureCoordBuffer.numItems = textureCoordData.length / 2;
-  
-  this.VertexPositionBuffer = GL.createBuffer();
-  GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
-  GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
-  this.VertexPositionBuffer.itemSize = 3;
-  this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
-  
-  this.CellBuffer = GL.createBuffer();
-  GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
-  GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
-  this.CellBuffer.itemSize = 1;
-  this.CellBuffer.numItems = cellData.length;
+    this.VertexTextureCoordBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexTextureCoordBuffer);
+    GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(textureCoordData), GL.STATIC_DRAW);
+    this.VertexTextureCoordBuffer.itemSize = 2;
+    this.VertexTextureCoordBuffer.numItems = textureCoordData.length / 2;
+    
+    this.VertexPositionBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ARRAY_BUFFER, this.VertexPositionBuffer);
+    GL.bufferData(GL.ARRAY_BUFFER, new Float32Array(vertexPositionData), GL.STATIC_DRAW);
+    this.VertexPositionBuffer.itemSize = 3;
+    this.VertexPositionBuffer.numItems = vertexPositionData.length / 3;
+    
+    this.CellBuffer = GL.createBuffer();
+    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
+    GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, new Uint16Array(cellData), GL.STATIC_DRAW);
+    this.CellBuffer.itemSize = 1;
+    this.CellBuffer.numItems = cellData.length;
 }
 
 Text.prototype.HandleMouseMove = function(event, dx,dy) {

@@ -4,10 +4,12 @@
 // Return value of the mouse release method will indicate
 // when the handler inactivates. (I do not like this!!!!)
 
-
-var ARROW_WIDGET_NEW = 0; // The arrow has just been created and is following the mouse.
+// The arrow has just been created and is following the mouse.
+// I have to differentiate from ARROW_WIDGET_DRAG because
+// dragging while just created cannot be relative.  It places the tip on the mouse.
+var ARROW_WIDGET_NEW = 0;
 var ARROW_WIDGET_DRAG = 1; // The whole arrow is being dragged.
-var ARROW_WIDGET_DRAG_TIP = 2; 
+var ARROW_WIDGET_DRAG_TIP = 2;
 var ARROW_WIDGET_DRAG_TAIL = 3;
 var ARROW_WIDGET_WAITING = 4; // The normal (resting) state.
 var ARROW_WIDGET_ACTIVE = 5; // Mouse is over the widget and it is receiving events.
@@ -16,7 +18,24 @@ var ARROW_WIDGET_PROPERTIES_DIALOG = 6; // Properties dialog is up
 
 
 function ArrowWidget (viewer, newFlag) {
+  if (viewer == null) {
+    return;
+  }
   this.Viewer = viewer;
+
+  // Wait to create this until the first move event.
+  this.Shape = new Arrow();
+  this.Shape.Origin = [0,0];
+  this.Shape.SetFillColor([0.0, 0.0, 0.0]);
+  this.Shape.OutlineColor = [1.0, 1.0, 1.0];
+  this.Shape.Length = 50;
+  this.Shape.Width = 8;
+  viewer.AddShape(this.Shape);
+  // Note: If the user clicks before the mouse is in the
+  // canvas, this will behave odd.
+  this.TipPosition = [0,0];
+  this.TipOffset = [0,0];
+
   if (newFlag) {
     this.State = ARROW_WIDGET_NEW;
     this.Viewer.ActivateWidget(this);
@@ -27,91 +46,131 @@ function ArrowWidget (viewer, newFlag) {
 }
 
 ArrowWidget.prototype.Serialize = function() {
-  if(this.Arrow === undefined) { 
+  if(this.Shape === undefined) { 
     return null; 
   }
 
   var obj = new Object();
   obj.type = "arrow";
-  obj.origin = this.Arrow.Origin
-	obj.fillcolor = this.Arrow.FillColor;
-	obj.outlinecolor = this.Arrow.OutlineColor;
-	obj.length = this.Arrow.Length;
-	obj.width = this.Arrow.Width;
-  obj.orientation = this.Arrow.Orientation;
+  obj.origin = this.Shape.Origin
+	obj.fillcolor = this.Shape.FillColor;
+	obj.outlinecolor = this.Shape.OutlineColor;
+	obj.length = this.Shape.Length;
+	obj.width = this.Shape.Width;
+  obj.orientation = this.Shape.Orientation;
   return obj;
 }
 
 ArrowWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 
-ArrowWidget.prototype.HandleMouseDown = function(x, y) {
+ArrowWidget.prototype.HandleMouseDown = function(event) {
+  if (event.SystemEvent.which != 1)
+    {
+    return;
+    }
   if (this.State == ARROW_WIDGET_NEW) {
+    this.TipPosition = [event.MouseX, event.MouseY];
     this.State = ARROW_WIDGET_DRAG_TAIL;
+  }
+  if (this.State == ARROW_WIDGET_ACTIVE) {
+    // We can get this working later.
+    //if (this.ActiveLocation < this.Shape.Width) {
+    //  this.State = ARROW_WIDGET_DRAG_TIP;
+    //} else 
+    if (this.ActiveLocation > this.Shape.Length - this.Shape.Width) {
+      this.TipPosition = this.Viewer.ConvertPointWorldToViewer(this.Shape.Origin[0], this.Shape.Origin[1]);
+      this.State = ARROW_WIDGET_DRAG_TAIL;
+    } else {
+      var tipPosition = this.Viewer.ConvertPointWorldToViewer(this.Shape.Origin[0], this.Shape.Origin[1]);
+      this.TipOffset[0] = tipPosition[0] - event.MouseX;
+      this.TipOffset[1] = tipPosition[1] - event.MouseY;
+      this.State = ARROW_WIDGET_DRAG;
+    }
   }
 }
 
 // returns false when it is finished doing its work.
 ArrowWidget.prototype.HandleMouseUp = function(event) {
-  this.State = ARROW_WIDGET_WAITING;
-  this.Viewer.SetActiveWidget(null);
+  if (this.State == ARROW_WIDGET_ACTIVE && event.SystemEvent.which == 3) {
+    // Right mouse was pressed.
+    // Pop up the properties dialog.
+    // Which one should we popup?
+    // Add a ShowProperties method to the widget. (With the magic of javascript). 
+    this.State = ARROW_WIDGET_PROPERTIES_DIALOG;
+    this.ShowPropertiesDialog();
+  }
+  if (this.State != ARROW_WIDGET_PROPERTIES_DIALOG) {
+    this.State = ARROW_WIDGET_WAITING;
+  }
 }
 
 ArrowWidget.prototype.HandleMouseMove = function(event) {
-  if (this.Arrow === undefined) {
-    // Wait to create this until the first move event.
-    this.Arrow = new Arrow();
-    this.Arrow.Origin = [0,0];
-    this.Arrow.SetFillColor([0.0, 0.0, 0.0]);
-    this.Arrow.OutlineColor = [1.0, 1.0, 1.0];
-    this.Arrow.Length = 50;
-    this.Arrow.Width = 8;
-    this.Viewer.AddShape(this.Arrow);
-    // Note: If the user clicks before the mouse is in the
-    // canvas, this will behave odd.
-    this.TipPosition = [0,0];
-  }
-
   var x = event.MouseX;
   var y = event.MouseY;
 
-  if (this.State == ARROW_WIDGET_NEW) {
-    var viewport = this.Viewer.GetViewport();
-
-    // Convert to viewer coordinate system.
-    // It would be nice to have this before this method.
-    x = x - viewport[0];
-    y = y - viewport[1];
-    // Now we need to convert to world coordinate system
-    
-    this.TipPosition = [x,y];
-    // Convert (x,y) to ???
-    // Compute focal point from inverse overview camera.
-    x = x/viewport[2];
-    y = y/viewport[3];
-    var cam = this.Viewer.MainView.Camera;
-    x = (x*2.0 - 1.0)*cam.Matrix[15];
-    y = (y*2.0 - 1.0)*cam.Matrix[15];
-    var m = cam.Matrix;
-    var det = m[0]*m[5] - m[1]*m[4];
-    var xNew = (x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det;
-    var yNew = (y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det;
-    
-    this.Arrow.Origin = [xNew, yNew];
-    eventuallyRender();
+  if (event.MouseDown == false && this.State == ARROW_WIDGET_ACTIVE) {
+    this.CheckActive(event);
+    return;
   }
   
+  if (this.State == ARROW_WIDGET_NEW || this.State == ARROW_WIDGET_DRAG) {
+    var viewport = this.Viewer.GetViewport();    
+    this.Shape.Origin = this.Viewer.ConvertPointViewerToWorld(x+this.TipOffset[0], y+this.TipOffset[1]);
+    eventuallyRender();
+  }
+
   if (this.State == ARROW_WIDGET_DRAG_TAIL) { 
     var dx = x-this.TipPosition[0];
     var dy = y-this.TipPosition[1];
-    this.Arrow.Length = Math.sqrt(dx*dx + dy*dy);
-    this.Arrow.Orientation = Math.atan2(dy, dx) * 180.0 / Math.PI;
-    this.Arrow.UpdateBuffers();
+    this.Shape.Length = Math.sqrt(dx*dx + dy*dy);
+    this.Shape.Orientation = Math.atan2(dy, dx) * 180.0 / Math.PI;
+    this.Shape.UpdateBuffers();
     eventuallyRender();
+  }
+
+  if (this.State == ARROW_WIDGET_WAITING) { 
+    this.CheckActive(event);
   }
   
   // I do not like having return an unrelated flag (widget still active). Fix this.
   return true;
+}
+
+ArrowWidget.prototype.CheckActive = function(event) {
+  var viewport = this.Viewer.GetViewport();
+  var cam = this.Viewer.MainView.Camera;
+  var m = cam.Matrix;
+  // Compute tip point in screen coordinates.
+  var x = this.Shape.Origin[0];
+  var y = this.Shape.Origin[1];
+    // Convert from world coordinate to view (-1->1);
+  var h = (x*m[3] + y*m[7] + m[15]);
+  var xNew = (x*m[0] + y*m[4] + m[12]) / h;
+  var yNew = (x*m[1] + y*m[5] + m[13]) / h;
+  // Convert from view to screen pixel coordinates.
+  xNew = (xNew + 1.0)*0.5*viewport[2] + viewport[0];
+  yNew = (yNew + 1.0)*0.5*viewport[3] + viewport[1];
+  // Use this point as the origin.
+  x = event.MouseX - xNew;
+  y = event.MouseY - yNew;
+  // Rotate so arrow lies along the x axis.
+  var tmp = this.Shape.Orientation * Math.PI / 180.0;
+  var ct = Math.cos(tmp);
+  var st = Math.sin(tmp);
+  xNew = x*ct + y*st;
+  yNew = -x*st + y*ct;
+  tmp = this.Shape.Width / 2.0;
+  if (xNew > 0.0 && xNew < this.Shape.Length && yNew < tmp && yNew > -tmp) {
+    this.SetActive(true);
+    // Save the position along the arrow to decide which drag behavior to use.
+    this.ActiveLocation = xNew;
+    return true;
+  } else {
+    this.SetActive(false);
+    this.ActiveLocation = 0.0;
+    return false;
+  }
 }
 
 // We have three states this widget is active.
@@ -119,7 +178,9 @@ ArrowWidget.prototype.HandleMouseMove = function(event) {
 // Active because mouse is over the arrow.  Color of arrow set to active.
 // Active because the properties dialog is up. (This is how dialog know which widget is being edited).
 ArrowWidget.prototype.GetActive = function() {
-  if (this.State == TEXT_WIDGET_ACTIVE || this.State == TEXT_WIDGET_PROPERTIES_DIALOG) {
+  if (this.State == ARROW_WIDGET_ACTIVE || 
+      this.State == ARROW_WIDGET_PROPERTIES_DIALOG || 
+      this.State == ARROW_WIDGET_NEW) {
     return true;  
   }
   return false;
@@ -132,12 +193,12 @@ ArrowWidget.prototype.SetActive = function(flag) {
 
   if (flag) {
     this.State = ARROW_WIDGET_ACTIVE;  
-    this.Arrow.Active = true;
+    this.Shape.Active = true;
     this.Viewer.ActivateWidget(this);
     eventuallyRender();
   } else {
     this.State = ARROW_WIDGET_WAITING;
-    this.Arrow.Active = false;
+    this.Shape.Active = false;
     this.Viewer.DeactivateWidget(this);
     eventuallyRender();
   }

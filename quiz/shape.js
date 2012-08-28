@@ -7,9 +7,9 @@ function Shape() {
   this.Origin = [10000,10000]; // Anchor in world coordinates.
   this.FixedSize = true;
   this.LineWidth = 0; // Line width has to be in same coordiantes as points.
-  this.Highlight = false;
-  this.HighlightColor = [1.0, 1.0, 0.0];
-};
+  this.Active = false;
+  this.ActiveColor = [1.0, 1.0, 0.0];
+  };
 
 Shape.prototype.destructor=function() {
   // Get rid of the buffers?
@@ -90,12 +90,12 @@ Shape.prototype.Draw = function (view) {
 
   // Fill color
   if (this.FillColor != undefined) {
-    if (this.Highlight) {
-      GL.uniform3f(program.colorUniform, this.HighlightColor[0], 
-      this.HighlightColor[1], this.HighlightColor[2]);
+    if (this.Active) {
+      GL.uniform3f(program.colorUniform, this.ActiveColor[0], 
+                   this.ActiveColor[1], this.ActiveColor[2]);
   	} else {
 	    GL.uniform3f(program.colorUniform, this.FillColor[0], 
-      this.FillColor[1], this.FillColor[2]);
+                   this.FillColor[1], this.FillColor[2]);
     }
     // Cell Connectivity
     GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, this.CellBuffer);
@@ -105,12 +105,12 @@ Shape.prototype.Draw = function (view) {
     }
   // Outline.
   if (this.OutlineColor != undefined) {
-    if (this.Highlight) {
-	    GL.uniform3f(program.colorUniform, this.HighlightColor[0], 
-			 this.HighlightColor[1], this.HighlightColor[2]);
+    if (this.Active) {
+	    GL.uniform3f(program.colorUniform, this.ActiveColor[0], 
+			             this.ActiveColor[1], this.ActiveColor[2]);
     } else {
 	    GL.uniform3f(program.colorUniform, this.OutlineColor[0], 
-      this.OutlineColor[1], this.OutlineColor[2]);
+                   this.OutlineColor[1], this.OutlineColor[2]);
     }
     if (this.LineWidth == 0) {
       GL.drawArrays(GL.LINE_STRIP, 0, this.VertexPositionBuffer.numItems);

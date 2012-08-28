@@ -33,29 +33,29 @@ function TextWidget (viewer, string) {
 
   var cam = this.Viewer.MainView.Camera;
 
-  this.Text = new Text();
-  this.Text.String = string;
-  this.Text.UpdateBuffers(); // Needed to get the bounds.
-  this.Text.Color = [0.0, 0.0, 0.0];
-  this.Text.Anchor = [0.5*(this.Text.PixelBounds[0]+this.Text.PixelBounds[1]),
-                      0.5*(this.Text.PixelBounds[2]+this.Text.PixelBounds[3])];
+  this.Shape = new Text();
+  this.Shape.String = string;
+  this.Shape.UpdateBuffers(); // Needed to get the bounds.
+  this.Shape.Color = [0.0, 0.0, 0.0];
+  this.Shape.Anchor = [0.5*(this.Shape.PixelBounds[0]+this.Shape.PixelBounds[1]),
+                      0.5*(this.Shape.PixelBounds[2]+this.Shape.PixelBounds[3])];
 
   // I would like to setup the ancoh in the middle of the screen,
   // And have the Anchor in the middle of the text.
-  this.Text.Position = [cam.FocalPoint[0], cam.FocalPoint[1]];
+  this.Shape.Position = [cam.FocalPoint[0], cam.FocalPoint[1]];
 
-  this.Viewer.AddShape(this.Text);
+  this.Viewer.AddShape(this.Shape);
 }
 
 TextWidget.prototype.Serialize = function() {
-  if(this.Text === undefined){ return null; }
+  if(this.Shape === undefined){ return null; }
   var obj = new Object();
   obj.type = "text";
-  obj.color = this.Text.Color;
-  obj.size = this.Text.Size;
-  obj.anchor = this.Text.Anchor;
-  obj.position = this.Text.Position;
-  obj.string = this.Text.String;
+  obj.color = this.Shape.Color;
+  obj.size = this.Shape.Size;
+  obj.anchor = this.Shape.Anchor;
+  obj.position = this.Shape.Position;
+  obj.string = this.Shape.String;
   return obj;
 }
 
@@ -64,14 +64,16 @@ TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 
 
-TextWidget.prototype.HandleMouseDown = function(x, y) {
+TextWidget.prototype.HandleMouseDown = function(event) {
   if (this.State == TEXT_WIDGET_ACTIVE) {
+    var x = event.MouseX;
+    var y = event.MouseY;
     this.State = TEXT_WIDGET_DRAG;
     // Set the anchor.
     // Covert mouse screen point to text coordinate system.
-    this.Text.Anchor = this.ScreenPixelToTextPixelPoint(x,y);
+    this.Shape.Anchor = this.ScreenPixelToTextPixelPoint(x,y);
     // Now we need to set the world position of the new anchor.
-    this.Text.Position = this.PixelPointToWorld(x,y);
+    this.Shape.Position = this.Viewer.ConvertPointViewerToWorld(x,y);
     eventuallyRender();
   }
 }
@@ -94,60 +96,20 @@ TextWidget.prototype.HandleMouseUp = function(event) {
     }
 }
 
-TextWidget.prototype.PixelPointToWorld = function(x, y) {
-  var viewport = this.Viewer.GetViewport();
-  var cam = this.Viewer.MainView.Camera;
-
-  // Convert from canvas/pixels to  coordinate system.
-  // It would be nice to have this before this method.
-  x = x - viewport[0];
-  y = y - viewport[1];
-  // Now we need to convert to world coordinate system
-  
-  // Compute focal point from inverse overview camera.
-  x = x/viewport[2];
-  y = y/viewport[3];
-  x = (x*2.0 - 1.0)*cam.Matrix[15];
-  y = (y*2.0 - 1.0)*cam.Matrix[15];
-  var m = cam.Matrix;
-  var det = m[0]*m[5] - m[1]*m[4];
-  var xNew = (x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det;
-  var yNew = (y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det;
-  
-  return [xNew, yNew];
-}
-
-TextWidget.prototype.WorldToPixelPoint = function(x, y) {
-  var viewport = this.Viewer.GetViewport();
-  var cam = this.Viewer.MainView.Camera;
-  var m = cam.Matrix;
-
-  // Convert from world coordinate to view (-1->1);
-  var h = (x*m[3] + y*m[7] + m[15]);
-  var xNew = (x*m[0] + y*m[4] + m[12]) / h;
-  var yNew = (x*m[1] + y*m[5] + m[13]) / h;
-  // Convert from view to screen pixel coordinates.
-  xNew = (xNew + 1.0)*0.5*viewport[2] + viewport[0];
-  yNew = (yNew + 1.0)*0.5*viewport[3] + viewport[1];
-    
-  return [xNew, yNew];
-}   
-
 
 // I need to convert mouse screen point to coordinates of text buffer
 // to see if the mouse position is in the bounds of the text.
 TextWidget.prototype.ScreenPixelToTextPixelPoint = function(x,y) {
-  var textOriginScreenPixelPosition = this.WorldToPixelPoint(this.Text.Position[0],this.Text.Position[1]);
-
-  x = (x - textOriginScreenPixelPosition[0]) + this.Text.Anchor[0];  
-  y = (y - textOriginScreenPixelPosition[1]) + this.Text.Anchor[1];  
+  var textOriginScreenPixelPosition = this.Viewer.ConvertPointWorldToViewer(this.Shape.Position[0],this.Shape.Position[1]);
+  x = (x - textOriginScreenPixelPosition[0]) + this.Shape.Anchor[0];  
+  y = (y - textOriginScreenPixelPosition[1]) + this.Shape.Anchor[1];  
 
   return [x,y];
 }
 
 TextWidget.prototype.HandleMouseMove = function(event) {
   if (this.State == TEXT_WIDGET_DRAG) {
-    this.Text.Position = this.PixelPointToWorld(event.MouseX, event.MouseY);
+    this.Shape.Position = this.Viewer.ConvertPointViewerToWorld(event.MouseX, event.MouseY);
     eventuallyRender();
     return true;
   }
@@ -162,8 +124,8 @@ TextWidget.prototype.CheckActive = function(event) {
   var tMouse = this.ScreenPixelToTextPixelPoint(event.MouseX, event.MouseY);
 
   // check to see if the point is no the bounds of the text.
-  if (tMouse[0] > this.Text.PixelBounds[0] && tMouse[0] < this.Text.PixelBounds[1] &&
-      tMouse[1] > this.Text.PixelBounds[2] && tMouse[1] < this.Text.PixelBounds[3]) {
+  if (tMouse[0] > this.Shape.PixelBounds[0] && tMouse[0] < this.Shape.PixelBounds[1] &&
+      tMouse[1] > this.Shape.PixelBounds[2] && tMouse[1] < this.Shape.PixelBounds[3]) {
     this.SetActive(true);
     return true;
   } else {
@@ -192,12 +154,12 @@ TextWidget.prototype.SetActive = function(flag) {
 
   if (flag) {
     this.State = TEXT_WIDGET_ACTIVE;  
-    this.Text.Active = true;
+    this.Shape.Active = true;
     this.Viewer.ActivateWidget(this);
     eventuallyRender();
   } else {
     this.State = TEXT_WIDGET_WAITING;
-    this.Text.Active = false;
+    this.Shape.Active = false;
     this.Viewer.DeactivateWidget(this);
     eventuallyRender();
   }
@@ -205,7 +167,7 @@ TextWidget.prototype.SetActive = function(flag) {
 
 TextWidget.prototype.ShowPropertiesDialog = function () {
   var ta = document.getElementById("textwidgetcontent");
-  ta.value = this.Text.String;       
+  ta.value = this.Shape.String;       
   $("#text-properties-dialog").dialog("open");
 }    
 
