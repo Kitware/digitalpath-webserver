@@ -1,6 +1,6 @@
 //==============================================================================
 // PLAN: for the new behavior.
-// The widget gets created in its waiting state.
+// The widget gets created with a dialog and is in it's waiting state.
 // It monitors mouse movements and decides when to become active.
 // It becomes active when the mouse is over the center or edge.
 // I think we should have a method other than handleMouseMove check this
@@ -10,21 +10,17 @@
 // When active, we will respond to right clicks which bring up a menu.
 // One item in the menu will be delete.
 
-//==============================================================================
-// Active widget 
-// User clicks to set cursor.
-// User types and text object updates.
-// The user clicks (and drags) to place the center of rotation, 
-// and drags to move the text.
-// When the button is release, the text widget deactivates. 
+// I am adding an optional glyph/shape that displays the text location.
 
-// Todo: Add a cursor icon (line) (that blinks?).
+//==============================================================================
+
 
 
 var TEXT_WIDGET_WAITING = 0;
 var TEXT_WIDGET_ACTIVE = 1;
-var TEXT_WIDGET_DRAG = 2;
-var TEXT_WIDGET_PROPERTIES_DIALOG = 3;
+var TEXT_WIDGET_DRAG = 2; // Drag text with position
+var TEXT_WIDGET_DRAG_TEXT = 3; // Drag text but leave the position the same.
+var TEXT_WIDGET_PROPERTIES_DIALOG = 4;
 
 function TextWidget (viewer, string) {
   this.Viewer = viewer;
@@ -51,6 +47,7 @@ function TextWidget (viewer, string) {
   this.OffsetShapeAnchor = [-20,10];
 
   this.Viewer.AddShape(this.Shape);
+  this.ActiveReason = 1;
 }
 
 TextWidget.prototype.Serialize = function() {
@@ -84,27 +81,21 @@ TextWidget.prototype.SetAnchorShapeVisibility = function(flag) {
 TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 
-
 TextWidget.prototype.HandleMouseDown = function(event) {
   if (this.State == TEXT_WIDGET_ACTIVE) {
-    var x = event.MouseX;
-    var y = event.MouseY;
-    this.State = TEXT_WIDGET_DRAG;
-    // Set the anchor.
-    // Covert mouse screen point to text coordinate system.
-    this.Shape.Anchor = this.ScreenPixelToTextPixelPoint(x,y);
-    // Now we need to set the world position of the new anchor.
-    this.Shape.Position = this.Viewer.ConvertPointViewerToWorld(x,y);
+    if (this.Shape.AnchorVisibility && this.ActiveReason == 0) {
+      this.State = TEXT_WIDGET_DRAG_TEXT;
+    } else {
+      this.State = TEXT_WIDGET_DRAG;
+    }
     eventuallyRender();
   }
 }
 
 // returns false when it is finished doing its work.
 TextWidget.prototype.HandleMouseUp = function(event) {
-  if (this.State == TEXT_WIDGET_DRAG) {
-    // Transition to typing state on first mouse up.
+  if (this.State == TEXT_WIDGET_DRAG || this.State == TEXT_WIDGET_DRAG_TEXT) {
     this.State = TEXT_WIDGET_ACTIVE;
-    // We should save the widget in the database here.
     }
   
   if (this.State == TEXT_WIDGET_ACTIVE && event.SystemEvent.which == 3) {
@@ -134,6 +125,12 @@ TextWidget.prototype.HandleMouseMove = function(event) {
     eventuallyRender();
     return true;
   }
+  if (this.State == TEXT_WIDGET_DRAG_TEXT) {
+    this.Shape.Anchor[0] -= event.MouseDeltaX;
+    this.Shape.Anchor[1] -= event.MouseDeltaY;
+    eventuallyRender();
+    return true;
+  }
   // We do not want to deactivate the widget while the properties dialog is showing.
   if (this.State != TEXT_WIDGET_PROPERTIES_DIALOG) {
     return this.CheckActive(event);
@@ -144,15 +141,25 @@ TextWidget.prototype.HandleMouseMove = function(event) {
 TextWidget.prototype.CheckActive = function(event) {
   var tMouse = this.ScreenPixelToTextPixelPoint(event.MouseX, event.MouseY);
 
-  // check to see if the point is no the bounds of the text.
-  if (tMouse[0] > this.Shape.PixelBounds[0] && tMouse[0] < this.Shape.PixelBounds[1] &&
-      tMouse[1] > this.Shape.PixelBounds[2] && tMouse[1] < this.Shape.PixelBounds[3]) {
+    // Fist check anchor
+    // thencheck to see if the point is no the bounds of the text.
+
+  if (this.Shape.AnchorVisibility && 
+      Math.abs(tMouse[0] - this.Shape.Anchor[0]) < 5 &&
+      Math.abs(tMouse[1] - this.Shape.Anchor[1]) < 5) {
+    this.ActiveReason = 1; // Hackish
+    // Doulbe hack. // Does not get highlighted because widget already active.
+    this.Shape.AnchorShape.Active = true; eventuallyRender();
     this.SetActive(true);
     return true;
-  } else {
-    this.SetActive(false);
-    return false;
+  } else if (tMouse[0] > this.Shape.PixelBounds[0] && tMouse[0] < this.Shape.PixelBounds[1] &&
+      tMouse[1] > this.Shape.PixelBounds[2] && tMouse[1] < this.Shape.PixelBounds[3]) {
+    this.ActiveReason = 0;
+    this.SetActive(true);
+    return true;
   }
+  this.SetActive(false);
+  return false;
 }
 
 TextWidget.prototype.GetActive = function() {
@@ -176,11 +183,15 @@ TextWidget.prototype.SetActive = function(flag) {
   if (flag) {
     this.State = TEXT_WIDGET_ACTIVE;  
     this.Shape.Active = true;
+    if (this.ActiveReason == 1) {
+      this.Shape.AnchorShape.Active = true;
+    }
     this.Viewer.ActivateWidget(this);
     eventuallyRender();
   } else {
     this.State = TEXT_WIDGET_WAITING;
     this.Shape.Active = false;
+    this.Shape.AnchorShape.Active = false;
     this.Viewer.DeactivateWidget(this);
     eventuallyRender();
   }

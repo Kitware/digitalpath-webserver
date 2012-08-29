@@ -97,9 +97,8 @@ ArrowWidget.prototype.HandleMouseUp = function(event) {
     // Add a ShowProperties method to the widget. (With the magic of javascript). 
     this.State = ARROW_WIDGET_PROPERTIES_DIALOG;
     this.ShowPropertiesDialog();
-  }
-  if (this.State != ARROW_WIDGET_PROPERTIES_DIALOG) {
-    this.State = ARROW_WIDGET_WAITING;
+  } else if (this.State != ARROW_WIDGET_PROPERTIES_DIALOG) {
+    this.SetActive(false);
   }
 }
 
@@ -173,12 +172,10 @@ ArrowWidget.prototype.CheckActive = function(event) {
 // Active because mouse is over the arrow.  Color of arrow set to active.
 // Active because the properties dialog is up. (This is how dialog know which widget is being edited).
 ArrowWidget.prototype.GetActive = function() {
-  if (this.State == ARROW_WIDGET_ACTIVE || 
-      this.State == ARROW_WIDGET_PROPERTIES_DIALOG || 
-      this.State == ARROW_WIDGET_NEW) {
-    return true;  
+  if (this.State == ARROW_WIDGET_WAITING) {
+    return false;  
   }
-  return false;
+  return true;
 }
 
 ArrowWidget.prototype.SetActive = function(flag) {  

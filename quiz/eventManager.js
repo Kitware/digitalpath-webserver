@@ -91,12 +91,12 @@ EventManager.prototype.HandleMouseMove = function(event) {
   this.LastMouseX = this.MouseX;
   this.LastMouseY = this.MouseY;
   this.SetMousePositionFromEvent(event);
-
+  this.MouseDeltaX = this.MouseX - this.LastMouseX;
+  this.MouseDeltaY = this.MouseY - this.LastMouseY;
+  
   this.ChooseViewer();
   if (this.CurrentViewer) {
-    var deltaX = this.MouseX - this.LastMouseX;
-    var deltaY = this.MouseY - this.LastMouseY;
-    this.CurrentViewer.HandleMouseMove(this, deltaX, deltaY);
+    this.CurrentViewer.HandleMouseMove(this);
   }
 }
 
