@@ -50,37 +50,6 @@ $mongo_question = $c->findOne(array('qid'=>new MongoId($qid)));
 $image_collection = $d->selectCollection("images");
 $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_question['imageid'])));
 
-/* DOCUMENTATION
-
-Collection 'questions':
-    'qid' - question ID - MONGOID
-    'imageid' - image ID
-    'qtext'
-    'cam'
-    array 'choices'(
-        choice 1 text,
-        choice 2 text,
-        choice 3 text,
-        ...
-        )
-    array 'annotations'(
-        annotation 1 - array(
-            type
-            other
-            )
-        annotation 2 - array(
-            type
-            other
-            )
-        )
-        
-To start, we
-
-setquestion.php
-    - 
-
-*/
-
 ?>
 
 <script type="text/javascript">
@@ -163,6 +132,7 @@ setquestion.php
 </script>
 <script type="text/javascript"> 
  
+
   var CANVAS;
   var EVENT_MANAGER;
   var VIEWER1;
@@ -198,54 +168,57 @@ setquestion.php
       for(var i=0; i < QUESTION.annotations.length; i++){
         switch(QUESTION.annotations[i].type){
           case "arrow":
-            var arrow = new Arrow();
-            arrow.Origin = QUESTION.annotations[i].origin;
-            arrow.FillColor = QUESTION.annotations[i].fillcolor;
-            arrow.OutlineColor = QUESTION.annotations[i].outlinecolor;
-            arrow.Length = QUESTION.annotations[i].length;
-            arrow.Width = QUESTION.annotations[i].width;
-            arrow.Orientation = QUESTION.annotations[i].orientation;
-            arrow.UpdateBuffers();
-            VIEWER1.AddShape(arrow);
+            var arrow = new ArrowWidget(VIEWER1, false);
+            arrow.Shape.Origin = QUESTION.annotations[i].origin;
+            arrow.Shape.FillColor = QUESTION.annotations[i].fillcolor;
+            arrow.Shape.OutlineColor = QUESTION.annotations[i].outlinecolor;
+            arrow.Shape.Length = QUESTION.annotations[i].length;
+            arrow.Shape.Width = QUESTION.annotations[i].width;
+            arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
+            arrow.Shape.UpdateBuffers();
+            VIEWER1.AddShape(arrow.Shape);
+            VIEWER1.WidgetList.push(arrow);
             break;
-          case "text":
-            var text = new Text();
-            text.Color = QUESTION.annotations[i].color;
-            text.Size = QUESTION.annotations[i].size;
-            text.Anchor = QUESTION.annotations[i].anchor;
-            text.Position = QUESTION.annotations[i].position;
-            text.String = QUESTION.annotations[i].string;
-            text.UpdateBuffers();
-            VIEWER1.AddShape(text);
-            break;
-          case "circle":
-            var circle = new Circle();
-            circle.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-            circle.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-            circle.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-            circle.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-            circle.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-            circle.Radius = parseFloat(QUESTION.annotations[i].radius);
-            circle.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-            circle.FixedSize = false;
-            circle.UpdateBuffers();
-            VIEWER1.AddShape(circle);
-            break;
-          case "freeform":
-            var ff = new FreeForm();
-            ff.FixedSize = false;
-            ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-            ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-            ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-            ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-            ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-            ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
-            for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
-              ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
-              ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
-            }
-            VIEWER1.AddShape(ff);
-            break;
+                    case "text":
+                        var text = new TextWidget(VIEWER1, "");
+                        text.Shape.Color = QUESTION.annotations[i].color;
+                        text.Shape.Size = QUESTION.annotations[i].size;
+                        text.Shape.Anchor = QUESTION.annotations[i].anchor;
+                        text.Shape.Position = QUESTION.annotations[i].position;
+                        text.Shape.String = QUESTION.annotations[i].string;
+                        text.Shape.UpdateBuffers();
+                        VIEWER1.AddShape(text.Shape);
+                        VIEWER1.WidgetList.push(text);
+                        break;
+                    case "circle":
+                        var circle = new CircleWidget(VIEWER1, false);
+                        circle.Shape.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+                        circle.Shape.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+                        circle.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+                        circle.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+                        circle.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+                        circle.Shape.Radius = parseFloat(QUESTION.annotations[i].radius);
+                        circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
+                        circle.Shape.FixedSize = false;
+                        circle.Shape.UpdateBuffers();
+                        VIEWER1.AddShape(circle.Shape);
+                        VIEWER1.WidgetList.push(circle);
+                        break;
+                    case "freeform":
+                        var ff = new FreeForm();
+                        ff.FixedSize = false;
+                        ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+                        ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+                        ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+                        ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+                        ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+                        ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
+                        for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
+                            ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
+                            ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
+                        }
+                        VIEWER1.AddShape(ff);
+                        break;
         }
       }
     }  
@@ -345,7 +318,9 @@ setquestion.php
   }
 
   function ArrowPropertyDialogApply() {
+    var hexcolor = document.getElementById("arrowcolor").value;
     var widget = VIEWER1.ActiveWidget;
+    widget.Shape.SetFillColor(hexcolor);
     if (widget != null) {
       widget.SetActive(false);
     }
@@ -353,7 +328,9 @@ setquestion.php
   }
 
   function CirclePropertyDialogApply() {
+    var hexcolor = document.getElementById("circlecolor").value;
     var widget = VIEWER1.ActiveWidget;
+    widget.Shape.SetOutlineColor(hexcolor);
     if (widget != null) {
       widget.SetActive(false);
     }
@@ -382,48 +359,6 @@ setquestion.php
   }    
 
 
-  //********************************************************
-  
-  function saveConstants() {
-      var questionchoices = [];
-      var questiontext = document.getElementById("qtext").value;
-      var questiontitle = document.getElementById("title").value;
-      
-      var numAnswers = $('.answer').length;
-  
-      for(var i=0; i < numAnswers; i++){
-          questionchoices[i] = $('.answer')[i].value;
-      }
-      
-      var qid = QUESTION.qid.$id;
-      var cam = VIEWER1.MainView.Camera;
-      var camValues = {'roll':cam.Roll, 'fp':cam.FocalPoint, 'height':cam.Height};
-      
-      var correct = findChecked();
-      
-      correct = correct + '';
-      
-      $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct});
-  }
-  
-  function findChecked(){
-      var span = document.getElementById("choicelist");
-      var inputs = span.getElementsByTagName("input");
-      var radios = [];
-      for (var i = 0; i < inputs.length; ++i){
-          if (inputs[i].type.toLowerCase() === "radio") {
-              radios.push(inputs[i]);
-          }
-      }
-      for (var i = 0; i < radios.length; ++i) {
-          if (radios[i].checked) {
-              return i;
-          }
-      }
-      
-      return 0;
-  }
-  
   function addanswer() {
       saveConstants();
       
@@ -453,22 +388,99 @@ setquestion.php
     VIEWER1.AnimateRoll(12.0); // degrees
   }
   
-  $(document).ready(function() {
-      if (QUESTION.choices) {
-          document.getElementById("qtext").innerHTML = QUESTION.qtext;
-          document.getElementById("title").innerHTML = QUESTION.title;
-          for (var i = 0; i < QUESTION.choices.length; ++i) {
-              var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
-              if(QUESTION.correct == (i+'')){
-                  liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-              }
-              $('#choicelist').append(liststring);    
-          }
+    //********************************************************
+    
+  function saveConstants() {
+    var questionchoices = [];
+    var questiontext = document.getElementById("qtext").value;
+    var questiontitle = document.getElementById("title").value;
+    
+    var numAnswers = $('.answer').length;
+
+    for(var i=0; i < numAnswers; i++){
+      questionchoices[i] = $('.answer')[i].value;
+    }
+    
+    var qid = QUESTION.qid.$id;
+    var cam = VIEWER1.MainView.Camera;
+    var camValues = {'roll':cam.Roll, 'fp':cam.FocalPoint, 'height':cam.Height};
+    
+    var correct = findChecked();
+    
+    correct = correct + '';
+    
+    var annots = [];
+    
+    for(var i=0; i < VIEWER1.WidgetList.length; i++){
+      annots.push(VIEWER1.WidgetList[i].Serialize());
+    }
+    
+    $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct, annots:annots});
+  }
+  
+  function findChecked(){
+    var span = document.getElementById("choicelist");
+    var inputs = span.getElementsByTagName("input");
+    var radios = [];
+    for (var i = 0; i < inputs.length; ++i){
+      if (inputs[i].type.toLowerCase() === "radio") {
+        radios.push(inputs[i]);
       }
-      else {
-          var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-          $('#choicelist').append(liststring);
+    }
+    for (var i = 0; i < radios.length; ++i) {
+      if (radios[i].checked) {
+        return i;
       }
+    }
+    
+    return 0;
+  }
+    
+  function addanswer() {
+    saveConstants();
+    
+    var numAnswers = $('.answer').length;
+    var liststring = (numAnswers+1)+': <input type="text" class="answer" /><input type="radio" name="correct" >Correct?</input><br />';
+    $('#choicelist').append(liststring); 
+  }
+    
+    function savequestion() {
+        saveConstants();
+        //window.location = "lessonmaker.php";
+    }
+    
+    function zoomIn() {
+      VIEWER1.AnimateZoom(0.5);
+    }
+    
+    function zoomOut() {
+      VIEWER1.AnimateZoom(2.0);
+    }
+    
+    function rotateRight() {
+      VIEWER1.AnimateRoll(12.0); // 12 degrees
+    }
+    
+    function rotateLeft() {
+      VIEWER1.AnimateRoll(-12.0); // -12 degrees
+    }
+    
+    $(document).ready(function() {
+        if (QUESTION.choices) {
+            document.getElementById("qtext").innerHTML = QUESTION.qtext;
+            document.getElementById("title").innerHTML = QUESTION.title;
+            for (var i = 0; i < QUESTION.choices.length; ++i) {
+                var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
+                if(QUESTION.correct == (i+'')){
+                    liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+                }
+                $('#choicelist').append(liststring);    
+            }
+        }
+        else {
+            var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+            $('#choicelist').append(liststring);
+        }
 
       $("#text-properties-dialog").dialog({
           autoOpen:false,
@@ -608,7 +620,8 @@ setquestion.php
     <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
         <form>
             <fieldset>
-              <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+                <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+                Color(#rrggbb):<input id="arrowcolor" ></input>
             </fieldset>
         </form>
     </div>
@@ -616,7 +629,8 @@ setquestion.php
     <div id="circle-properties-dialog" title="Circle Annotation Editor" >
         <form>
             <fieldset>
-              <!-- I plan to have a color selector and center and radius entries (thickness too) -->
+                <!-- I plan to have a color selector and center and radius entries (thickness too) -->
+                Color(#rrggbb):<input id="circlecolor" ></input>
             </fieldset>
         </form>
     </div>

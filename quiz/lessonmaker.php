@@ -14,10 +14,12 @@ $img = $c1->find();
 DOCUMENTATION:
 Collection 'lessons':
     'lessonid' MONGOID
+    'name'
     array 'questions'(
         'qid' - question ID.  MONGOID.
 Collection 'questions':
     'qid' - question ID.  MONGOID
+    'title'
     'imageid'
     'qtext'
     array 'choices'(
