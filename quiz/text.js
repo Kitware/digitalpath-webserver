@@ -101,7 +101,7 @@ function Text() {
   this.AnchorShape = new CrossHairs();
   this.AnchorShape.Origin = this.Position;
   this.AnchorShape.Length = 50;
-  this.AnchorShape.ZOffset = -0.1;
+  this.AnchorShape.ZOffset = 0.1;
   //this.AnchorShape.OutlineColor = [0.9,0.9,0.9];
   this.AnchorShape.UpdateBuffers();
   

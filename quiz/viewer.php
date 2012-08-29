@@ -302,7 +302,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       return;
     }
     var widget = VIEWER1.ActiveWidget;
-    var markerFlag = document.getElementById("TextMarker").value;
+    var markerFlag = document.getElementById("TextMarker").checked;
 
     if (widget == null) {
       // This is a new widget.
@@ -458,11 +458,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     }
     
     function rotateRight() {
-      VIEWER1.AnimateRoll(12.0); // 12 degrees
+      VIEWER1.AnimateRoll(-12.0); // degrees
     }
     
     function rotateLeft() {
-      VIEWER1.AnimateRoll(-12.0); // -12 degrees
+      VIEWER1.AnimateRoll(12.0); // degrees
     }
     
     $(document).ready(function() {

@@ -271,7 +271,7 @@ Viewer.prototype.HandleMouseUp = function(event) {
 
 
 
-Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
+Viewer.prototype.HandleMouseMove = function(event) {
   // Many shapes, widgets and interactors will need the mouse in world coodinates.
   var x = event.MouseX;
   var y = event.MouseY;
@@ -292,24 +292,7 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
   var det = m[0]*m[5] - m[1]*m[4];
   event.MouseWorldX = (x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det;
   event.MouseWorldY = (y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det;
-  
-  /*
-  var viewport = this.GetViewport();
-  var cam = this.MainView.Camera;
-  x = x - viewport[0];
-  y = y - viewport[1];
-  // Compute world point from inverse overview camera.
-  x = x/viewport[2];
-  y = y/viewport[3];
-  x = (x*2.0 - 1.0)*cam.Matrix[15];
-  y = (y*2.0 - 1.0)*cam.Matrix[15];
-  var m = cam.Matrix;
-  var det = m[0]*m[5] - m[1]*m[4];
-  // I am not sure where this is used.
-  event.MouseWorldX = ((x*m[5]-y*m[4]+m[4]*m[13]-m[5]*m[12]) / det);
-  event.MouseWorldY = ((y*m[0]-x*m[1]-m[0]*m[13]+m[1]*m[12]) / det);
-  */
-  
+    
   // Forward the events to the widget if one is active.
   if (this.ActiveWidget != null) {
     this.ActiveWidget.HandleMouseMove(event);
@@ -349,14 +332,14 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
     var cx = x - (this.MainView.Viewport[2]*0.5);
     var cy = y - (this.MainView.Viewport[3]*0.5);
     // GLOBAL views will go away when views handle this.
-    this.MainView.Camera.HandleRoll(cx, cy, dx, dy);
-    this.OverView.Camera.HandleRoll(cx, cy, dx, dy);
+    this.MainView.Camera.HandleRoll(cx, cy, event.MouseDeltaX, event.MouseDeltaY);
+    this.OverView.Camera.HandleRoll(cx, cy, event.MouseDeltaX, event.MouseDeltaY);
   } else {
     // Translate
     // Convert to view [-0.5,0.5] coordinate system.
     // Note: the origin gets subtracted out in delta above.
-    dx = -dx / this.MainView.Viewport[2];
-    dy = -dy / this.MainView.Viewport[2];    
+    var dx = -event.MouseDeltaX / this.MainView.Viewport[2];
+    var dy = -event.MouseDeltaY / this.MainView.Viewport[2];    
     this.MainView.Camera.HandleTranslate(dx, dy, 0.0);
   }
     eventuallyRender();
