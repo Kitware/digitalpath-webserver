@@ -51,12 +51,10 @@ function Viewer (viewport, cache) {
     // Left click option: Drag in main window, place in overview.
     this.OverViewEventFlag = false;
 
-    this.ZoomTarget;
     this.AnimateLast;
     this.AnimateDuration = 0.0;
     this.TranslateTarget = [0.0,0.0];
-    this.ZoomTarget = 1.0;
-
+    
     this.MainView = new View(viewport, cache);
     this.MainView.Camera.ZRange = [0,1];
     this.MainView.Camera.ComputeMatrix();
@@ -69,12 +67,81 @@ function Viewer (viewport, cache) {
     this.OverView.Camera.Height = 22000.0;
     this.OverView.Camera.ComputeMatrix();
     this.ZoomTarget = this.MainView.Camera.GetHeight();
+    this.RollTarget = this.MainView.Camera.Roll;
 	
     this.AnnotationList = []; // Remove this.
     this.ShapeList = [];
     this.WidgetList = [];
     this.ActiveWidget = null;
+
+  this.DoubleClickX = 0; 
+  this.DoubleClickY = 0;
 }
+
+
+// I could merge zoom methods if position defaulted to focal point.
+Viewer.prototype.AnimateDoubleClickZoom = function(factor, position) {
+  this.ZoomTarget = this.MainView.Camera.Height * factor;
+  if (VIEWER1.ZoomTarget < 0.9 / (1 << 5)) {
+    this.ZoomTarget = 0.9 / (1 << 5);
+  }
+  factor = this.ZoomTarget / this.MainView.Camera.Height; // Actual factor after limit.
+  
+  // Compute traslate target to keep position in the same place.
+  this.TranslateTarget[0] = position[0] - factor * (position[0] - this.MainView.Camera.FocalPoint[0]);
+  this.TranslateTarget[1] = position[1] - factor * (position[1] - this.MainView.Camera.FocalPoint[1]);
+  
+  this.RollTarget = this.MainView.Camera.Roll;
+
+  this.AnimateLast = new Date().getTime();
+  this.AnimateDuration = 200.0; // hard code 200 milliseconds
+  eventuallyRender();
+}
+
+
+Viewer.prototype.AnimateZoom = function(factor) {
+  this.ZoomTarget = this.MainView.Camera.Height * factor;
+  if (VIEWER1.ZoomTarget < 0.9 / (1 << 5)) {
+    this.ZoomTarget = 0.9 / (1 << 5);
+  }
+
+  this.RollTarget = this.MainView.Camera.Roll;
+  this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0];
+  this.TranslateTarget[1] = this.MainView.Camera.FocalPoint[1];
+
+  this.AnimateLast = new Date().getTime();
+  this.AnimateDuration = 200.0; // hard code 200 milliseconds
+  eventuallyRender();
+}
+
+Viewer.prototype.AnimateTranslate = function(dx, dy) {
+  this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0] + dx;
+  this.TranslateTarget[1] = this.MainView.Camera.FocalPoint[1] + dy;
+
+  this.ZoomTarget = this.MainView.Camera.Height;
+  this.RollTarget = this.MainView.Camera.Roll;
+  
+  this.AnimateLast = new Date().getTime();
+  this.AnimateDuration = 200.0; // hard code 200 milliseconds
+  eventuallyRender();
+}
+
+Viewer.prototype.AnimateRoll = function(dRoll) {
+  dRoll *= Math.PI / 180.0;
+  this.RollTarget = this.MainView.Camera.Roll + dRoll;
+ 
+  this.ZoomTarget = this.MainView.Camera.Height;
+  this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0];
+  this.TranslateTarget[1] = this.MainView.Camera.FocalPoint[1];
+
+  this.AnimateLast = new Date().getTime();
+  this.AnimateDuration = 200.0; // hard code 200 milliseconds
+  eventuallyRender();
+}
+
+
+
+
 
 // I am doing a dance because I expect widget SetActive to call this,
 // but this calls widget SetActive.  But remove Acti
@@ -153,14 +220,19 @@ Viewer.prototype.Animate = function() {
   if (timeNow >= (this.AnimateLast + this.AnimateDuration)) {
     // We have past the target. Just set the target values.
     this.MainView.Camera.Height = this.ZoomTarget;
+    this.OverView.Camera.Roll = this.MainView.Camera.Roll = this.RollTarget;
     this.MainView.Camera.FocalPoint[0] = this.TranslateTarget[0];
     this.MainView.Camera.FocalPoint[1] = this.TranslateTarget[1];
   } else {
     // Interpolate
     var currentHeight = this.MainView.Camera.GetHeight();
     var currentCenter = this.MainView.Camera.FocalPoint;
-    this.MainView.Camera.Height 
+    var currentRoll   = this.MainView.Camera.Roll;
+    this.MainView.Camera.Height
 	    = currentHeight + (this.ZoomTarget-currentHeight)
+            *(timeNow-this.AnimateLast)/this.AnimateDuration;
+    this.MainView.Camera.Roll = this.OverView.Camera.Roll
+	    = currentRoll + (this.RollTarget-currentRoll)
             *(timeNow-this.AnimateLast)/this.AnimateDuration;
     this.MainView.Camera.FocalPoint[0]
 	    = currentCenter[0] + (this.TranslateTarget[0]-currentCenter[0])
@@ -173,10 +245,10 @@ Viewer.prototype.Animate = function() {
     eventuallyRender();
   }
   this.MainView.Camera.ComputeMatrix();
+  this.OverView.Camera.ComputeMatrix();
   this.AnimateDuration -= (timeNow-this.AnimateLast);
   this.AnimateLast = timeNow;  
 }    
-
 
 Viewer.prototype.OverViewPlaceCamera = function(x, y) {
     // Compute focal point from inverse overview camera.
@@ -224,6 +296,21 @@ Viewer.prototype.HandleMouseUp = function(event) {
   if (this.ActiveWidget != null) {
     this.ActiveWidget.HandleMouseUp(event);
   }
+  
+  // Detect double click.  No time for now.  Just detect two ups in the same location.
+  if (event.MouseX == this.DoubleClickX && event.MouseY == this.DoubleClickY) {
+    mWorld = this.ConvertPointViewerToWorld(event.MouseX, event.MouseY);
+    if (event.SystemEvent.which == 1) {
+      this.AnimateDoubleClickZoom(0.5, mWorld);
+      //this.AnimateZoom(0.5);
+    } else if (event.SystemEvent.which == 3) {
+      this.AnimateDoubleClickZoom(2.0, mWorld);
+      //this.AnimateZoom(2.0);
+    }
+  }
+  this.DoubleClickX = event.MouseX; 
+  this.DoubleClickY = event.MouseY; 
+  
 	return;
 }
 

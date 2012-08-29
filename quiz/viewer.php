@@ -446,39 +446,19 @@ var VIEWER1;
     }
     
     function zoomIn() {
-        if (VIEWER1.ZoomTarget > 0.9 / (1 << 5)) {
-            VIEWER1.ZoomTarget *= 0.5;
-	    VIEWER1.TranslateTarget[0] = VIEWER1.MainView.Camera.FocalPoint[0];
-	    VIEWER1.TranslateTarget[1] = VIEWER1.MainView.Camera.FocalPoint[1];
-            VIEWER1.AnimateLast = new Date().getTime();
-            VIEWER1.AnimateDuration = 200.0;
-            eventuallyRender();
-        }
+      VIEWER1.AnimateZoom(0.5);
     }
     
     function zoomOut() {
-        VIEWER1.ZoomTarget *= 2;
-	VIEWER1.TranslateTarget[0] = VIEWER1.MainView.Camera.FocalPoint[0];
-	VIEWER1.TranslateTarget[1] = VIEWER1.MainView.Camera.FocalPoint[1];
-        VIEWER1.AnimateLast = new Date().getTime();
-        VIEWER1.AnimateDuration = 200.0;
-        eventuallyRender();
+      VIEWER1.AnimateZoom(2.0);
     }
     
     function rotateRight() {
-        VIEWER1.MainView.Camera.Roll += Math.PI/12;
-        VIEWER1.OverView.Camera.Roll += Math.PI/12;
-        VIEWER1.MainView.Camera.ComputeMatrix();
-        VIEWER1.OverView.Camera.ComputeMatrix();
-        eventuallyRender();
+      VIEWER1.AnimateRoll(12.0); // 12 degrees
     }
     
     function rotateLeft() {
-        VIEWER1.MainView.Camera.Roll -= Math.PI/12;
-        VIEWER1.OverView.Camera.Roll -= Math.PI/12;
-        VIEWER1.MainView.Camera.ComputeMatrix();
-        VIEWER1.OverView.Camera.ComputeMatrix();
-        eventuallyRender();
+      VIEWER1.AnimateRoll(-12.0); // -12 degrees
     }
     
     $(document).ready(function() {
