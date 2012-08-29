@@ -88,14 +88,23 @@ function Text() {
   
   this.Color = [0.5, 1.0, 1.0];
   this.Size = 30; // Height in pixels
+  // Position of the anchor in the world coordinate system.
+  this.Position = [100,100];
+
   // The anchor point and position are the same point.
   // Position is in world coordinates.
   // Anchor is in pixel coordinates of text (buffers).  
   // In pixel(text) coordinate system
   this.Anchor = [0,0];
-  // Position of the anchor in the world coordinate system.
-  this.Position = [100,100];
-
+  // The anchor shape could be put into the text widget, but I might want a thumb tack anchor.
+  this.AnchorVisibility = false;
+  this.AnchorShape = new CrossHairs();
+  this.AnchorShape.Origin = this.Position;
+  this.AnchorShape.Length = 50;
+  this.AnchorShape.ZOffset = -0.1;
+  //this.AnchorShape.OutlineColor = [0.9,0.9,0.9];
+  this.AnchorShape.UpdateBuffers();
+  
   this.Active = false;
   
   //this.String = "Hello World";
@@ -201,6 +210,11 @@ Text.prototype.Draw = function (view) {
   GL.uniform1i(program.samplerUniform, 0);
 
   GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, GL.UNSIGNED_SHORT,0);
+
+  if (this.AnchorVisibility) {
+    this.AnchorShape.Origin = this.Position;
+    this.AnchorShape.Draw(view);
+  }  
 }
 
 

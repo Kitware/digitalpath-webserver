@@ -9,6 +9,8 @@ function Shape() {
   this.LineWidth = 0; // Line width has to be in same coordiantes as points.
   this.Active = false;
   this.ActiveColor = [1.0, 1.0, 0.0];
+  // Playing around with layering.  The anchor is being obscured by the text.
+  this.ZOffset = 0.0;
   };
 
 Shape.prototype.destructor=function() {
@@ -85,8 +87,8 @@ Shape.prototype.Draw = function (view) {
   // Translate to place the origin.
   this.Matrix[12] = x;
   this.Matrix[13] = y;
+  this.Matrix[14] = this.ZOffset;
   GL.uniformMatrix4fv(program.mvMatrixUniform, false, this.Matrix);
-
 
   // Fill color
   if (this.FillColor != undefined) {

@@ -3,49 +3,6 @@
 // to other objects as it see fit however.
 
 
-// ParaMarine
-// Weight balance.
-// Resistance, powering damage stability
-
-
-// VTK Simple: Quickly, Short learning curve. Drag and drop.
-// Current tool (thesis) is excell / scripted based.
-// Bulkheads
-// Initial analysis for damage survival. (Before paramarine)
-// They have code
-// Intakes (turbine) must be straight.  Exhaust can have bends.
-// Stacks at from bad (Salt water intake)
-// Separation of engines.
-
-// Cloud.  What does htis give you?
-
-// Engine room assembly (group / ungroup for editing assembly).
-
-// Initial all bounding boxes (labels).
-// Assmblies can spread out to fit hull.  (Parameters).
-
-// Constraints?
-// Estimate drop.
-// Constraint to deck
-// Groups of objects work together.
-
-// Export to paramarine. (paramarine has too many features (To hard to use)).
-
-// pain in Early design
-// Conduits Conneting machinery.  Need highways (space allocated for wiring and pipes)
-
-
-
-
-
-// What do we provide initially?
-
-//Clip deck to hull.
-//Punch holes in hull.
-//Assemblies.
-//Pararmeter based models.
-//Viewers.
-
 function Viewer (viewport, cache) {
     // Some of these could get transitioned to view or style ...
     // Left click option: Drag in main window, place in overview.
@@ -78,7 +35,6 @@ function Viewer (viewport, cache) {
   this.DoubleClickY = 0;
 }
 
-
 // I could merge zoom methods if position defaulted to focal point.
 Viewer.prototype.AnimateDoubleClickZoom = function(factor, position) {
   this.ZoomTarget = this.MainView.Camera.Height * factor;
@@ -97,7 +53,6 @@ Viewer.prototype.AnimateDoubleClickZoom = function(factor, position) {
   this.AnimateDuration = 200.0; // hard code 200 milliseconds
   eventuallyRender();
 }
-
 
 Viewer.prototype.AnimateZoom = function(factor) {
   this.ZoomTarget = this.MainView.Camera.Height * factor;
@@ -239,7 +194,7 @@ Viewer.prototype.Animate = function() {
             *(timeNow-this.AnimateLast)/this.AnimateDuration;
     this.MainView.Camera.FocalPoint[1]
 	    = currentCenter[1] + (this.TranslateTarget[1]-currentCenter[1])
-            *(timeNow-this.AnimateLast)/this.AnimateDuration;	    
+            *(timeNow-this.AnimateLast)/this.AnimateDuration;
     // We are not finished yet.
     // Schedule another render
     eventuallyRender();
@@ -247,7 +202,7 @@ Viewer.prototype.Animate = function() {
   this.MainView.Camera.ComputeMatrix();
   this.OverView.Camera.ComputeMatrix();
   this.AnimateDuration -= (timeNow-this.AnimateLast);
-  this.AnimateLast = timeNow;  
+  this.AnimateLast = timeNow;
 }    
 
 Viewer.prototype.OverViewPlaceCamera = function(x, y) {

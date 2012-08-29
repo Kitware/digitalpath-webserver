@@ -43,6 +43,12 @@ function TextWidget (viewer, string) {
   // I would like to setup the ancoh in the middle of the screen,
   // And have the Anchor in the middle of the text.
   this.Shape.Position = [cam.FocalPoint[0], cam.FocalPoint[1]];
+  
+  // This has the same information as the shapes ancho point.
+  // The widget needs to remember the anchor as the anchor shape visibility
+  // turns on and off.  When off, the shap anchor moves to the center of the text.
+  // (The text position moves, and the world anchor location stays the same.)
+  this.OffsetShapeAnchor = [-20,10];
 
   this.Viewer.AddShape(this.Shape);
 }
@@ -59,6 +65,21 @@ TextWidget.prototype.Serialize = function() {
   return obj;
 }
 
+// Anchor is in the middle of the bounds when the shape is not visible.
+TextWidget.prototype.SetAnchorShapeVisibility = function(flag) {
+  if (this.Shape.AnchorVisibility == flag) {
+    return;
+  }
+  if (flag) {
+    this.Shape.Anchor = this.OffsetShapeAnchor;
+    this.Shape.AnchorVisibility = true;
+  } else {
+    this.ShapeAnchor = [(this.Shape.PixelBounds[0]+this.Shape.PixelBounds[1])*0.5, this.Shape.PixelBounds[2]];
+    this.Shape.AnchorVisibility = false;
+  }
+  this.SavedShapeAnchor = [this.Shape.Anchor[0], this.Shape.Anchor[1]];
+  eventuallyRender();
+}
 
 TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
@@ -167,7 +188,10 @@ TextWidget.prototype.SetActive = function(flag) {
 
 TextWidget.prototype.ShowPropertiesDialog = function () {
   var ta = document.getElementById("textwidgetcontent");
-  ta.value = this.Shape.String;       
+  ta.value = this.Shape.String;
+  var tm = document.getElementById("TextMarker");
+  tm.value = this.Shape.AnchorVisibility;
+  
   $("#text-properties-dialog").dialog("open");
 }    
 
