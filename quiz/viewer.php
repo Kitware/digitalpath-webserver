@@ -462,69 +462,69 @@ var VIEWER1;
     }
     
     $(document).ready(function() {
-      if (QUESTION.choices) {
-        document.getElementById("qtext").innerHTML = QUESTION.qtext;
-        document.getElementById("title").innerHTML = QUESTION.title;
-        for (var i = 0; i < QUESTION.choices.length; ++i) {
-          var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
-          if(QUESTION.correct == (i+'')){
-              liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-          }
-          $('#choicelist').append(liststring);    
+        if (QUESTION.choices) {
+            document.getElementById("qtext").innerHTML = QUESTION.qtext;
+            document.getElementById("title").innerHTML = QUESTION.title;
+            for (var i = 0; i < QUESTION.choices.length; ++i) {
+                var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
+                if(QUESTION.correct == (i+'')){
+                    liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+                }
+                $('#choicelist').append(liststring);    
+            }
         }
-      }
-      else {
-        var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
-        $('#choicelist').append(liststring);
-      }
+        else {
+            var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+            $('#choicelist').append(liststring);
+        }
 
-      $("#text-properties-dialog").dialog({
-        autoOpen:false,
-        height:200,
-        width:350,
-        modal:true,
-        buttons:{
-          Delete: function() {
-            WidgetPropertyDialogDelete();
-            $(this).dialog("close");
-          },
-          Apply: function() {
-            TextPropertyDialogApply();
-            $(this).dialog("close");
-          }
-        },
-        close: function(event,ui) {
-          if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
-            WidgetPropertyDialogCancel();
-            $(this).dialog("close");
-          }
-          $("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
-        }   
-      });
+        $("#text-properties-dialog").dialog({
+            autoOpen:false,
+            height:200,
+            width:350,
+            modal:true,
+            buttons:{
+                Delete: function() {
+                    WidgetPropertyDialogDelete();
+                    $(this).dialog("close");
+                },
+                Apply: function() {
+                    TextPropertyDialogApply();
+                    $(this).dialog("close");
+                }
+            },
+            close: function(event,ui) {
+                if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+                    WidgetPropertyDialogCancel();
+                    $(this).dialog("close");
+                }
+                $("#textwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+            }   
+        });
         
-      $("#arrow-properties-dialog").dialog({
-        autoOpen:false,
-        height:200,
-        width:350,
-        modal:true,
-        buttons:{
-          Delete: function() {
-            WidgetPropertyDialogDelete();
-            $(this).dialog("close");
-          },
-          Apply: function() {
-            ArrowPropertyDialogApply();
-            $(this).dialog("close");
-          }
-        },
-        close: function(event,ui) {
-          if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
-            WidgetPropertyDialogCancel();
-            $(this).dialog("close");
-          }
-          //$("#arrowwidgetcontent").val( "" ).removeClass( "ui-state-error" );
-        }   
-      });
+        $("#arrow-properties-dialog").dialog({
+            autoOpen:false,
+            height:200,
+            width:350,
+            modal:true,
+            buttons:{
+                Delete: function() {
+                    WidgetPropertyDialogDelete();
+                    $(this).dialog("close");
+                },
+                Apply: function() {
+                    ArrowPropertyDialogApply();
+                    $(this).dialog("close");
+                }
+            },
+            close: function(event,ui) {
+                if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+                    WidgetPropertyDialogCancel();
+                    $(this).dialog("close");
+                }
+                //$("#arrowwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+            }   
+        });
 
       $("#circle-properties-dialog").dialog({
         autoOpen:false,
