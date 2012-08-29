@@ -52,37 +52,6 @@ $mongo_question = $c1->findOne(array('qid'=>$qid));
 $image_collection = $d->selectCollection("images");
 $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_question['imageid'])));
 
-/* DOCUMENTATION
-
-Collection 'questions':
-    'qid' - question ID - MONGOID
-    'imageid' - image ID
-    'qtext'
-    'cam'
-    array 'choices'(
-        choice 1 text,
-        choice 2 text,
-        choice 3 text,
-        ...
-        )
-    array 'annotations'(
-        annotation 1 - array(
-            type
-            other
-            )
-        annotation 2 - array(
-            type
-            other
-            )
-        )
-        
-To start, we
-
-setquestion.php
-    - 
-
-*/
-
 ?>
 
 <script type="text/javascript" >
@@ -284,6 +253,22 @@ var IMAGE;
         eventuallyRender();
     }
     
+    function zoomIn() {
+      VIEWER1.AnimateZoom(0.5);
+    }
+    
+    function zoomOut() {
+      VIEWER1.AnimateZoom(2.0);
+    }
+    
+    function rotateRight() {
+      VIEWER1.AnimateRoll(12.0); // 12 degrees
+    }
+    
+    function rotateLeft() {
+      VIEWER1.AnimateRoll(-12.0); // -12 degrees
+    }
+    
     
     /*function NewArrow() {
       //alert("New Arrow");
@@ -395,6 +380,20 @@ var IMAGE;
     </div>
     <div class="viewer" >
         <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas>
+        <table border="1" id="zoombuttons" >
+            <tr>
+                <td type="button" onclick="zoomIn();" style="width:20px;height:20px;background-color:white;text-align:center;" >+</td>
+            </tr>
+            <tr>
+                <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
+            </tr>
+        </table>
+        <table border="1" id="rotatebuttons" >
+            <tr>
+                <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >R</td>
+                <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >L</td>
+            </tr>
+        </table>
     </div>
     <div id="form" >
     </div>

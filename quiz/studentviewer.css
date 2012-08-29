@@ -6,9 +6,10 @@ body {
 
 .container {
     width:1210px;
-    height:775px;
+    height:750px;
     margin-right:auto;
     margin-left:auto;
+    margin-top: 0px;
     background-color:#ffffff;
 }
 
@@ -28,8 +29,24 @@ body {
 }
 
 .header {
-    height:73px;
+    height:48px;
     width:100%;
     background-color:#0198e1;
     border: 1px solid black;
+}
+
+#zoombuttons {
+    z-index:10;
+    height:45px;
+    top: 640px;
+    left: 860px;
+    position:absolute;
+}
+
+#rotatebuttons {
+    z-index:10;
+    height:45px;
+    top: 705px;
+    left: 150px;
+    position:absolute;
 }
