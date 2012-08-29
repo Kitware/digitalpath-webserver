@@ -145,7 +145,7 @@ setquestion.php
         vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
         // Use the image pixel value as transparency.
         gl_FragColor = vec4(uColor, textureColor.rgb[0]);
-    }
+        }
 </script>
 <script id="shader-text-vs" type="x-shader/x-vertex">
     attribute vec3 aVertexPosition;
@@ -288,9 +288,7 @@ var VIEWER1;
     }
 
     function NewArrow() {
-      //alert("New Arrow");
       // When the arrow button is pressed, create the widget.
-      //alert("CLICK!");
       var widget = new ArrowWidget(VIEWER1, true);
       VIEWER1.ActiveWidget = widget;
       VIEWER1.WidgetList.push(widget);
@@ -298,7 +296,9 @@ var VIEWER1;
 
     function NewCircle() {
       // When the circle button is pressed, create the widget.
-      VIEWER1.ActiveWidget = new CircleWidget(VIEWER1);
+      var widget = new CircleWidget(VIEWER1, true);
+      VIEWER1.ActiveWidget = widget;
+      VIEWER1.WidgetList.push(widget);
     }
 
     function NewFreeForm() {
@@ -341,6 +341,20 @@ var VIEWER1;
     }
   
     function ArrowPropertyDialogApply() {
+      var widget = VIEWER1.ActiveWidget;
+      if (widget != null) {
+        widget.SetActive(false);
+      }
+      eventuallyRender();
+      if (widget.AnnotationCallback != undefined) {
+        // DEBUG: Do not save annotations (I have no easy way of deleting).
+        //VIEWER1.Widget..AnnotationCallback(this.Widget);
+        // I am going to have to save the modified states (modified by widget) someplace else.
+        // Maybe keep a modified flag.
+      }
+    }
+
+    function CirclePropertyDialogApply() {
       var widget = VIEWER1.ActiveWidget;
       if (widget != null) {
         widget.SetActive(false);
@@ -532,6 +546,30 @@ var VIEWER1;
             }   
         });
 
+      $("#circle-properties-dialog").dialog({
+        autoOpen:false,
+        height:200,
+        width:350,
+        modal:true,
+        buttons:{
+          Delete: function() {
+            WidgetPropertyDialogDelete();
+            $(this).dialog("close");
+          },
+          Apply: function() {
+            CirclePropertyDialogApply();
+            $(this).dialog("close");
+          }
+        },
+        close: function(event,ui) {
+          if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+            WidgetPropertyDialogCancel();
+            $(this).dialog("close");
+          }
+          //$("#arrowwidgetcontent").val( "" ).removeClass( "ui-state-error" );
+        }   
+      });
+
     });
  
 </script> 
@@ -599,7 +637,15 @@ var VIEWER1;
     <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
         <form>
             <fieldset>
-              <!-- I plan to have a color selector and maybe tip,orientation,length -->
+              <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="circle-properties-dialog" title="Circle Annotation Editor" >
+        <form>
+            <fieldset>
+              <!-- I plan to have a color selector and center and radius entries (thickness too) -->
             </fieldset>
         </form>
     </div>

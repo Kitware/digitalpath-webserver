@@ -239,8 +239,6 @@ Viewer.prototype.HandleMouseMove = function(event, dx,dy) {
   // It would be nice to have this before this method.
   x = x - viewport[0];
   y = y - viewport[1];
-  // Now we need to convert to world coordinate system
-  this.TipPosition = [x,y];
   // Convert (x,y) to ???
   // Compute focal point from inverse overview camera.
   x = x/viewport[2];

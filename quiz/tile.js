@@ -39,30 +39,30 @@ function GetErrorTextureFunction (callback) {
 // 2: Initialize the texture.
 // 3: onload is called indicating the image has been loaded.
 function Tile(x, y, z, level, name, cache) {
-    // This should be implicit.
-    //this is just for debugging
-    //this.Id = x + (y<<level)
-    //
-    this.X = x;
-    this.Y = y;
-    this.Level = level;
-    this.Children = []; 
-    this.Parent = null;
-    this.LoadState = 0;
-    var xScale = cache.TileDimensions[0] * cache.RootSpacing[0] / (1 << level);
-    var yScale = cache.TileDimensions[1] * cache.RootSpacing[1] / (1 << level);
-    this.Matrix = mat4.create();
-    this.Matrix[0] = xScale;
-    this.Matrix[5] = yScale;
-    this.Matrix[12] = x * xScale;
-    this.Matrix[13] = y * yScale;
-    this.Matrix[14] = z * cache.RootSpacing[2] -(0.001 * this.Level);
-    this.Matrix[15] = 1.0;
-    this.Name = name;
-    this.Texture = null;
-    this.TimeStamp = TIME_STAMP;
-    this.BranchTimeStamp = TIME_STAMP;
-    ++cache.NumberOfTiles;
+  // This should be implicit.
+  //this is just for debugging
+  //this.Id = x + (y<<level)
+  //
+  this.X = x;
+  this.Y = y;
+  this.Level = level;
+  this.Children = []; 
+  this.Parent = null;
+  this.LoadState = 0;
+  var xScale = cache.TileDimensions[0] * cache.RootSpacing[0] / (1 << level);
+  var yScale = cache.TileDimensions[1] * cache.RootSpacing[1] / (1 << level);
+  this.Matrix = mat4.create();
+  this.Matrix[0] = xScale;
+  this.Matrix[5] = yScale;
+  this.Matrix[12] = x * xScale;
+  this.Matrix[13] = y * yScale;
+  this.Matrix[14] = z * cache.RootSpacing[2] -(0.001 * this.Level);
+  this.Matrix[15] = 1.0;
+  this.Name = name;
+  this.Texture = null;
+  this.TimeStamp = TIME_STAMP;
+  this.BranchTimeStamp = TIME_STAMP;
+  ++cache.NumberOfTiles;
 };
 
 Tile.prototype.destructor=function()
@@ -91,22 +91,22 @@ Tile.prototype.destructor=function()
 // Loading is asynchronous, so the tile will not 
 // immediately change its state.
 Tile.prototype.StartLoad = function (cache) {
-    if (this.Texture != null) {
-	return;
-    }
+  if (this.Texture != null) {
+    return;
+  }
 
-    var imageSrc = cache.GetSource() + this.Name + ".jpg"; 
+  var imageSrc = cache.GetSource() + this.Name + ".jpg"; 
 
-    this.Texture = GL.createTexture();
-    // Reusing the image caused problems.
-    //if (this.Image == null) {
+  this.Texture = GL.createTexture();
+  // Reusing the image caused problems.
+  //if (this.Image == null) {
     this.Image = new Image();
     var callback = new LoadTileCallback(this, cache);
     this.Image.onload = GetLoadTextureFunction(callback); 
     this.Image.onerror = GetErrorTextureFunction(callback); 
-    //}
-    // This starts the loading.
-    this.Image.src = imageSrc;
+  //}
+  // This starts the loading.
+  this.Image.src = imageSrc;
 };
 
 
