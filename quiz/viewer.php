@@ -49,37 +49,6 @@ $mongo_question = $c->findOne(array('qid'=>new MongoId($qid)));
 $image_collection = $d->selectCollection("images");
 $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_question['imageid'])));
 
-/* DOCUMENTATION
-
-Collection 'questions':
-    'qid' - question ID - MONGOID
-    'imageid' - image ID
-    'qtext'
-    'cam'
-    array 'choices'(
-        choice 1 text,
-        choice 2 text,
-        choice 3 text,
-        ...
-        )
-    array 'annotations'(
-        annotation 1 - array(
-            type
-            other
-            )
-        annotation 2 - array(
-            type
-            other
-            )
-        )
-        
-To start, we
-
-setquestion.php
-    - 
-
-*/
-
 ?>
 
 <script type="text/javascript">
@@ -175,10 +144,7 @@ var VIEWER1;
         var source1 = new Cache("http://localhost:81/tile.php?image="+QUESTION.imageid+"&name=");
         VIEWER1 = new Viewer([0,0, 900,700], source1);
         VIEWER1.AnnotationCallback = function(widget) {
-            var json = widget.Serialize();
-            $.post("saveannotation.php?id="+QUESTION.qid.$id, {widget:json}, function(){
-                saveConstants();
-            });
+            saveConstants();
         }
         var cam = QUESTION.cam;
         if(cam){
@@ -197,38 +163,41 @@ var VIEWER1;
             for(var i=0; i < QUESTION.annotations.length; i++){
                 switch(QUESTION.annotations[i].type){
                     case "arrow":
-                        var arrow = new Arrow();
-                        arrow.Origin = QUESTION.annotations[i].origin;
-                        arrow.FillColor = QUESTION.annotations[i].fillcolor;
-                        arrow.OutlineColor = QUESTION.annotations[i].outlinecolor;
-                        arrow.Length = QUESTION.annotations[i].length;
-                        arrow.Width = QUESTION.annotations[i].width;
-                        arrow.Orientation = QUESTION.annotations[i].orientation;
-                        arrow.UpdateBuffers();
-                        VIEWER1.AddShape(arrow);
+                        var arrow = new ArrowWidget(VIEWER1, false);
+                        arrow.Shape.Origin = QUESTION.annotations[i].origin;
+                        arrow.Shape.FillColor = QUESTION.annotations[i].fillcolor;
+                        arrow.Shape.OutlineColor = QUESTION.annotations[i].outlinecolor;
+                        arrow.Shape.Length = QUESTION.annotations[i].length;
+                        arrow.Shape.Width = QUESTION.annotations[i].width;
+                        arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
+                        arrow.Shape.UpdateBuffers();
+                        VIEWER1.AddShape(arrow.Shape);
+                        VIEWER1.WidgetList.push(arrow);
                         break;
                     case "text":
-                        var text = new Text();
-                        text.Color = QUESTION.annotations[i].color;
-                        text.Size = QUESTION.annotations[i].size;
-                        text.Anchor = QUESTION.annotations[i].anchor;
-                        text.Position = QUESTION.annotations[i].position;
-                        text.String = QUESTION.annotations[i].string;
-                        text.UpdateBuffers();
-                        VIEWER1.AddShape(text);
+                        var text = new TextWidget(VIEWER1, "");
+                        text.Shape.Color = QUESTION.annotations[i].color;
+                        text.Shape.Size = QUESTION.annotations[i].size;
+                        text.Shape.Anchor = QUESTION.annotations[i].anchor;
+                        text.Shape.Position = QUESTION.annotations[i].position;
+                        text.Shape.String = QUESTION.annotations[i].string;
+                        text.Shape.UpdateBuffers();
+                        VIEWER1.AddShape(text.Shape);
+                        VIEWER1.WidgetList.push(text);
                         break;
                     case "circle":
-                        var circle = new Circle();
-                        circle.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-                        circle.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-                        circle.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-                        circle.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-                        circle.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-                        circle.Radius = parseFloat(QUESTION.annotations[i].radius);
-                        circle.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-                        circle.FixedSize = false;
-                        circle.UpdateBuffers();
-                        VIEWER1.AddShape(circle);
+                        var circle = new CircleWidget(VIEWER1, false);
+                        circle.Shape.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+                        circle.Shape.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+                        circle.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+                        circle.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+                        circle.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+                        circle.Shape.Radius = parseFloat(QUESTION.annotations[i].radius);
+                        circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
+                        circle.Shape.FixedSize = false;
+                        circle.Shape.UpdateBuffers();
+                        VIEWER1.AddShape(circle.Shape);
+                        VIEWER1.WidgetList.push(circle);
                         break;
                     case "freeform":
                         var ff = new FreeForm();
@@ -341,7 +310,9 @@ var VIEWER1;
     }
   
     function ArrowPropertyDialogApply() {
+      var hexcolor = document.getElementById("arrowcolor").value;
       var widget = VIEWER1.ActiveWidget;
+      widget.Shape.SetFillColor(hexcolor);
       if (widget != null) {
         widget.SetActive(false);
       }
@@ -355,7 +326,9 @@ var VIEWER1;
     }
 
     function CirclePropertyDialogApply() {
+    var hexcolor = document.getElementById("circlecolor").value;
       var widget = VIEWER1.ActiveWidget;
+      widget.Shape.SetOutlineColor(hexcolor);
       if (widget != null) {
         widget.SetActive(false);
       }
@@ -365,6 +338,7 @@ var VIEWER1;
         //VIEWER1.Widget..AnnotationCallback(this.Widget);
         // I am going to have to save the modified states (modified by widget) someplace else.
         // Maybe keep a modified flag.
+        
       }
     }
 
@@ -411,7 +385,13 @@ var VIEWER1;
         
         correct = correct + '';
         
-        $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct});
+        var annots = [];
+        
+        for(var i=0; i < VIEWER1.WidgetList.length; i++){
+            annots.push(VIEWER1.WidgetList[i].Serialize());
+        }
+        
+        $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct, annots:annots});
     }
     
     function findChecked(){
@@ -617,7 +597,8 @@ var VIEWER1;
     <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
         <form>
             <fieldset>
-              <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+                <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+                Color(#rrggbb):<input id="arrowcolor" ></input>
             </fieldset>
         </form>
     </div>
@@ -625,7 +606,8 @@ var VIEWER1;
     <div id="circle-properties-dialog" title="Circle Annotation Editor" >
         <form>
             <fieldset>
-              <!-- I plan to have a color selector and center and radius entries (thickness too) -->
+                <!-- I plan to have a color selector and center and radius entries (thickness too) -->
+                Color(#rrggbb):<input id="circlecolor" ></input>
             </fieldset>
         </form>
     </div>

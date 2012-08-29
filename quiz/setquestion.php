@@ -8,6 +8,7 @@ $qtext = $_POST['qtext'];
 $choices = $_POST['choices'];
 $cam = $_POST['cam'];
 $correct = $_POST['corr'];
+$annots = $_POST['annots'];
 // How do we get the values store as floats rather than strings?
 //$cam = json_decode($cam); did not work
 //$cam.height = (float)$cam.height;
@@ -27,6 +28,6 @@ $c3 = $d->selectCollection('questions');
 
 //$imgid = $c3->findOne(array('_id'=>new MongoId($id)), array('imageid'=>1));
 
-$c3->update(array('qid'=>new MongoId($id)), array('$set'=>array('qtext'=>$qtext, 'title'=>$title, 'choices'=>$choices, 'cam'=>$cam, 'correct'=>$correct)), true);
+$c3->update(array('qid'=>new MongoId($id)), array('$set'=>array('qtext'=>$qtext, 'title'=>$title, 'choices'=>$choices, 'cam'=>$cam, 'correct'=>$correct, 'annotations'=>$annots)), true);
 
 ?>
