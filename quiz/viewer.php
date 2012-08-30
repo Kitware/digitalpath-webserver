@@ -145,6 +145,9 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
     var source1 = new Cache("http://localhost:81/tile.php?image="+QUESTION.imageid+"&name=");
     VIEWER1 = new Viewer([0,0, 900,700], source1);
+    //VIEWER1 = new Viewer([0,0, 1200,500], source1);
+    
+    
     VIEWER1.AnnotationCallback = function(widget) {
       var json = widget.Serialize();
       $.post("saveannotation.php?id="+QUESTION.qid.$id, {widget:json}, function(){
@@ -178,13 +181,23 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             arrow.Shape.UpdateBuffers();
             break;
           case "text":
-            var text = new TextWidget(VIEWER1, "");
-            text.Shape.Color = QUESTION.annotations[i].color;
-            text.Shape.Size = QUESTION.annotations[i].size;
-            text.Shape.Anchor = QUESTION.annotations[i].anchor;
-            text.Shape.Position = QUESTION.annotations[i].position;
-            text.Shape.String = QUESTION.annotations[i].string;
-            text.Shape.UpdateBuffers();
+            var string = QUESTION.annotations[i].string;
+            if (string != "") {
+              var text = new TextWidget(VIEWER1, string);
+              text.Shape.Color = [parseFloat(QUESTION.annotations[i].color[0]),
+                                  parseFloat(QUESTION.annotations[i].color[1]),
+                                  parseFloat(QUESTION.annotations[i].color[0])];
+              text.Shape.Size = parseFloat(QUESTION.annotations[i].size);
+              if (QUESTION.annotations[i].offset !== undefined) { // how to try / catch in javascript?
+                text.SetTextOffset(parseFloat(QUESTION.annotations[i].offset[0]), 
+                                   parseFloat(QUESTION.annotations[i].offset[1]));
+              }
+              text.Shape.Position = [parseFloat(QUESTION.annotations[i].position[0]),
+                                     parseFloat(QUESTION.annotations[i].position[1]),
+                                     parseFloat(QUESTION.annotations[i].position[2])];
+              text.SetAnchorShapeVisibility(QUESTION.annotations[i].anchorVisibility == "true");
+              text.Shape.UpdateBuffers();
+            }
             break;
           case "circle":
             var circle = new CircleWidget(VIEWER1, false);
@@ -257,7 +270,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     // When the arrow button is pressed, create the widget.
     var widget = new ArrowWidget(VIEWER1, true);
     VIEWER1.ActiveWidget = widget;
-  }
+
+    VIEWER1.SetViewport([0,0, 1200,500]);
+    eventuallyRender();
+    }
 
   function NewCircle() {
     // When the circle button is pressed, create the widget.
@@ -434,23 +450,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
         saveConstants();
         //window.location = "lessonmaker.php";
     }
-    
-    function zoomIn() {
-      VIEWER1.AnimateZoom(0.5);
-    }
-    
-    function zoomOut() {
-      VIEWER1.AnimateZoom(2.0);
-    }
-    
-    function rotateRight() {
-      VIEWER1.AnimateRoll(-12.0); // degrees
-    }
-    
-    function rotateLeft() {
-      VIEWER1.AnimateRoll(12.0); // degrees
-    }
-    
     $(document).ready(function() {
         if (QUESTION.choices) {
             document.getElementById("qtext").innerHTML = QUESTION.qtext;
@@ -551,7 +550,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 <body onload="webGLStart();">
     <div class="container" >
     <div class="viewer" >
-        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
+        <canvas id="viewer-canvas" style="border: none;" width="900" height="700"></canvas> 
         <table border="1" id="annotbuttons">
             <tr>
                 <td>

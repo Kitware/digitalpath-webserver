@@ -80,17 +80,26 @@ TextWidget.prototype.RemoveFromViewer = function() {
   }
 }
 
+// When the arrow is visible, the text is offset from the position (tip of arrow).
+TextWidget.prototype.SetTextOffset = function(x, y) {
+  this.SavedShapeAnchor = [-x, -y];
+  this.Shape.Anchor[0] = this.SavedShapeAnchor;
+}
+
 TextWidget.prototype.Serialize = function() {
   if(this.Shape === undefined){ return null; }
   var obj = new Object();
   obj.type = "text";
   obj.color = this.Shape.Color;
   obj.size = this.Shape.Size;
-  obj.anchor = this.Shape.Anchor;
+  obj.offset = [-this.Shape.Anchor[0], -this.Shape.Anchor[1]];
   obj.position = this.Shape.Position;
   obj.string = this.Shape.String;
+  obj.anchorVisibility = this.AnchorShape.Visibility;
   return obj;
 }
+
+
 
 // Anchor is in the middle of the bounds when the shape is not visible.
 TextWidget.prototype.SetAnchorShapeVisibility = function(flag) {
@@ -269,7 +278,7 @@ TextWidget.prototype.ShowPropertiesDialog = function () {
   var ta = document.getElementById("textwidgetcontent");
   ta.value = this.Shape.String;
   var tm = document.getElementById("TextMarker");
-  tm.value = this.Shape.AnchorVisibility;
+  tm.checked = this.AnchorShape.Visibility;
   
   $("#text-properties-dialog").dialog("open");
 }    

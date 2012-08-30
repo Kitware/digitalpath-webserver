@@ -4,35 +4,44 @@
 
 
 function Viewer (viewport, cache) {
-    // Some of these could get transitioned to view or style ...
-    // Left click option: Drag in main window, place in overview.
-    this.OverViewEventFlag = false;
+  // Some of these could get transitioned to view or style ...
+  // Left click option: Drag in main window, place in overview.
+  this.OverViewEventFlag = false;
 
-    this.AnimateLast;
-    this.AnimateDuration = 0.0;
-    this.TranslateTarget = [0.0,0.0];
-    
-    this.MainView = new View(viewport, cache);
-    this.MainView.Camera.ZRange = [0,1];
-    this.MainView.Camera.ComputeMatrix();
-    var overViewport = [viewport[0] + viewport[2]*0.8, 
-                        viewport[1] + viewport[3]*0.8,
-                        viewport[2]*0.18, viewport[3]*0.18];
-    this.OverView = new View(overViewport, cache);
-    this.OverView.Camera.ZRange = [-1,0];
-    this.OverView.Camera.FocalPoint = [13000.0, 11000.0, 10.0];
-    this.OverView.Camera.Height = 22000.0;
-    this.OverView.Camera.ComputeMatrix();
-    this.ZoomTarget = this.MainView.Camera.GetHeight();
-    this.RollTarget = this.MainView.Camera.Roll;
-	
-    this.AnnotationList = []; // Remove this.
-    this.ShapeList = [];
-    this.WidgetList = [];
-    this.ActiveWidget = null;
+  this.AnimateLast;
+  this.AnimateDuration = 0.0;
+  this.TranslateTarget = [0.0,0.0];
+  
+  this.MainView = new View(viewport, cache);
+  this.MainView.Camera.ZRange = [0,1];
+  this.MainView.Camera.ComputeMatrix();
+  var overViewport = [viewport[0] + viewport[2]*0.8, 
+                      viewport[1] + viewport[3]*0.8,
+                      viewport[2]*0.18, viewport[3]*0.18];
+  this.OverView = new View(overViewport, cache);
+  this.OverView.Camera.ZRange = [-1,0];
+  this.OverView.Camera.FocalPoint = [13000.0, 11000.0, 10.0];
+  this.OverView.Camera.Height = 22000.0;
+  this.OverView.Camera.ComputeMatrix();
+  this.ZoomTarget = this.MainView.Camera.GetHeight();
+  this.RollTarget = this.MainView.Camera.Roll;
+
+  this.AnnotationList = []; // Remove this.
+  this.ShapeList = [];
+  this.WidgetList = [];
+  this.ActiveWidget = null;
 
   this.DoubleClickX = 0; 
   this.DoubleClickY = 0;
+}
+
+
+Viewer.prototype.SetViewport = function(viewport) {
+  this.MainView.SetViewport(viewport);
+  var overViewport = [viewport[0] + viewport[2]*0.8, 
+                      viewport[1] + viewport[3]*0.8,
+                      viewport[2]*0.18, viewport[3]*0.18];
+  this.OverView.SetViewport(overViewport);
 }
 
 // I could merge zoom methods if position defaulted to focal point.
