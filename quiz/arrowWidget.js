@@ -17,7 +17,7 @@ var ARROW_WIDGET_PROPERTIES_DIALOG = 6; // Properties dialog is up
 
 function ArrowWidget (viewer, newFlag) {
   if (viewer == null) {
-    return;
+    return null;
   }
   this.Viewer = viewer;
 
@@ -28,6 +28,7 @@ function ArrowWidget (viewer, newFlag) {
   this.Shape.OutlineColor = [1.0, 1.0, 1.0];
   this.Shape.Length = 50;
   this.Shape.Width = 8;
+  viewer.WidgetList.push(this);
   viewer.AddShape(this.Shape);
   // Note: If the user clicks before the mouse is in the
   // canvas, this will behave odd.
@@ -41,6 +42,20 @@ function ArrowWidget (viewer, newFlag) {
   }
 
   this.State = ARROW_WIDGET_WAITING;
+}
+
+ArrowWidget.prototype.RemoveFromViewer = function() {
+  if (this.Viewer == null) {
+    return;
+  }
+  var idx = this.Viewer.ShapeList.indexOf(this.Shape);
+  if(idx!=-1) { 
+    this.Viewer.ShapeList.splice(idx, 1); 
+  }
+  var idx = this.Viewer.WidgetList.indexOf(this);
+  if(idx!=-1) { 
+    this.Viewer.WidgetList.splice(idx, 1); 
+  }
 }
 
 ArrowWidget.prototype.Serialize = function() {

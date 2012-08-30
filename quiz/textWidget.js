@@ -23,6 +23,9 @@ var TEXT_WIDGET_DRAG_TEXT = 3; // Drag text but leave the position the same.
 var TEXT_WIDGET_PROPERTIES_DIALOG = 4;
 
 function TextWidget (viewer, string) {
+  if (viewer == null) {
+    return null;
+  }
   this.Viewer = viewer;
   this.State = TEXT_WIDGET_WAITING;
   this.CursorLocation = 0; // REMOVE
@@ -40,14 +43,41 @@ function TextWidget (viewer, string) {
   // And have the Anchor in the middle of the text.
   this.Shape.Position = [cam.FocalPoint[0], cam.FocalPoint[1]];
   
-  // This has the same information as the shapes ancho point.
-  // The widget needs to remember the anchor as the anchor shape visibility
-  // turns on and off.  When off, the shap anchor moves to the center of the text.
-  // (The text position moves, and the world anchor location stays the same.)
-  this.OffsetShapeAnchor = [-20,10];
+  // The anchor shape could be put into the text widget, but I might want a thumb tack anchor.
+  this.AnchorShape = new Arrow();
+  this.AnchorShape.Origin = this.Shape.Position; // note: both point to the same memory now.
+  this.AnchorShape.Length = 50;
+  this.AnchorShape.Width = 10;
+  this.AnchorShape.UpdateBuffers();
+  this.AnchorShape.Visibility = false;
+  this.AnchorShape.Orientation = 45.0; // in degrees, counter clockwise, 0 is left
+  this.AnchorShape.FillColor = [0,0,0];
+  this.AnchorShape.OutlineColor = [1,1,1];
+  this.AnchorShape.ZOffset = 0.2;
+  this.AnchorShape.UpdateBuffers();
 
-  this.Viewer.AddShape(this.Shape);
+  viewer.WidgetList.push(this);
+  viewer.AddShape(this.Shape);
+  viewer.AddShape(this.AnchorShape);
   this.ActiveReason = 1;
+}
+
+TextWidget.prototype.RemoveFromViewer = function() {
+  if (this.Viewer == null) {
+    return;
+  }
+  var idx = this.Viewer.ShapeList.indexOf(this.Shape);
+  if(idx!=-1) { 
+    this.Viewer.ShapeList.splice(idx, 1); 
+  }
+  var idx = this.Viewer.ShapeList.indexOf(this.AnchorShape);
+  if(idx!=-1) { 
+    this.Viewer.ShapeList.splice(idx, 1); 
+  }
+  var idx = this.Viewer.WidgetList.indexOf(this);
+  if(idx!=-1) { 
+    this.Viewer.WidgetList.splice(idx, 1); 
+  }
 }
 
 TextWidget.prototype.Serialize = function() {
@@ -64,18 +94,55 @@ TextWidget.prototype.Serialize = function() {
 
 // Anchor is in the middle of the bounds when the shape is not visible.
 TextWidget.prototype.SetAnchorShapeVisibility = function(flag) {
-  if (this.Shape.AnchorVisibility == flag) {
+  if (this.AnchorShape.Visibility == flag) {
     return;
   }
-  if (flag) {
-    this.Shape.Anchor = this.OffsetShapeAnchor;
-    this.Shape.AnchorVisibility = true;
-  } else {
-    this.ShapeAnchor = [(this.Shape.PixelBounds[0]+this.Shape.PixelBounds[1])*0.5, this.Shape.PixelBounds[2]];
-    this.Shape.AnchorVisibility = false;
+  if (flag) { // turn glyph on
+    if (this.SavedShapeAnchor == undefined) {
+      this.SavedShapeAnchor = [-30, 0];
+      }
+    this.Shape.Anchor = this.SavedShapeAnchor;
+    this.AnchorShape.Visibility = true;
+    this.AnchorShape.Origin = this.Shape.Position;
+    this.UpdateAnchorShape();
+  } else { // turn glyph off
+    // save the old anchor incase glyph is turned back on.
+    this.SavedShapeAnchor = [this.Shape.Anchor[0], this.Shape.Anchor[1]];
+    // Put the new (invisible rotation point (anchor) in the middle bottom of the bounds.
+    this.Shape.Anchor = [(this.Shape.PixelBounds[0]+this.Shape.PixelBounds[1])*0.5, this.Shape.PixelBounds[2]];
+    this.AnchorShape.Visibility = false;
   }
-  this.SavedShapeAnchor = [this.Shape.Anchor[0], this.Shape.Anchor[1]];
   eventuallyRender();
+}
+
+// Change orientation and length of arrow based on the anchor location.
+TextWidget.prototype.UpdateAnchorShape = function() {
+  // Compute the middle of the text bounds.
+  var xMid = 0.5 * (this.Shape.PixelBounds[0] + this.Shape.PixelBounds[1]); 
+  var yMid = 0.5 * (this.Shape.PixelBounds[2] + this.Shape.PixelBounds[3]); 
+  var xRad = 0.5 * (this.Shape.PixelBounds[1] - this.Shape.PixelBounds[0]); 
+  var yRad = 0.5 * (this.Shape.PixelBounds[3] - this.Shape.PixelBounds[2]); 
+
+  // Compute the angle of the arrow.
+  var dx = this.Shape.Anchor[0]-xMid;
+  var dy = this.Shape.Anchor[1]-yMid;
+  this.AnchorShape.Orientation = 180.0 + Math.atan2(dy, dx) * 180.0 / Math.PI;
+  // Compute the length of the arrow.
+  var length = Math.sqrt(dx*dx + dy*dy);
+  // Find the intersection of the vector and the bounding box.
+  var min = length;
+  if (dy != 0) {
+    var d = Math.abs(length * yRad / dy);
+    if (min > d) { min = d; }
+  }
+  if (dx != 0) {
+    var d = Math.abs(length * xRad / dx);
+    if (min > d) { min = d; }
+  }
+  length = length - min - 5;
+  if (length < 5) { length = 5;}
+  this.AnchorShape.Length = length;
+  this.AnchorShape.UpdateBuffers();
 }
 
 TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
@@ -83,7 +150,7 @@ TextWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 
 TextWidget.prototype.HandleMouseDown = function(event) {
   if (this.State == TEXT_WIDGET_ACTIVE) {
-    if (this.Shape.AnchorVisibility && this.ActiveReason == 0) {
+    if (this.AnchorShape.Visibility && this.ActiveReason == 0) {
       this.State = TEXT_WIDGET_DRAG_TEXT;
     } else {
       this.State = TEXT_WIDGET_DRAG;
@@ -122,12 +189,14 @@ TextWidget.prototype.ScreenPixelToTextPixelPoint = function(x,y) {
 TextWidget.prototype.HandleMouseMove = function(event) {
   if (this.State == TEXT_WIDGET_DRAG) {
     this.Shape.Position = this.Viewer.ConvertPointViewerToWorld(event.MouseX, event.MouseY);
+    this.AnchorShape.Origin = this.Shape.Position;
     eventuallyRender();
     return true;
   }
-  if (this.State == TEXT_WIDGET_DRAG_TEXT) {
+  if (this.State == TEXT_WIDGET_DRAG_TEXT) { // Just the text not the anchor glyph
     this.Shape.Anchor[0] -= event.MouseDeltaX;
     this.Shape.Anchor[1] -= event.MouseDeltaY;
+    this.UpdateAnchorShape();
     eventuallyRender();
     return true;
   }
@@ -141,18 +210,17 @@ TextWidget.prototype.HandleMouseMove = function(event) {
 TextWidget.prototype.CheckActive = function(event) {
   var tMouse = this.ScreenPixelToTextPixelPoint(event.MouseX, event.MouseY);
 
-    // Fist check anchor
-    // thencheck to see if the point is no the bounds of the text.
+  // First check anchor
+  // thencheck to see if the point is no the bounds of the text.
 
-  if (this.Shape.AnchorVisibility && 
-      Math.abs(tMouse[0] - this.Shape.Anchor[0]) < 5 &&
-      Math.abs(tMouse[1] - this.Shape.Anchor[1]) < 5) {
+  if (this.AnchorShape.Visibility && this.AnchorShape.PointInShape(tMouse[0]-this.Shape.Anchor[0], tMouse[1]-this.Shape.Anchor[1])) {
     this.ActiveReason = 1; // Hackish
     // Doulbe hack. // Does not get highlighted because widget already active.
-    this.Shape.AnchorShape.Active = true; eventuallyRender();
+    this.AnchorShape.Active = true; eventuallyRender();
     this.SetActive(true);
     return true;
-  } else if (tMouse[0] > this.Shape.PixelBounds[0] && tMouse[0] < this.Shape.PixelBounds[1] &&
+  }
+  if (tMouse[0] > this.Shape.PixelBounds[0] && tMouse[0] < this.Shape.PixelBounds[1] &&
       tMouse[1] > this.Shape.PixelBounds[2] && tMouse[1] < this.Shape.PixelBounds[3]) {
     this.ActiveReason = 0;
     this.SetActive(true);
@@ -184,14 +252,14 @@ TextWidget.prototype.SetActive = function(flag) {
     this.State = TEXT_WIDGET_ACTIVE;  
     this.Shape.Active = true;
     if (this.ActiveReason == 1) {
-      this.Shape.AnchorShape.Active = true;
+      this.AnchorShape.Active = true;
     }
     this.Viewer.ActivateWidget(this);
     eventuallyRender();
   } else {
     this.State = TEXT_WIDGET_WAITING;
     this.Shape.Active = false;
-    this.Shape.AnchorShape.Active = false;
+    this.AnchorShape.Active = false;
     this.Viewer.DeactivateWidget(this);
     eventuallyRender();
   }

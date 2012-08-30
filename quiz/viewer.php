@@ -176,49 +176,42 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             arrow.Shape.Width = QUESTION.annotations[i].width;
             arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
             arrow.Shape.UpdateBuffers();
-            VIEWER1.AddShape(arrow.Shape);
-            VIEWER1.WidgetList.push(arrow);
             break;
-                    case "text":
-                        var text = new TextWidget(VIEWER1, "");
-                        text.Shape.Color = QUESTION.annotations[i].color;
-                        text.Shape.Size = QUESTION.annotations[i].size;
-                        text.Shape.Anchor = QUESTION.annotations[i].anchor;
-                        text.Shape.Position = QUESTION.annotations[i].position;
-                        text.Shape.String = QUESTION.annotations[i].string;
-                        text.Shape.UpdateBuffers();
-                        VIEWER1.AddShape(text.Shape);
-                        VIEWER1.WidgetList.push(text);
-                        break;
-                    case "circle":
-                        var circle = new CircleWidget(VIEWER1, false);
-                        circle.Shape.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-                        circle.Shape.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-                        circle.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-                        circle.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-                        circle.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-                        circle.Shape.Radius = parseFloat(QUESTION.annotations[i].radius);
-                        circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-                        circle.Shape.FixedSize = false;
-                        circle.Shape.UpdateBuffers();
-                        VIEWER1.AddShape(circle.Shape);
-                        VIEWER1.WidgetList.push(circle);
-                        break;
-                    case "freeform":
-                        var ff = new FreeForm();
-                        ff.FixedSize = false;
-                        ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-                        ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-                        ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-                        ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-                        ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-                        ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
-                        for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
-                            ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
-                            ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
-                        }
-                        VIEWER1.AddShape(ff);
-                        break;
+          case "text":
+            var text = new TextWidget(VIEWER1, "");
+            text.Shape.Color = QUESTION.annotations[i].color;
+            text.Shape.Size = QUESTION.annotations[i].size;
+            text.Shape.Anchor = QUESTION.annotations[i].anchor;
+            text.Shape.Position = QUESTION.annotations[i].position;
+            text.Shape.String = QUESTION.annotations[i].string;
+            text.Shape.UpdateBuffers();
+            break;
+          case "circle":
+            var circle = new CircleWidget(VIEWER1, false);
+            circle.Shape.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+            circle.Shape.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+            circle.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+            circle.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+            circle.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+            circle.Shape.Radius = parseFloat(QUESTION.annotations[i].radius);
+            circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
+            circle.Shape.FixedSize = false;
+            circle.Shape.UpdateBuffers();
+            break;
+          case "freeform":
+            var ff = new FreeForm();
+            ff.FixedSize = false;
+            ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
+            ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
+            ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+            ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+            ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+            ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
+            for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
+                ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
+                ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
+            }
+            break;
         }
       }
     }  
@@ -264,14 +257,12 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     // When the arrow button is pressed, create the widget.
     var widget = new ArrowWidget(VIEWER1, true);
     VIEWER1.ActiveWidget = widget;
-    VIEWER1.WidgetList.push(widget);
   }
 
   function NewCircle() {
     // When the circle button is pressed, create the widget.
     var widget = new CircleWidget(VIEWER1, true);
     VIEWER1.ActiveWidget = widget;
-    VIEWER1.WidgetList.push(widget);
   }
 
   function NewFreeForm() {
@@ -307,7 +298,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     if (widget == null) {
       // This is a new widget.
       var widget = new TextWidget(VIEWER1, string);
-      VIEWER1.WidgetList.push(widget);
     } else {
       widget.Shape.String = string;
       widget.Shape.UpdateBuffers();
@@ -350,14 +340,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       VIEWER1.ActiveWidget = null;
       // We need to remove an item from a list.
       // shape list and widget list.
-      var idx = VIEWER1.ShapeList.indexOf(widget.Shape);
-      if(idx!=-1) { VIEWER1.ShapeList.splice(idx, 1); }
-      var idx = VIEWER1.WidgetList.indexOf(widget);
-      if(idx!=-1) { VIEWER1.WidgetList.splice(idx, 1); }
+      widget.RemoveFromViewer();
       eventuallyRender();
     }
   }    
-
 
   function addanswer() {
       saveConstants();

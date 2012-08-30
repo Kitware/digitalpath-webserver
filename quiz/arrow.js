@@ -5,6 +5,7 @@ function Arrow() {
     this.Length = 50; // Length of the arrow in pixels
     this.Orientation = 45.0; // in degrees, counter clockwise, 0 is left
     this.Origin = [10000,10000]; // Tip position in world coordinates.
+    this.ZOffset = -0.1;
 };
 Arrow.prototype = new Shape;
 
@@ -13,6 +14,19 @@ Arrow.prototype.destructor=function() {
     // Get rid of the buffers?
 }
 
+// Point origin is anchor and units pixels.
+Arrow.prototype.PointInShape = function(x, y) {
+  // Rotate point so arrow lies along the x axis.
+  var tmp = this.Orientation * Math.PI / 180.0;
+  var ct = Math.cos(tmp);
+  var st = Math.sin(tmp);
+  xNew = x*ct + y*st;
+  yNew = -x*st + y*ct;
+  tmp = this.Width / 2.0;
+  if (xNew > 0.0 && xNew < this.Length && yNew < tmp && yNew > -tmp) {
+    return true;
+  }
+}
 
 Arrow.prototype.UpdateBuffers = function() {
     var vertexPositionData = [];
