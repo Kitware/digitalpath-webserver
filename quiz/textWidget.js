@@ -80,11 +80,6 @@ TextWidget.prototype.RemoveFromViewer = function() {
   }
 }
 
-// When the arrow is visible, the text is offset from the position (tip of arrow).
-TextWidget.prototype.SetTextOffset = function(x, y) {
-  this.SavedShapeAnchor = [-x, -y];
-  this.Shape.Anchor[0] = this.SavedShapeAnchor;
-}
 
 TextWidget.prototype.Serialize = function() {
   if(this.Shape === undefined){ return null; }
@@ -100,6 +95,19 @@ TextWidget.prototype.Serialize = function() {
 }
 
 
+// When the arrow is visible, the text is offset from the position (tip of arrow).
+TextWidget.prototype.SetTextOffset = function(x, y) {
+  this.SavedShapeAnchor = [-x, -y];
+  this.Shape.Anchor = this.SavedShapeAnchor;
+  this.UpdateAnchorShape();
+}
+
+
+// When the arrow is visible, the text is offset from the position (tip of arrow).
+TextWidget.prototype.SetPosition = function(x, y) {
+  this.Shape.Position = [x, y];
+  this.AnchorShape.Origin = this.Shape.Position;
+}
 
 // Anchor is in the middle of the bounds when the shape is not visible.
 TextWidget.prototype.SetAnchorShapeVisibility = function(flag) {
