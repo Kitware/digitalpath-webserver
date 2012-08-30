@@ -21,7 +21,12 @@
 <script type="text/javascript" src="cache.js"></script>
 <script type="text/javascript" src="viewer.js"></script>
 <script type="text/javascript" src="eventManager.js"></script>
-
+<script type="text/javascript" src="shape.js"></script>
+<script type="text/javascript" src="arrow.js"></script>
+<script type="text/javascript" src="circle.js"></script>
+<script type="text/javascript" src="text.js"></script>
+<script type="text/javascript" src="circleWidget.js"></script>
+<script type="text/javascript" src="textWidget.js"></script>
 <script type="text/javascript">
   // These globals are used in the viewer javascript.  I need to get rid of them.	
   var origin = [9663763, 7643791.5, 0];
@@ -171,6 +176,18 @@
     VIEWER1.AnimateRoll(12.0); // degrees
   }
 
+  
+  function newCircle() {
+    var widget = new CircleWidget(VIEWER1, true);
+  }
+  
+  function newText() {
+    var widget = new TextWidget(VIEWER1, "Some Text");
+    widget.SetAnchorShapeVisibility(true);
+  }
+
+  
+  
 </script> 
  
 </head> 
@@ -185,6 +202,8 @@
       <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
       <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >R</td>
       <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >L</td>
+      <td type="button" onclick="newCircle();" style="width:20px;height:20px;background-color:white;text-align:center;" >O</td>
+      <td type="button" onclick="newText();" style="width:20px;height:20px;background-color:white;text-align:center;" >T</td>
     </tr>
   </table>
  </body> 
