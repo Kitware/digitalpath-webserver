@@ -51,14 +51,20 @@ EventManager.prototype.ChooseViewer = function() {
 EventManager.prototype.SetMousePositionFromEvent = function(event) {
   this.SystemEvent = event;
   // Translate to coordinate of canvas
-  // Change origin to lower left.
-  var xOffset = this.Canvas.offsetLeft + this.Canvas.offsetParent.offsetLeft;
-  var yOffset = this.Canvas.offsetTop + this.Canvas.offsetParent.offsetTop;
-  
-  // There has to be a better way to get the element with scroll bars. (HTML Body element)
-  xOffset -= this.Canvas.parentNode.parentNode.parentNode.scrollLeft;
-  yOffset -= this.Canvas.parentNode.parentNode.parentNode.scrollTop;
-  
+  // There has to be a better what to get the offset of the canvas relative to the body (or screen even).
+  // Here I loop through the parents accumilating the offset.
+  var docObj = this.Canvas;
+  var xOffset = docObj.offsetLeft;
+  var yOffset = docObj.offsetTop;
+  while (docObj.offsetParent != null) {
+    docObj = docObj.offsetParent;
+    xOffset += docObj.offsetLeft;
+    yOffset += docObj.offsetTop;
+    }
+  // Scoll bars on html body element.
+  var body = document.getElementsByTagName("body");
+  xOffset -= body[0].scrollLeft;
+  yOffset -= body[0].scrollTop;
   
   this.MouseX = event.clientX-xOffset;
   this.MouseY = this.Canvas.height - (event.clientY-yOffset);
@@ -69,9 +75,10 @@ EventManager.prototype.HandleMouseDown = function(event) {
   this.LastMouseY = this.MouseY;
   this.SetMousePositionFromEvent(event);
   this.MouseDown = true;
-
+  
   this.ChooseViewer();
   if (this.CurrentViewer) {
+    //event.stopPropagation(); // does not work.  Right mouse still brings up browser menu.
     this.CurrentViewer.HandleMouseDown(this);
   }
 }

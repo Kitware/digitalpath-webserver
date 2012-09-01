@@ -14,6 +14,12 @@ function View (viewport, cache) {
     this.OutlineCamMatrix = mat4.create();
 }
 
+View.prototype.SetViewport = function(viewport) {
+    this.Viewport = viewport;
+    this.Camera.ViewportWidth = viewport[2];
+    this.Camera.ViewportHeight = viewport[3];
+}
+
 // Note: Tile in the list may not be loaded yet.
 View.prototype.DrawTiles = function () {
     // Select the tiles to render first.

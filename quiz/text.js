@@ -96,15 +96,6 @@ function Text() {
   // Anchor is in pixel coordinates of text (buffers).  
   // In pixel(text) coordinate system
   this.Anchor = [0,0];
-  // The anchor shape could be put into the text widget, but I might want a thumb tack anchor.
-  this.AnchorVisibility = false;
-  this.AnchorShape = new CrossHairs();
-  this.AnchorShape.Origin = this.Position;
-  this.AnchorShape.Length = 50;
-  this.AnchorShape.ZOffset = 0.1;
-  //this.AnchorShape.OutlineColor = [0.9,0.9,0.9];
-  this.AnchorShape.UpdateBuffers();
-  
   this.Active = false;
   
   //this.String = "Hello World";
@@ -210,11 +201,6 @@ Text.prototype.Draw = function (view) {
   GL.uniform1i(program.samplerUniform, 0);
 
   GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, GL.UNSIGNED_SHORT,0);
-
-  if (this.AnchorVisibility) {
-    this.AnchorShape.Origin = this.Position;
-    this.AnchorShape.Draw(view);
-  }  
 }
 
 

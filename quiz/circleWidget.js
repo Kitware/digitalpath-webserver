@@ -22,9 +22,10 @@ function CircleWidget (viewer, newFlag) {
   this.Shape = new Circle();
   this.Shape.Origin = [0,0];
   this.Shape.OutlineColor = [0.0, 0.0, 0.0];
-  this.Shape.Radius = 200;
+  this.Shape.Radius = 50*cam.Height/viewport[3];
   this.Shape.LineWidth =  5.0*cam.Height/viewport[3];
   this.Shape.FixedSize = false;
+  this.Viewer.WidgetList.push(this);
   this.Viewer.AddShape(this.Shape);
 
   // Note: If the user clicks before the mouse is in the
@@ -37,6 +38,20 @@ function CircleWidget (viewer, newFlag) {
   }
 
   this.State = CIRCLE_WIDGET_WAITING;
+}
+
+CircleWidget.prototype.RemoveFromViewer = function() {
+  if (this.Viewer == null) {
+    return;
+  }
+  var idx = this.Viewer.ShapeList.indexOf(this.Shape);
+  if(idx!=-1) { 
+    this.Viewer.ShapeList.splice(idx, 1); 
+  }
+  var idx = this.Viewer.WidgetList.indexOf(this);
+  if(idx!=-1) { 
+    this.Viewer.WidgetList.splice(idx, 1); 
+  }
 }
 
 CircleWidget.prototype.Serialize = function() {
