@@ -12,7 +12,7 @@ function init(lessonId){
             var imageId = obj[i].imageid;
             if(obj[i].title){
                 var liststring =
-                    '<li class="ui-state-default" id="'+qid2+'">'+
+                    '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                         '<a href="viewer.php?id='+qid2+'" >'+
                             '<img src="http://localhost:81/tile.php?image='+imageId+'&name=t.jpg" />'+
                         '</a>'+
@@ -21,7 +21,7 @@ function init(lessonId){
                     '</li>';
             } else {
                 var liststring =
-                    '<li class="ui-state-default" id="'+qid2+'">'+
+                    '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                         '<a href="viewer.php?id='+qid2+'" >'+
                             '<img src="http://localhost:81/tile.php?image='+imageId+'&name=t.jpg" />'+
                         '</a>'+
@@ -57,7 +57,7 @@ function addquestion(imageid){
     $.ajax({url:"addquestion.php?image="+imageid+"&lid="+LESSONID, success:function(qid){
         var qid2 = jQuery.parseJSON(qid).$id;
         var liststring =
-            '<li class="ui-state-default" id="'+qid2+'">'+
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                 '<a href="viewer.php?id='+qid2+'" >'+
                     '<img src="http://localhost:81/tile.php?image='+imageid+'&name=t.jpg" />'+
                 '</a>'+

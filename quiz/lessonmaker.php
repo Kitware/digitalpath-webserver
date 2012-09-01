@@ -123,17 +123,17 @@ Collection 'questions':
     </head>
 	
 	<body onload='init(<?php echo json_encode($lessonid);?>);'>
-		<div class="container">
-            <div class="qlist" >
+		<div class="container ui-widget">
+            <div class="qlist ui-widget-content" >
             <!--<button onclick="saveLesson();" style="width:100%;" >Save</button>-->
                 <ul id="sortable">
                 </ul>
             </div>
-			<div class="table">
+			<div class="table ui-widget-content">
 				<?php
 				foreach($img as $i){
                 ?>
-					<div class="qelement" id="<?php echo $i['_id'];?>" >
+					<div class="qelement ui-widget-content" id="<?php echo $i['_id'];?>" style="border:1px solid black" >
                         <a href="viewerSansEditor.php?id=<?php echo $i['_id'];?>" >
                             <img src="http://localhost:81/tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
                         </a>
