@@ -178,7 +178,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             arrow.Shape.Width = QUESTION.annotations[i].width;
             arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
             arrow.Shape.UpdateBuffers();
-            VIEWER1.WidgetList.push(arrow);
             break;
           case "text":
             var string = QUESTION.annotations[i].string;
@@ -197,7 +196,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
                                      parseFloat(QUESTION.annotations[i].position[2])];
               text.SetAnchorShapeVisibility(QUESTION.annotations[i].anchorVisibility == "true");
               text.Shape.UpdateBuffers();
-              VIEWER1.WidgetList.push(text);
             }
             break;
           case "circle":
@@ -211,7 +209,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
             circle.Shape.FixedSize = false;
             circle.Shape.UpdateBuffers();
-            VIEWER1.WidgetList.push(circle);
             break;
           case "polyline":
             var pl = new PolylineWidget(VIEWER1, false);
@@ -219,12 +216,12 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             pl.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
             pl.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
             pl.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-            for(var n=0; n < QUESTION.annotations[i].length; n++){
-                pl.Shape.Points[n] = parseFloat(QUESTION.annotations[i].Points[n]);
+            for(var n=0; n < QUESTION.annotations[i].points.length; n++){
+                pl.Shape.Points[n] = [parseFloat(QUESTION.annotations[i].points[n][0]),
+                                      parseFloat(QUESTION.annotations[i].points[n][1])];
             }
-            pl.ClosedLoop = QUESTION.annotations[i].closedloop;
+            pl.ClosedLoop = (QUESTION.annotations[i].closedloop == "true");
             pl.Shape.UpdateBuffers();
-            VIEWER1.WidgetList.push(pl); //The lines like these I added; they weren't there when i pulled.
             break;
         }
       }
@@ -618,8 +615,12 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
         </table>
          <table border="1" id="rotatebuttons" >
             <tr>
-                <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >R</td>
-                <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >L</td>
+                <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+                  <img src="rotateRight" height="25" />
+                </td>
+                <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+                  <img src="rotateLeft.jpg" height="25" />
+                </td>
             </tr>
         </table>
     </div>

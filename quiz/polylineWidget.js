@@ -30,7 +30,7 @@ function PolylineWidget (viewer, newFlag) {
   this.ClosedLoop = false;
   // Circle is to show an active vertex.
   this.Circle = new Circle();
-  this.Circle.FillColor = [1.0, 1.0, 0.0]
+  this.Circle.FillColor = [1.0, 1.0, 0.2]
   this.Circle.OutlineColor = [0.0,0.0,0.0];
   this.Circle.FixedSize = false;
   this.Circle.ZOffset = -0.05;
@@ -45,7 +45,7 @@ function PolylineWidget (viewer, newFlag) {
   
   // Set line thickness using viewer. (5 pixels).
   this.Shape.LineWidth = 5.0*cam.Height/viewport[3];
-  this.Circle.Radius = 0.75 * this.Shape.LineWidth; 
+  this.Circle.Radius = this.Shape.LineWidth; 
   this.Circle.UpdateBuffers();
   
   if (newFlag) {

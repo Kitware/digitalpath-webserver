@@ -45,31 +45,31 @@ Camera.prototype.HandleTranslate = function (dx,dy) {
 // dx,dy are in the same coordinates system (scale).
 // Scale does not matter because we only care about rotation.
 Camera.prototype.HandleRoll = function (x,y, dx, dy) {
-    // Avoid divide by zero / singularity
-    if (x == 0 && y == 0) {
-	return;
-    }
-    // Orthogonal (counter clockwise) dot dVect.
-    var dRoll = -y*dx +x*dy;
-    // Remove magnitude of location.
-    // Scale by R to get correct angle.
-    dRoll = dRoll / (x*x + y*y);
-    // Keep roll in radians.
-    this.Roll += dRoll;
-    this.ComputeMatrix();
+  // Avoid divide by zero / singularity
+  if (x == 0 && y == 0) {
+    return;
+  }
+  // Orthogonal (counter clockwise) dot dVect.
+  var dRoll = -y*dx +x*dy;
+  // Remove magnitude of location.
+  // Scale by R to get correct angle.
+  dRoll = dRoll / (x*x + y*y);
+  // Keep roll in radians.
+  this.Roll += dRoll;
+  this.ComputeMatrix();
 }
 
 
 Camera.prototype.Translate = function (dx,dy,dz) {
-    this.FocalPoint[0] += dx;
-    this.FocalPoint[1] += dy;
-    this.FocalPoint[2] += dz;
-    this.ComputeMatrix();
+  this.FocalPoint[0] += dx;
+  this.FocalPoint[1] += dy;
+  this.FocalPoint[2] += dz;
+  this.ComputeMatrix();
 }
 
 
 Camera.prototype.GetHeight = function () {
-    return this.Height;
+  return this.Height;
 }
 
 Camera.prototype.GetWidth = function () {

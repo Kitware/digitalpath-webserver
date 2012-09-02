@@ -310,20 +310,25 @@ Viewer.prototype.HandleMouseMove = function(event) {
   }
   
   // See if any widget became active.
-  for (var i = 0; i < this.WidgetList.length; ++i) {
-    if (this.WidgetList[i].CheckActive(event)) {
-      this.ActivateWidget(this.WidgetList[i]);
-      return;
+  if (event.SystemEvent.which == 0) {
+    for (var i = 0; i < this.WidgetList.length; ++i) {
+      if (this.WidgetList[i].CheckActive(event)) {
+        this.ActivateWidget(this.WidgetList[i]);
+        return;
+      }
     }
   }
-  
+    
   if (event.MouseDown == false) {
     return;
   }
   
   var x = event.MouseX;
   var y = event.MouseY;
-  var shiftKeyPressed = event.ShiftKeyPressed;
+  var rotate = false;
+  if (event.SystemEvent.ctrlKey || event.SystemEvent.which == 2 ) {
+    rotate = true;
+  }
   if (this.OverViewEventFlag) {
     x = x - this.OverView.Viewport[0];
     y = y - this.OverView.Viewport[1];
@@ -335,7 +340,7 @@ Viewer.prototype.HandleMouseMove = function(event) {
   // Drag camera in main view.
   x = x - this.MainView.Viewport[0];
   y = y - this.MainView.Viewport[1];
-  if (shiftKeyPressed) {
+  if (rotate) {
     // Rotate
     // Origin in the center.
     // GLOBAL GL will use view's viewport instead.

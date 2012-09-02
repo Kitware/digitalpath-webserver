@@ -25,10 +25,10 @@ function EventManager (canvas) {
     this.CurrentViewer = null;
     this.ShiftKeyPressed = false;
     this.Key = '';
-    this.MouseX;
-    this.MouseY;
-    this.LastMouseX = null;
-    this.LastMouseY = null;
+    this.MouseX = 0;
+    this.MouseY = 0;
+    this.LastMouseX = 0;
+    this.LastMouseY = 0;
     this.MouseDown = false;
 }
 
@@ -50,29 +50,32 @@ EventManager.prototype.ChooseViewer = function() {
 
 EventManager.prototype.SetMousePositionFromEvent = function(event) {
   this.SystemEvent = event;
-  // Translate to coordinate of canvas
-  // There has to be a better what to get the offset of the canvas relative to the body (or screen even).
-  // Here I loop through the parents accumilating the offset.
-  var docObj = this.Canvas;
-  var xOffset = docObj.offsetLeft;
-  var yOffset = docObj.offsetTop;
-  while (docObj.offsetParent != null) {
-    docObj = docObj.offsetParent;
-    xOffset += docObj.offsetLeft;
-    yOffset += docObj.offsetTop;
-    }
-  // Scoll bars on html body element.
-  var body = document.getElementsByTagName("body");
-  xOffset -= body[0].scrollLeft;
-  yOffset -= body[0].scrollTop;
+  if (event.clientX && event.clientY) {
+    // Translate to coordinate of canvas
+    // There has to be a better what to get the offset of the canvas relative to the body (or screen even).
+    // Here I loop through the parents accumilating the offset.
+    var docObj = this.Canvas;
+    var xOffset = docObj.offsetLeft;
+    var yOffset = docObj.offsetTop;
+    while (docObj.offsetParent != null) {
+      docObj = docObj.offsetParent;
+      xOffset += docObj.offsetLeft;
+      yOffset += docObj.offsetTop;
+      }
+    // Scoll bars on html body element.
+    var body = document.getElementsByTagName("body");
+    xOffset -= body[0].scrollLeft;
+    yOffset -= body[0].scrollTop;
   
-  this.MouseX = event.clientX-xOffset;
-  this.MouseY = this.Canvas.height - (event.clientY-yOffset);
+    this.MouseX = event.clientX-xOffset;
+    this.MouseY = this.Canvas.height - (event.clientY-yOffset);
+  }
 }
 
 EventManager.prototype.HandleMouseDown = function(event) {
   this.LastMouseX = this.MouseX;
-  this.LastMouseY = this.MouseY;
+  this.LastMouseY = this.MouseY;  
+  
   this.SetMousePositionFromEvent(event);
   this.MouseDown = true;
   
@@ -95,7 +98,7 @@ EventManager.prototype.HandleMouseUp = function(event) {
 
 // Forward even to view.
 EventManager.prototype.HandleMouseMove = function(event) {
-  this.LastMouseX = this.MouseX;
+  this.LastMouseX = this.MouseX;  
   this.LastMouseY = this.MouseY;
   this.SetMousePositionFromEvent(event);
   this.MouseDeltaX = this.MouseX - this.LastMouseX;
@@ -110,7 +113,6 @@ EventManager.prototype.HandleMouseMove = function(event) {
 //------------- Keys ---------------
 
 EventManager.prototype.HandleKeyDown = function(event) { 
-  this.SetMousePositionFromEvent(event);
   if (event.keyCode == 16) {
     // Shift key modifier.
     this.ShiftKeyPressed = true;
@@ -124,7 +126,6 @@ EventManager.prototype.HandleKeyDown = function(event) {
 }
 
 EventManager.prototype.HandleKeyUp = function(event) {
-  this.SetMousePositionFromEvent(event);
   if (event.keyCode == 16) {
     // Shift key modifier.
     this.ShiftKeyPressed = false;
