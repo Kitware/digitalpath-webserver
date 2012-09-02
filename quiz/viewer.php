@@ -178,6 +178,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             arrow.Shape.Width = QUESTION.annotations[i].width;
             arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
             arrow.Shape.UpdateBuffers();
+            VIEWER1.WidgetList.push(arrow);
             break;
           case "text":
             var string = QUESTION.annotations[i].string;
@@ -187,7 +188,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
                                   parseFloat(QUESTION.annotations[i].color[1]),
                                   parseFloat(QUESTION.annotations[i].color[0])];
               text.Shape.Size = parseFloat(QUESTION.annotations[i].size);
-              if (QUESTION.annotations[i].offset !== undefined) { // how to try / catch in javascript?
+              if (QUESTION.annotations[i].offset) { // how to try / catch in javascript?
                 text.SetTextOffset(parseFloat(QUESTION.annotations[i].offset[0]), 
                                    parseFloat(QUESTION.annotations[i].offset[1]));
               }
@@ -196,6 +197,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
                                      parseFloat(QUESTION.annotations[i].position[2])];
               text.SetAnchorShapeVisibility(QUESTION.annotations[i].anchorVisibility == "true");
               text.Shape.UpdateBuffers();
+              VIEWER1.WidgetList.push(text);
             }
             break;
           case "circle":
@@ -209,20 +211,20 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
             circle.Shape.FixedSize = false;
             circle.Shape.UpdateBuffers();
+            VIEWER1.WidgetList.push(circle);
             break;
-          case "freeform":
-            var ff = new FreeForm();
-            ff.FixedSize = false;
-            ff.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-            ff.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-            ff.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-            ff.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-            ff.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-            ff.LineWidth = parseFloat(QUESTION.annotations[i].LineWidth);
-            for(var n=0; i<QUESTION.annotations[i].Points.length; n++){
-                ff.Points[n][0] = parseFloat(QUESTION.annotations[i].Points[n][0]);
-                ff.Points[n][1] = parseFloat(QUESTION.annotations[i].Points[n][1]);
+          case "polyline":
+            var pl = new PolylineWidget(VIEWER1, false);
+            pl.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
+            pl.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
+            pl.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
+            pl.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
+            for(var n=0; n < QUESTION.annotations[i].length; n++){
+                pl.Shape.Points[n] = parseFloat(QUESTION.annotations[i].Points[n]);
             }
+            pl.ClosedLoop = QUESTION.annotations[i].closedloop;
+            pl.Shape.UpdateBuffers();
+            VIEWER1.WidgetList.push(pl); //The lines like these I added; they weren't there when i pulled.
             break;
         }
       }
@@ -638,7 +640,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       <form>
         <textarea id="textwidgetcontent" style="width:100%;height:100%;" ></textarea> </br>
         <input type="checkbox" id="TextMarker" checked /> Marker </input>
-        </form>
+      </form>
     </div>
     
     <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
