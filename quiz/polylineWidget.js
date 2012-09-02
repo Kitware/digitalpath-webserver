@@ -13,8 +13,9 @@ var POLYLINE_WIDGET_NEW = 0;
 var POLYLINE_WIDGET_NEW_EDGE = 1;
 var POLYLINE_WIDGET_WAITING = 2;
 var POLYLINE_WIDGET_VERTEX_ACTIVE = 3;
-var POLYLINE_WIDGET_ACTIVE = 4;
-var POLYLINE_WIDGET_PROPERTIES_DIALOG = 5;
+var POLYLINE_WIDGET_MIDPOINT_ACTIVE = 4;
+var POLYLINE_WIDGET_ACTIVE = 5;
+var POLYLINE_WIDGET_PROPERTIES_DIALOG = 6;
 
 
 function PolylineWidget (viewer, newFlag) {
@@ -55,8 +56,9 @@ function PolylineWidget (viewer, newFlag) {
   } else {
     this.State = POLYLINE_WIDGET_WAITING;
     this.Circle.Visibility = false;
-    this.ActiveVertex == 0;
+    this.ActiveVertex == -1;
   }
+  this.ActiveMidpoint = -1;
   eventuallyRender();
 }
 
@@ -123,6 +125,18 @@ PolylineWidget.prototype.HandleMouseDown = function(event) {
     return;
   }
 
+  if (this.State == POLYLINE_WIDGET_MIDPOINT_ACTIVE) {
+    // Compute the midpoint.
+    var x = 0.5 * (this.Shape.Points[this.ActiveMidpoint-1][0] + this.Shape.Points[this.ActiveMidpoint][0]);
+    var y = 0.5 * (this.Shape.Points[this.ActiveMidpoint-1][1] + this.Shape.Points[this.ActiveMidpoint][1]);
+    // Insert the midpoint in the loop.
+    this.Shape.Points.splice(this.ActiveMidpoint,0,[x,y]);
+    // Now set up dragging interaction on the new point.
+    this.ActivateVertex(this.ActiveMidpoint);
+    this.ActiveMidpoint = -1;
+    this.State = POLYLINE_WIDGET_VERTEX_ACTIVE; // Activate vertex probably does this.
+    }
+
   if (this.State == POLYLINE_WIDGET_ACTIVE) {
     this.LastMouseWorld = pt;
   }
@@ -162,31 +176,33 @@ PolylineWidget.prototype.HandleMouseMove = function(event) {
     eventuallyRender();
     return;
   }
-  if (this.State == POLYLINE_WIDGET_VERTEX_ACTIVE || this.State == POLYLINE_WIDGET_ACTIVE) {
+  if (this.State == POLYLINE_WIDGET_VERTEX_ACTIVE ||
+      this.State == POLYLINE_WIDGET_MIDPOINT_ACTIVE ||
+      this.State == POLYLINE_WIDGET_ACTIVE) {
     if (event.SystemEvent.which == 0) {
       // Turn off the active vertex if the mouse moves away.
       this.SetActive(this.CheckActive(event));
       return;
     }
-    if (event.SystemEvent.which == 1) {
-      if (this.ActiveVertex < 0) {
-        //drag the whole widget.
-        var dx = pt[0] - this.LastMouseWorld[0];
-        var dy = pt[1] - this.LastMouseWorld[1];
-        for (var i = 0; i < this.Shape.Points.length; ++i) {
-          this.Shape.Points[i][0] += dx;
-          this.Shape.Points[i][1] += dy;
-        }
-        this.LastMouseWorld = pt;
-        this.Shape.UpdateBuffers();
-        eventuallyRender();
-        return;
+    if (this.State == POLYLINE_WIDGET_ACTIVE && event.SystemEvent.which == 1) {
+      //drag the whole widget.
+      var dx = pt[0] - this.LastMouseWorld[0];
+      var dy = pt[1] - this.LastMouseWorld[1];
+      for (var i = 0; i < this.Shape.Points.length; ++i) {
+        this.Shape.Points[i][0] += dx;
+        this.Shape.Points[i][1] += dy;
       }
+      this.LastMouseWorld = pt;
+      this.Shape.UpdateBuffers();
+      eventuallyRender();
+      return;
+    }
+    if (this.State == POLYLINE_WIDGET_VERTEX_ACTIVE && event.SystemEvent.which == 1) {
       //drag the vertex
       var last = this.Shape.Points.length-1;
       if (this.ClosedLoop && (this.ActiveVertex == 0 || this.ActiveVertex == last)) {
         this.Shape.Points[0] = pt;
-        this.Shape.Points[last] = pt;
+        this.Shape.Points[last] = [pt[0],pt[1]]; // Bug moving entire line with shared points incremented twice.
         }
       else
         {
@@ -196,7 +212,7 @@ PolylineWidget.prototype.HandleMouseMove = function(event) {
       this.Shape.UpdateBuffers();
       eventuallyRender();
     }
-  }  
+  }
 }
 
 // pt is mouse in world coordinates.
@@ -239,15 +255,32 @@ PolylineWidget.prototype.CheckActive = function(event) {
   var x = event.MouseX;
   var y = event.MouseY;
   var pt = this.Viewer.ConvertPointViewerToWorld(x,y);
+
   // First check if any verticies are active.
   var idx = this.WhichVertexShouldBeActive(pt);
   this.ActivateVertex(idx);
-
   if (idx != -1) {
     this.State = POLYLINE_WIDGET_VERTEX_ACTIVE;
     return true;
   }
 
+  // Check for the mouse over a midpoint.
+  var r2 = this.Circle.Radius * this.Circle.Radius;
+  for (idx = 1; idx < this.Shape.Points.length; ++idx) {
+    x = 0.5 *(this.Shape.Points[idx-1][0] + this.Shape.Points[idx][0]);
+    y = 0.5 *(this.Shape.Points[idx-1][1] + this.Shape.Points[idx][1]);
+    var dx = pt[0] - x;
+    var dy = pt[1] - y;
+    if ((dx*dx + dy*dy) <= r2) {
+      this.Circle.Visibility = true;
+      this.Circle.Origin = [x, y];
+      this.State = POLYLINE_WIDGET_MIDPOINT_ACTIVE;
+      this.Shape.Active = false;
+      this.ActiveMidpoint = idx;
+      return true;
+      }
+  }
+  
   // Check for mouse touching an edge.
   for (var i = 1; i < this.Shape.Points.length; ++i) {
     if (this.Shape.IntersectPointLine(pt, this.Shape.Points[i-1], this.Shape.Points[i], this.Shape.LineWidth)) {
