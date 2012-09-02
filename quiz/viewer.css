@@ -29,10 +29,14 @@ body {
     background-color:#0198e1;
 }
 
+td {
+    background-color:white;
+}
+
 #annotbuttons {
     z-index:10;
     height:40px;
-    top: 630px;
+    top: 650px;
     left: 10px;
     position:absolute;
 }
@@ -40,7 +44,7 @@ body {
 #zoombuttons {
     z-index:10;
     height:45px;
-    top: 640px;
+    top: 630px;
     left: 860px;
     position:absolute;
 }

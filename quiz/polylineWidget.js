@@ -60,6 +60,17 @@ function PolylineWidget (viewer, newFlag) {
   eventuallyRender();
 }
 
+PolylineWidget.prototype.Serialize = function() {
+  if(this.Shape === undefined){ return null; }
+  var obj = new Object();
+  obj.type = "polyline";
+  obj.outlinecolor = this.Shape.OutlineColor;
+  obj.linewidth = this.Shape.LineWidth;
+  obj.points = this.Shape.Points;
+  obj.closedloop = this.ClosedLoop;
+  return obj;
+}
+
 
 PolylineWidget.prototype.RemoveFromViewer = function() {
   if (this.Viewer == null) {
