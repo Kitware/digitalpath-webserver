@@ -275,8 +275,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     // When the arrow button is pressed, create the widget.
     var widget = new ArrowWidget(VIEWER1, true);
     VIEWER1.ActiveWidget = widget;
-
-    VIEWER1.SetViewport([0,0, 1200,500]);
     eventuallyRender();
     }
 
