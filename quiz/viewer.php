@@ -12,6 +12,12 @@
 
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
 
+<!--
+<link type="text/css" href="theme/ui.all.css" rel="Stylesheet" />	
+<link type="text/css" href="theme_interiorNavigation/ui.all.css" rel="Stylesheet" />	
+<script type="text/javascript" src="jquery-ui-personalized-1.6rc6.js"></script>
+-->
+
 <link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
 <script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
@@ -581,9 +587,9 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
  
  
 <body onload="webGLStart();">
-    <div class="container" >
-    <div class="viewer" >
-        <canvas id="viewer-canvas" style="border: none;" width="900" height="700"></canvas> 
+    <div class="container ui-widget" >
+    <div class="viewer ui-widget-content" >
+        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
         <table border="1" id="annotbuttons">
             <tr>
                 <td>
@@ -615,7 +621,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             </tr>
         </table>
     </div>
-    <div class="form" >
+    <div class="form ui-widget-content" >
         Title:<br />
         <textarea id="title" ></textarea><br />
         Question:<br />

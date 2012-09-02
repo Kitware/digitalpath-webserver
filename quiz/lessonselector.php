@@ -18,7 +18,9 @@ will be passed to other webpages, including lessonmaker.php.
 <head>
     <title>Lesson Selector</title>
     
+    <link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
     <script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
     
     <script type="text/javascript" >
         
@@ -59,24 +61,24 @@ will be passed to other webpages, including lessonmaker.php.
                     var lname = obj[i].name;
                     if(lname){
                         var liststring =
-                            '<div class="lessonindicator" id="'+lessonid2+'" >'+
+                            '<div class="lessonindicator ui-widget-content" id="'+lessonid2+'" >'+
                                 '<a href="lessonmaker.php?lid='+lessonid2+'" >'+
-                                '<div style="width:100%;">'+lname+'</div>'+
+                                '<div style="width:100%;margin-left:5px;">'+lname+'</div>'+
                                 '</a>'+
                                 '<button id="del'+lessonid2+'" >Delete</button>'+
                                 '<button id="set'+lessonid2+'" >Set Name</button>'+
                             '</div>';
                     } else {
                         var liststring =
-                            '<div class="lessonindicator" id="'+lessonid2+'" >'+
+                            '<div class="lessonindicator ui-widget-content" id="'+lessonid2+'" >'+
                                 '<a href="lessonmaker.php?lid='+lessonid2+'" >'+
-                                '<div style="width:100%;" >ID:'+lessonid2+'</div>'+
+                                '<div style="width:100%;margin-left:5px;" >ID:'+lessonid2+'</div>'+
                                 '</a>'+
                                 '<button id="del'+lessonid2+'" >Delete</button>'+
                                 '<button id="set'+lessonid2+'" >Set Name</button>'+
                             '</div>';
                     }
-                    $('#container').append(liststring);
+                    $('.container').append(liststring);
                     $('#del'+lessonid2).click(function(){
                         var me = $(this);
                         var parent = me.parent();
@@ -103,22 +105,23 @@ will be passed to other webpages, including lessonmaker.php.
         body {
             background-color: #BCD2EE;
         }
-        #container {
+        .container {
             width: 1220px;
             height: 700px;
             overflow-y: scroll;
             overflow-x: hidden;
             margin-left: auto;
             margin-right: auto;
-            background-color:#0198e1;
+            <!--background-color:#0198e1;-->
         }
         .lessonindicator {
             width: 220px;
-            height: 50px;
+            height: 60px;
             margin: 10px;
             float: left;
             background-color: #00eeee;
             word-wrap:break-word;
+            border:1px solid black;
         }
         button {
             float:left;
@@ -127,8 +130,10 @@ will be passed to other webpages, including lessonmaker.php.
 </head>
 
 <body>
-    <div id="container" >
+    <div class="ui-widget" >
+    <div class="container ui-widget-content" >
         <button type="button" style="width:100%;" onclick="addLesson();" >Add Lesson</button>
+    </div>
     </div>
 </body>
 

@@ -7,7 +7,7 @@ body {
 .container {
 	margin-right: auto;
 	margin-left: auto;
-	width: 1130px;
+	width: 1135px;
 	height: 650px;
 	background-color:#0198e1;
 }
@@ -29,6 +29,7 @@ li {
 	margin: 10px;
 	background-color: #00eeee;
     overflow-x:hidden;
+    border:1px solid black;
 }
 
 ul {
@@ -59,6 +60,7 @@ ul {
 	float:left;
 	background-color: #00eeee;
     overflow-x:hidden;
+    border:1px solid black;
 }
 
 .del, .add {
