@@ -108,7 +108,7 @@ Shape.prototype.Draw = function (view) {
       
     GL.drawElements(GL.TRIANGLES, this.CellBuffer.numItems, 
                     GL.UNSIGNED_SHORT,0);
-    }
+  }
   // Outline.
   if (this.OutlineColor != undefined) {
     if (this.Active) {
@@ -230,3 +230,26 @@ Shape.prototype.HandleMouseMove = function(event, dx,dy) {
 //Shape.prototype.UpdateBuffers = function() {
     //    // The superclass does not implement this method.
 //}
+
+Shape.prototype.IntersectPointLine = function(pt, end0, end1, thickness) {
+  // make end0 the origin.
+  var x = pt[0] - end0[0];
+  var y = pt[1] - end0[1];
+  var vx = end1[0] - end0[0];
+  var vy = end1[1] - end0[1];
+  
+  // Rotate so the edge lies on the x axis.
+  var length = Math.sqrt(vx*vx + vy*vy); // Avoid atan2 ... with clever use of complex numbers.
+  vx = vx/length;
+  vy = -vy/length;
+  var newX = (x*vx - y*vy);
+  var newY = (x*vy + y*vx);
+  
+  if (newX >= 0.0 && newX <= length) {
+    if (Math.abs(newY) < (thickness *0.5)) {
+      return true;
+    }
+  return false;
+  }
+}
+  

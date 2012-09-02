@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 
 
-
-
 <html> 
  
 <head> 
@@ -29,11 +27,11 @@
 <script type="text/javascript" src="crossHairs.js"></script>
 <script type="text/javascript" src="arrow.js"></script>
 <script type="text/javascript" src="circle.js"></script>
-<script type="text/javascript" src="freeForm.js"></script>
+<script type="text/javascript" src="polyline.js"></script>
 <script type="text/javascript" src="arrowWidget.js"></script>
 <script type="text/javascript" src="circleWidget.js"></script>
 <script type="text/javascript" src="textWidget.js"></script>
-<script type="text/javascript" src="freeFormWidget.js"></script>
+<script type="text/javascript" src="polylineWidget.js"></script>
 <script type="text/javascript" src="annotation.js"></script>
 <script type="text/javascript" src="cache.js"></script>
 <script type="text/javascript" src="viewer.js"></script>
@@ -138,17 +136,12 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   var VIEWER1;
 
   function initViews() {
-    //VIEWER = new Viewer(CANVAS,
-    //                    [0,0,GL.viewportWidth, GL.viewportHeight],
-    //                    source);
-
-    //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
     var source1 = new Cache("http://localhost:81/tile.php?image="+QUESTION.imageid+"&name=");
-    VIEWER1 = new Viewer([0,0, 900,700], source1);
-    //VIEWER1 = new Viewer([0,0, 1200,500], source1);
+    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height], source1);    
     
-    
+    // This may not be used anymore.
     VIEWER1.AnnotationCallback = function(widget) {
+      alert("Annotation Callback is being used.");
       var json = widget.Serialize();
       $.post("saveannotation.php?id="+QUESTION.qid.$id, {widget:json}, function(){
         saveConstants();
@@ -288,9 +281,9 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     VIEWER1.ActiveWidget = widget;
   }
 
-  function NewFreeForm() {
+  function NewPolyline() {
     // When the text button is pressed, create the widget.
-    VIEWER1.ActiveWidget = new FreeFormWidget(VIEWER1);
+    VIEWER1.ActiveWidget = new PolylineWidget(VIEWER1, true);
   }
   
   function NewText() {
@@ -342,6 +335,16 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 
   function CirclePropertyDialogApply() {
     var hexcolor = document.getElementById("circlecolor").value;
+    var widget = VIEWER1.ActiveWidget;
+    widget.Shape.SetOutlineColor(hexcolor);
+    if (widget != null) {
+      widget.SetActive(false);
+    }
+    eventuallyRender();
+  }
+
+  function PolylinePropertyDialogApply() {
+    var hexcolor = document.getElementById("polylinecolor").value;
     var widget = VIEWER1.ActiveWidget;
     widget.Shape.SetOutlineColor(hexcolor);
     if (widget != null) {
@@ -546,6 +549,29 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       }   
     });
 
+    $("#polyline-properties-dialog").dialog({
+      autoOpen:false,
+      height:200,
+      width:350,
+      modal:true,
+      buttons:{
+        Delete: function() {
+          WidgetPropertyDialogDelete();
+          $(this).dialog("close");
+        },
+        Apply: function() {
+          PolylinePropertyDialogApply();
+          $(this).dialog("close");
+        }
+      },
+      close: function(event,ui) {
+        if ( event.originalEvent && $(event.originalEvent.target).closest(".ui-dialog-titlebar-close").length ) {
+          WidgetPropertyDialogCancel();
+          $(this).dialog("close");
+        }
+      }   
+    });
+
   });
  
 </script> 
@@ -561,16 +587,16 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
         <table border="1" id="annotbuttons">
             <tr>
                 <td>
-                    <img src="Arrow.gif" id="arrow" type="button" onclick="NewArrow();" />
+                    <img src="Arrow.gif" height="25" id="arrow" type="button" onclick="NewArrow();" />
                 </td>
                 <td>
-                    <img src="Circle.gif" id="arrow" type="button" onclick="NewCircle();" />
+                    <img src="Circle.gif" height="25" id="arrow" type="button" onclick="NewCircle();" />
                 </td>
-                <!-- <td>
-                    <img src="FreeForm.gif" id="text" type="button" onclick="NewFreeForm();" />
-                </td> -->
                 <td>
-                    <img src="Text.gif" id="text" type="button" onclick="NewText();" />
+                    <img src="FreeForm.gif" height="25" id="text" type="button" onclick="NewPolyline();" />
+                </td>
+                <td>
+                    <img src="Text.gif" height="25" id="text" type="button" onclick="NewText();" />
                 </td>
             </tr>
         </table>
@@ -623,6 +649,15 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             <fieldset>
                 <!-- I plan to have a color selector and center and radius entries (thickness too) -->
                 Color(#rrggbb):<input id="circlecolor" ></input>
+            </fieldset>
+        </form>
+    </div>
+
+    <div id="polyline-properties-dialog" title="Polyline Annotation Editor" >
+        <form>
+            <fieldset>
+                <!-- I plan to have a color selector and thickness, and maybe entries for the points.(closed too) -->
+                Color(#rrggbb):<input id="polylinecolor" ></input>
             </fieldset>
         </form>
     </div>

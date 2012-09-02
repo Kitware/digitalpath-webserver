@@ -259,6 +259,7 @@ Viewer.prototype.HandleMouseUp = function(event) {
   // Forward the events to the widget if one is active.
   if (this.ActiveWidget != null) {
     this.ActiveWidget.HandleMouseUp(event);
+    return;
   }
   
   // Detect double click.  No time for now.  Just detect two ups in the same location.
