@@ -18,6 +18,7 @@ body {
     height:700px;
     overflow:hidden;
     float:left;
+    position:relative;
 }
 
 #form {
@@ -46,7 +47,7 @@ body {
 #rotatebuttons {
     z-index:10;
     height:45px;
-    top: 705px;
-    left: 150px;
+    top: 645px;
+    left: 10px;
     position:absolute;
 }
