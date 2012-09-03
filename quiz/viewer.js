@@ -340,8 +340,13 @@ Viewer.prototype.HandleMouseMove = function(event) {
   var x = event.MouseX;
   var y = event.MouseY;
   var rotate = false;
+  var zoom = false;
   if (event.SystemEvent.ctrlKey || event.SystemEvent.which == 2 ) {
     rotate = true;
+  }
+  if (event.SystemEvent.altKey) {    
+    rotate = false;
+    zoom = true;
   }
   if (this.OverViewEventFlag) {
     x = x - this.OverView.Viewport[0];
@@ -363,6 +368,11 @@ Viewer.prototype.HandleMouseMove = function(event) {
     // GLOBAL views will go away when views handle this.
     this.MainView.Camera.HandleRoll(cx, cy, event.MouseDeltaX, event.MouseDeltaY);
     this.OverView.Camera.HandleRoll(cx, cy, event.MouseDeltaX, event.MouseDeltaY);
+  } else if (zoom) {
+    var dy = event.MouseDeltaY / this.MainView.Viewport[2];
+    this.MainView.Camera.Height *= (1.0 + (dy* 5.0));
+    this.ZoomTarget = this.MainView.Camera.Height;
+    this.MainView.Camera.ComputeMatrix();
   } else {
     // Translate
     // Convert to view [-0.5,0.5] coordinate system.
