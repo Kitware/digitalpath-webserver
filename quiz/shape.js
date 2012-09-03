@@ -187,6 +187,25 @@ Shape.prototype.ConvertColor = function (color) {
   return color;
 }
 
+// RGB [Float, Float, Float] to #RRGGBB
+Shape.prototype.ConvertColorToHex = function (color) {
+  var hexDigits = "0123456789abcdef";
+  var str = "#";
+  for (var i = 0; i < 3; ++i) {
+    var tmp = color[i];
+    for (var j = 0; j < 2; ++j) {
+      tmp *= 16.0;
+      var digit = Math.floor(tmp);
+      if (digit < 0) { digit = 0; } 
+      if (digit > 15){ digit = 15;} 
+      tmp = tmp - digit;
+      str += hexDigits.charAt(digit);
+    }
+  }
+  return str;
+}
+
+
 // 0-f hex digit to int
 Shape.prototype.HexDigitToInt = function (hex) {
   if (hex == '1') {

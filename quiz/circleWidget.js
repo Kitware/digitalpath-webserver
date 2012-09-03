@@ -205,6 +205,21 @@ CircleWidget.prototype.SetActive = function(flag) {
 }
 
 CircleWidget.prototype.ShowPropertiesDialog = function () {
+  var color = document.getElementById("circlecolor");
+  color.value = this.Shape.ConvertColorToHex(this.Shape.OutlineColor);
+
+  var lineWidth = document.getElementById("circlelinewidth");
+  lineWidth.value = (this.Shape.LineWidth).toFixed(2);
+  
+  var areaLabel = document.getElementById("circlearea");
+    areaLabel.innerHTML = "Area: " + (2.0*Math.PI*this.Shape.Radius*this.Shape.Radius).toFixed(2);
+  if (this.Shape.FixedSize) {
+    areaLabel.innerHTML += " pixels^2";
+  } else {
+    areaLabel.innerHTML += " units^2";
+  }
+  
+
   $("#circle-properties-dialog").dialog("open");
 }    
 

@@ -287,6 +287,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     var hexcolor = document.getElementById("circlecolor").value;
     var widget = VIEWER1.ActiveWidget;
     widget.Shape.SetOutlineColor(hexcolor);
+    var lineWidth = document.getElementById("circlelinewidth");
+    widget.Shape.LineWidth = parseFloat(lineWidth.value);
+    widget.Shape.UpdateBuffers();
+
     if (widget != null) {
       widget.SetActive(false);
     }
@@ -297,6 +301,9 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     var hexcolor = document.getElementById("polylinecolor").value;
     var widget = VIEWER1.ActiveWidget;
     widget.Shape.SetOutlineColor(hexcolor);
+    var lineWidth = document.getElementById("polylinewidth");
+    widget.Shape.LineWidth = parseFloat(lineWidth.value);
+    widget.Shape.UpdateBuffers();
     if (widget != null) {
       widget.SetActive(false);
     }
@@ -477,7 +484,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 
     $("#circle-properties-dialog").dialog({
       autoOpen:false,
-      height:200,
+      height:300,
       width:350,
       modal:true,
       buttons:{
@@ -501,7 +508,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 
     $("#polyline-properties-dialog").dialog({
       autoOpen:false,
-      height:200,
+      height:250,
       width:350,
       modal:true,
       buttons:{
@@ -531,93 +538,96 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
  
  
 <body onload="webGLStart();">
-    <div class="container ui-widget" >
+  <div class="container ui-widget" >
     <div class="viewer ui-widget-content" >
-        <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
-        <table border="1" id="annotbuttons">
-            <tr>
-                <td>
-                    <img src="Arrow.gif" height="25" id="arrow" type="button" onclick="NewArrow();" />
-                </td>
-                <td>
-                    <img src="Circle.gif" height="25" id="arrow" type="button" onclick="NewCircle();" />
-                </td>
-                <td>
-                    <img src="FreeForm.gif" height="25" id="text" type="button" onclick="NewPolyline();" />
-                </td>
-                <td>
-                    <img src="Text.gif" height="25" id="text" type="button" onclick="NewText();" />
-                </td>
-            </tr>
-        </table>
-        <table border="1" id="zoombuttons" >
-            <tr>
-                <td type="button" onclick="zoomIn();" style="width:20px;height:20px;background-color:white;text-align:center;" >+</td>
-            </tr>
-            <tr>
-                <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
-            </tr>
-        </table>
-         <table border="1" id="rotatebuttons" >
-            <tr>
-                <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
-                  <img src="rotateLeft.jpg" height="25" />
-                </td>
-                <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
-                  <img src="rotateRight" height="25" />
-                </td>
-            </tr>
-        </table>
+      <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
+      <table border="1" id="annotbuttons">
+        <tr>
+          <td>
+            <img src="Arrow.gif" height="25" id="arrow" type="button" onclick="NewArrow();" />
+          </td>
+          <td>
+            <img src="Circle.gif" height="25" id="arrow" type="button" onclick="NewCircle();" />
+          </td>
+          <td>
+            <img src="FreeForm.gif" height="25" id="text" type="button" onclick="NewPolyline();" />
+          </td>
+          <td>
+            <img src="Text.gif" height="25" id="text" type="button" onclick="NewText();" />
+          </td>
+        </tr>
+      </table>
+      <table border="1" id="zoombuttons" >
+        <tr>
+          <td type="button" onclick="zoomIn();" style="width:20px;height:20px;background-color:white;text-align:center;" >+</td>
+        </tr>
+        <tr>
+          <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
+        </tr>
+      </table>
+      <table border="1" id="rotatebuttons" >
+        <tr>
+          <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+            <img src="rotateLeft.jpg" height="25" />
+          </td>
+          <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+            <img src="rotateRight" height="25" />
+          </td>
+        </tr>
+      </table>
     </div>
     <div class="form ui-widget-content" >
-        Title:<br />
-        <textarea id="title" ></textarea><br />
-        Question:<br />
-        <textarea id="qtext" ></textarea><br /><br />
-        <button id="addanswer" onclick="addanswer();" >Add Answer Choice</button><br />
-        <button id="savequestion" onclick="savequestion();" >Save Question</button><br />
-        Answers:<br />
-        <div id="choicelist" >
-        </div>
+      Title:<br />
+      <textarea id="title" ></textarea><br />
+      Question:<br />
+      <textarea id="qtext" ></textarea><br /><br />
+      <button id="addanswer" onclick="addanswer();" >Add Answer Choice</button><br />
+      <button id="savequestion" onclick="savequestion();" >Save Question</button><br />
+      Answers:<br />
+      <div id="choicelist" >
+      </div>
     </div>
-    </div>
+  </div>
     
-    <div id="text-properties-dialog" title="Text Annotation Editor" >
-      <form>
-        <textarea id="textwidgetcontent" style="width:100%;height:100%;" ></textarea> </br>
-        <input type="checkbox" id="TextMarker" checked /> Marker </input>
-      </form>
-    </div>
-    
-    <div id="circle-properties-dialog" title="Circle Annotation Editor" >
-        <form>
-            <fieldset>
-                <!-- I plan to have a color selector and center and radius entries (thickness too) -->
-                Color2(#rrggbb):<input id="circlecolor" ></input>
-            </fieldset>
-        </form>
-    </div>
+  <div id="text-properties-dialog" title="Text Annotation Editor" >
+    <form>
+      <textarea id="textwidgetcontent" style="width:100%;height:100%;" ></textarea> </br>
+      <input type="checkbox" id="TextMarker" checked /> Marker </input>
+    </form>
+  </div>
+  
+  <div id="circle-properties-dialog" title="Circle Annotation Editor" >
+    <form>
+      <fieldset>
+        <!-- I plan to have a color selector and center and radius entries (thickness too) -->
+        Color(#rrggbb):<input id="circlecolor" ></input></br>
+        Line Width:<input id="circlelinewidth" ></input></br>
+        <p id="circlearea"></p>
+      </fieldset>
+    </form>
+  </div>
 
-    <div id="polyline-properties-dialog" title="Polyline Annotation Editor" >
-        <form>
-            <fieldset>
-                <!-- I plan to have a color selector and thickness, and maybe entries for the points.(closed too) -->
-                Color3(#rrggbb):<input id="polylinecolor" ></input>
-            </fieldset>
-        </form>
-    </div>
+  <div id="polyline-properties-dialog" title="Polyline Annotation Editor" >
+    <form>
+      <fieldset>
+        <!-- I plan to have a color selector and thickness, and maybe entries for the points.(closed too) -->
+        Color(#rrggbb):<input id="polylinecolor" ></input></br>
+        Line Width:<input id="polylinewidth" ></input>
+      </fieldset>
+    </form>
+  </div>
 
-    <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
-      <form>
-        <fieldset>
-          <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
-          Color1(#rrggbb):<input id="arrowcolor" ></input>
-          </br>
-          <input type="checkbox" id="ArrowFixedSize" checked /> FixedSize2 </input>
-          <p id="ArrowLength"></p>
-        </fieldset>
-      </form>      
-    </div>
+  <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
+    <form>
+      <fieldset>
+        <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+        Color(#rrggbb):<input id="arrowcolor" ></input>
+        </br>
+        <input type="checkbox" id="ArrowFixedSize" checked /> FixedSize </input>
+        <p id="ArrowLength"></p>
+      </fieldset>
+    </form>      
+  </div>
 
  </body> 
  

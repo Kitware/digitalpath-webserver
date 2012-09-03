@@ -76,8 +76,8 @@ ArrowWidget.prototype.Serialize = function() {
 	obj.length = this.Shape.Length;
 	obj.width = this.Shape.Width;
   obj.orientation = this.Shape.Orientation;
-  obj.fixedsize = this.FixedSize;
-  obj.fixedorientation = this.FixedOrientation;
+  obj.fixedsize = this.Shape.FixedSize;
+  obj.fixedorientation = this.Shape.FixedOrientation;
 
   return obj;
 }
@@ -282,6 +282,9 @@ ArrowWidget.prototype.ShowPropertiesDialog = function () {
   var fs = document.getElementById("ArrowFixedSize");
   fs.checked = this.Shape.FixedSize;
 
+  var color = document.getElementById("arrowcolor");
+  color.value = this.Shape.ConvertColorToHex(this.Shape.FillColor);
+  
   var lengthLabel = document.getElementById("ArrowLength");
   if (fs.checked) {
     lengthLabel.innerHTML = "Length: " + (this.Shape.Length).toFixed(2) + " pixels";
