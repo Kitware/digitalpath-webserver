@@ -21,6 +21,14 @@ $m = new Mongo();
 $d = $m->selectDb('demo');
 $c3 = $d->selectCollection('questions');
 
+$choices2 = array();
+
+/*for($i = 0; $i < count($choices); $i++){
+    if($choices[$i] != ""){
+        $choices2.array_push($choices[i]);
+    }
+}*/
+
 //$mod = $c3->find(array('_id'=>new MongoId($id)));
 
 //$mod['qtext'] = $qtext;
