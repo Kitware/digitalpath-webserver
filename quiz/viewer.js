@@ -35,7 +35,7 @@ function Viewer (viewport, cache) {
   this.DoubleClickY = 0;
 }
 
-
+// I intend this method to get called when the window resizes.
 Viewer.prototype.SetViewport = function(viewport) {
   this.MainView.SetViewport(viewport);
   var overViewport = [viewport[0] + viewport[2]*0.8, 
@@ -43,6 +43,11 @@ Viewer.prototype.SetViewport = function(viewport) {
                       viewport[2]*0.18, viewport[3]*0.18];
   this.OverView.SetViewport(overViewport);
 }
+
+Viewer.prototype.GetViewport = function() {
+  return this.MainView.Viewport;
+}
+
 
 // I could merge zoom methods if position defaulted to focal point.
 Viewer.prototype.AnimateDoubleClickZoom = function(factor, position) {
@@ -103,43 +108,52 @@ Viewer.prototype.AnimateRoll = function(dRoll) {
   eventuallyRender();
 }
 
-
-
-
-
-// I am doing a dance because I expect widget SetActive to call this,
-// but this calls widget SetActive.  But remove Acti
-Viewer.prototype.ActivateWidget = function(widget) {
-  if (this.ActiveWidget == widget) {
-    return;
-  }
-  var oldWidget = this.ActiveWidget;
-  this.ActiveWidget = widget;
-  if (oldWidget) {
-    oldWidget.SetActive(false);
-  }
-  if (widget) {
-    widget.SetActive(true);
+// Load a widget from a json object (origin MongoDB).
+Viewer.prototype.LoadWidget = function(obj) {
+  switch(obj.type){
+    case "arrow":
+      var arrow = new ArrowWidget(VIEWER1, false);
+      arrow.Load(obj);  
+      break;
+    case "text":
+      var text = new TextWidget(VIEWER1, "");
+      text.Load(obj);
+      break;
+    case "circle":
+      var circle = new CircleWidget(VIEWER1, false);
+      circle.Load(obj);
+      break;
+    case "polyline":
+      var pl = new PolylineWidget(VIEWER1, false);
+      pl.Load(obj);
+      break;
   }
 }
 
 // I am doing a dance because I expect widget SetActive to call this,
-// but this calls widget SetActive.  But remove Acti
+// but this calls widget SetActive.
+// The widget is the only object to call these methods.  
+// A widget cannot call this if another widget is active.
+// The widget deals with its own activation and deactivation.
+Viewer.prototype.ActivateWidget = function(widget) {
+  if (this.ActiveWidget == widget) {
+    return;
+  }
+  this.ActiveWidget = widget;
+}
+
 Viewer.prototype.DeactivateWidget = function(widget) {
   if (this.ActiveWidget != widget || widget == null) {
     // Do nothing if the widget is not active.
     return;
   }
   this.ActiveWidget = null;
-  widget.SetActive(false);
 }
+
+
 
 Viewer.prototype.DegToRad = function(degrees) {
   return degrees * Math.PI / 180;
-}
-
-Viewer.prototype.GetViewport = function() {
-  return this.MainView.Viewport;
 }
 
 
@@ -362,7 +376,7 @@ Viewer.prototype.HandleMouseMove = function(event) {
 
 Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
   if (this.ActiveWidget != null) {
-    this.Widget.HandleKeyPress(keyCode, shift);
+    this.ActiveWidget.HandleKeyPress(keyCode, shift);
     return;
   }
 
@@ -408,6 +422,16 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 
 
+// Get the current scale factor between pixels and world units.
+Viewer.prototype.GetPixelsPerUnit = function() {
+  // Determine the scale difference between the two coordinate systems.
+  var viewport = this.GetViewport();
+  var cam = this.MainView.Camera;
+  var m = cam.Matrix;
+
+  // Convert from world coordinate to view (-1->1);
+  return 0.5*viewport[2] / (m[3] + m[15]); // m[3] for x, m[7] for height
+}
 
 // Covert a point from world coordiante system to viewer coordinate system (units pixels).
 Viewer.prototype.ConvertPointWorldToViewer = function(x, y) {

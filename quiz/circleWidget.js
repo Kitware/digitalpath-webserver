@@ -65,6 +65,19 @@ CircleWidget.prototype.Serialize = function() {
   return obj;
 }
 
+// Load a widget from a json object (origin MongoDB).
+CircleWidget.prototype.Load = function(obj) {
+  this.Shape.Origin[0] = parseFloat(obj.origin[0]);
+  this.Shape.Origin[1] = parseFloat(obj.origin[1]);
+  this.Shape.OutlineColor[0] = parseFloat(obj.outlinecolor[0]);
+  this.Shape.OutlineColor[1] = parseFloat(obj.outlinecolor[1]);
+  this.Shape.OutlineColor[2] = parseFloat(obj.outlinecolor[2]);
+  this.Shape.Radius = parseFloat(obj.radius);
+  this.Shape.LineWidth = parseFloat(obj.linewidth);
+  this.Shape.FixedSize = false;
+  this.Shape.UpdateBuffers();
+}
+  
 CircleWidget.prototype.HandleKeyPress = function(keyCode, shift) {
 }
 

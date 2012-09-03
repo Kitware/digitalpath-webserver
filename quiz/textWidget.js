@@ -1,5 +1,5 @@
 //==============================================================================
-// PLAN: for the new behavior.
+// The new behavior.
 // The widget gets created with a dialog and is in it's waiting state.
 // It monitors mouse movements and decides when to become active.
 // It becomes active when the mouse is over the center or edge.
@@ -10,7 +10,9 @@
 // When active, we will respond to right clicks which bring up a menu.
 // One item in the menu will be delete.
 
-// I am adding an optional glyph/shape that displays the text location.
+// I am adding an optional glyph/shape/arrow that displays the text location.
+
+// TODO:  Dragging the arrow should not snap the tip to the mouse.
 
 //==============================================================================
 
@@ -80,7 +82,6 @@ TextWidget.prototype.RemoveFromViewer = function() {
   }
 }
 
-
 TextWidget.prototype.Serialize = function() {
   if(this.Shape === undefined){ return null; }
   var obj = new Object();
@@ -94,6 +95,31 @@ TextWidget.prototype.Serialize = function() {
   return obj;
 }
 
+// Load a widget from a json object (origin MongoDB).
+TextWidget.prototype.Load = function(obj) {
+  var string = obj.string;
+  // Some empty strings got in my database.  I connot delete them from the gui.
+  if (obj.string && obj.string == "") {
+    this.RemoveFromViewer();
+    return;
+  }
+
+  this.Shape.String = obj.string;
+  this.Shape.Color = [parseFloat(obj.color[0]),
+                      parseFloat(obj.color[1]),
+                      parseFloat(obj.color[0])];
+  this.Shape.Size = parseFloat(obj.size);
+  // I added offest and I have to deal with entries that do not have it.
+  if (obj.offset) { // how to try / catch in javascript?
+    this.SetTextOffset(parseFloat(obj.offset[0]), 
+                       parseFloat(obj.offset[1]));
+  }
+  this.Shape.Position = [parseFloat(obj.position[0]),
+                         parseFloat(obj.position[1]),
+                         parseFloat(obj.position[2])];
+  this.SetAnchorShapeVisibility(obj.anchorVisibility == "true");
+  this.Shape.UpdateBuffers();
+}
 
 // When the arrow is visible, the text is offset from the position (tip of arrow).
 TextWidget.prototype.SetTextOffset = function(x, y) {
