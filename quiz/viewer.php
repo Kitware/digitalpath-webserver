@@ -221,7 +221,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     var widget = new ArrowWidget(VIEWER1, true);
     VIEWER1.ActiveWidget = widget;
     eventuallyRender();
-    }
+  }
 
   function NewCircle() {
     // When the circle button is pressed, create the widget.
@@ -326,14 +326,6 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       widget.RemoveFromViewer();
       eventuallyRender();
     }
-  }    
-
-  function addanswer() {
-      saveConstants();
-      
-      var numAnswers = $('.answer').length;
-      var liststring = (numAnswers+1)+': <input type="text" class="answer" /><input type="radio" name="correct" >Correct?</input><br />';
-      $('#choicelist').append(liststring); 
   }
   
   function savequestion() {
@@ -383,8 +375,13 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     for(var i=0; i < VIEWER1.WidgetList.length; i++){
       annots.push(VIEWER1.WidgetList[i].Serialize());
     }
+    if(annots.length == 0){
+        annots = 0;
+    }
     
-    $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct, annots:annots});
+    $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct, annotations:annots}, function(cs){
+        alert(cs);
+    });
   }
   
   function findChecked(){
@@ -406,11 +403,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   }
     
   function addanswer() {
-    saveConstants();
-    
     var numAnswers = $('.answer').length;
-    var liststring = (numAnswers+1)+': <input type="text" class="answer" /><input type="radio" name="correct" >Correct?</input><br />';
+    var liststring = '<tr><td>'+(numAnswers+1)+': <input type="text" class="answer" /></td><td><input type="radio" name="correct" /></td></tr>';
     $('#choicelist').append(liststring); 
+    saveConstants();
   }
     
     function savequestion() {
@@ -422,15 +418,15 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
             document.getElementById("qtext").innerHTML = QUESTION.qtext;
             document.getElementById("title").innerHTML = QUESTION.title;
             for (var i = 0; i < QUESTION.choices.length; ++i) {
-                var liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" >Correct?</input><br />';
+                var liststring = '<tr><td>'+(i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /></td><td><input type="radio" name="correct" /></td></tr>';
                 if(QUESTION.correct == (i+'')){
-                    liststring = (i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+                    liststring = '<tr><td>'+(i+1)+': <input type="text" class="answer" value="'+QUESTION.choices[i]+'" /></td><td><input type="radio" name="correct" checked="checked" /></td></tr>';
                 }
                 $('#choicelist').append(liststring);    
             }
         }
         else {
-            var liststring = '1: <input type="text" class="answer" /><input type="radio" name="correct" checked="checked" >Correct?</input><br />';
+            var liststring = '<tr><td>1: <input type="text" class="answer" /></td><td><input type="radio" name="correct" checked="checked" /></td></tr>';
             $('#choicelist').append(liststring);
         }
 
@@ -583,9 +579,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       <textarea id="qtext" ></textarea><br /><br />
       <button id="addanswer" onclick="addanswer();" >Add Answer Choice</button><br />
       <button id="savequestion" onclick="savequestion();" >Save Question</button><br />
-      Answers:<br />
-      <div id="choicelist" >
-      </div>
+      <table id="choicelist" class="ui-widget-content" style="width:100%" >
+        <tr>
+          <td>Answers:</td><td>Correct?</td>
+        </tr>
+      </table>
     </div>
   </div>
     
