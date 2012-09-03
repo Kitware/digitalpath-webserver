@@ -167,63 +167,8 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     
     EVENT_MANAGER.AddViewer(VIEWER1);
     if(QUESTION.annotations != undefined){
-      for(var i=0; i < QUESTION.annotations.length; i++){
-        switch(QUESTION.annotations[i].type){
-          case "arrow":
-            var arrow = new ArrowWidget(VIEWER1, false);
-            arrow.Shape.Origin = QUESTION.annotations[i].origin;
-            arrow.Shape.FillColor = QUESTION.annotations[i].fillcolor;
-            arrow.Shape.OutlineColor = QUESTION.annotations[i].outlinecolor;
-            arrow.Shape.Length = QUESTION.annotations[i].length;
-            arrow.Shape.Width = QUESTION.annotations[i].width;
-            arrow.Shape.Orientation = QUESTION.annotations[i].orientation;
-            arrow.Shape.UpdateBuffers();
-            break;
-          case "text":
-            var string = QUESTION.annotations[i].string;
-            if (string != "") {
-              var text = new TextWidget(VIEWER1, string);
-              text.Shape.Color = [parseFloat(QUESTION.annotations[i].color[0]),
-                                  parseFloat(QUESTION.annotations[i].color[1]),
-                                  parseFloat(QUESTION.annotations[i].color[0])];
-              text.Shape.Size = parseFloat(QUESTION.annotations[i].size);
-              if (QUESTION.annotations[i].offset) { // how to try / catch in javascript?
-                text.SetTextOffset(parseFloat(QUESTION.annotations[i].offset[0]), 
-                                   parseFloat(QUESTION.annotations[i].offset[1]));
-              }
-              text.Shape.Position = [parseFloat(QUESTION.annotations[i].position[0]),
-                                     parseFloat(QUESTION.annotations[i].position[1]),
-                                     parseFloat(QUESTION.annotations[i].position[2])];
-              text.SetAnchorShapeVisibility(QUESTION.annotations[i].anchorVisibility == "true");
-              text.Shape.UpdateBuffers();
-            }
-            break;
-          case "circle":
-            var circle = new CircleWidget(VIEWER1, false);
-            circle.Shape.Origin[0] = parseFloat(QUESTION.annotations[i].origin[0]);
-            circle.Shape.Origin[1] = parseFloat(QUESTION.annotations[i].origin[1]);
-            circle.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-            circle.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-            circle.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-            circle.Shape.Radius = parseFloat(QUESTION.annotations[i].radius);
-            circle.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-            circle.Shape.FixedSize = false;
-            circle.Shape.UpdateBuffers();
-            break;
-          case "polyline":
-            var pl = new PolylineWidget(VIEWER1, false);
-            pl.Shape.OutlineColor[0] = parseFloat(QUESTION.annotations[i].outlinecolor[0]);
-            pl.Shape.OutlineColor[1] = parseFloat(QUESTION.annotations[i].outlinecolor[1]);
-            pl.Shape.OutlineColor[2] = parseFloat(QUESTION.annotations[i].outlinecolor[2]);
-            pl.Shape.LineWidth = parseFloat(QUESTION.annotations[i].linewidth);
-            for(var n=0; n < QUESTION.annotations[i].points.length; n++){
-                pl.Shape.Points[n] = [parseFloat(QUESTION.annotations[i].points[n][0]),
-                                      parseFloat(QUESTION.annotations[i].points[n][1])];
-            }
-            pl.ClosedLoop = (QUESTION.annotations[i].closedloop == "true");
-            pl.Shape.UpdateBuffers();
-            break;
-        }
+      for(var i=0; i < QUESTION.annotations.length; i++) {
+        VIEWER1.LoadWidget(QUESTION.annotations[i]);
       }
     }  
   }
@@ -329,9 +274,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   function ArrowPropertyDialogApply() {
     var hexcolor = document.getElementById("arrowcolor").value;
     var widget = VIEWER1.ActiveWidget;
+    var fixedSizeFlag = document.getElementById("ArrowFixedSize").checked;
     widget.Shape.SetFillColor(hexcolor);
     if (widget != null) {
       widget.SetActive(false);
+      widget.SetFixedSize(fixedSizeFlag);
     }
     eventuallyRender();
   }
@@ -502,7 +449,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       
       $("#arrow-properties-dialog").dialog({
           autoOpen:false,
-          height:200,
+          height:280,
           width:350,
           modal:true,
           buttons:{
@@ -610,10 +557,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
          <table border="1" id="rotatebuttons" >
             <tr>
                 <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
-                  <img src="rotateRight" height="25" />
+                  <img src="rotateLeft.jpg" height="25" />
                 </td>
                 <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
-                  <img src="rotateLeft.jpg" height="25" />
+                  <img src="rotateRight" height="25" />
                 </td>
             </tr>
         </table>
@@ -640,20 +587,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       </form>
     </div>
     
-    <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
-        <form>
-            <fieldset>
-                <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
-                Color(#rrggbb):<input id="arrowcolor" ></input>
-            </fieldset>
-        </form>
-    </div>
-
     <div id="circle-properties-dialog" title="Circle Annotation Editor" >
         <form>
             <fieldset>
                 <!-- I plan to have a color selector and center and radius entries (thickness too) -->
-                Color(#rrggbb):<input id="circlecolor" ></input>
+                Color2(#rrggbb):<input id="circlecolor" ></input>
             </fieldset>
         </form>
     </div>
@@ -662,9 +600,21 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
         <form>
             <fieldset>
                 <!-- I plan to have a color selector and thickness, and maybe entries for the points.(closed too) -->
-                Color(#rrggbb):<input id="polylinecolor" ></input>
+                Color3(#rrggbb):<input id="polylinecolor" ></input>
             </fieldset>
         </form>
+    </div>
+
+    <div id="arrow-properties-dialog" title="Arrow Annotation Editor" >
+      <form>
+        <fieldset>
+          <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
+          Color1(#rrggbb):<input id="arrowcolor" ></input>
+          </br>
+          <input type="checkbox" id="ArrowFixedSize" checked /> FixedSize2 </input>
+          <p id="ArrowLength"></p>
+        </fieldset>
+      </form>      
     </div>
 
  </body> 

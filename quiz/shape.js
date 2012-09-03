@@ -6,6 +6,7 @@ function Shape() {
   this.Orientation = 0.0; // in degrees, counter clockwise, 0 is left
   this.Origin = [10000,10000]; // Anchor in world coordinates.
   this.FixedSize = true;
+  this.FixedOrientation = true;
   this.LineWidth = 0; // Line width has to be in same coordiantes as points.
   this.Visibility = true; // An easy way to turn off a shape (with removing it from the shapeList).
   this.Active = false;

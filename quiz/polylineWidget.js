@@ -6,7 +6,7 @@
 // Mouse drag at this point drages an edge from the last vertex.
 
 
-// Todo: Merge vertecies, split edge.
+// Todo: Merge vertecies
 // Properties dialog for a point (or list).
 
 var POLYLINE_WIDGET_NEW = 0;
@@ -43,7 +43,7 @@ function PolylineWidget (viewer, newFlag) {
   this.Viewer.ShapeList.push(this.Circle);
   this.Viewer.WidgetList.push(this);
   
-  // Set line thickness using viewer. (5 pixels).
+  // Set line thickness   using viewer. (5 pixels).
   this.Shape.LineWidth = 5.0*cam.Height/viewport[3];
   this.Circle.Radius = this.Shape.LineWidth; 
   this.Circle.UpdateBuffers();
@@ -72,6 +72,21 @@ PolylineWidget.prototype.Serialize = function() {
   obj.closedloop = this.ClosedLoop;
   return obj;
 }
+
+// Load a widget from a json object (origin MongoDB).
+PolylineWidget.prototype.Load = function(obj) {
+  this.Shape.OutlineColor[0] = parseFloat(obj.outlinecolor[0]);
+  this.Shape.OutlineColor[1] = parseFloat(obj.outlinecolor[1]);
+  this.Shape.OutlineColor[2] = parseFloat(obj.outlinecolor[2]);
+  this.Shape.LineWidth = parseFloat(obj.linewidth);
+  for(var n=0; n < obj.points.length; n++){
+      this.Shape.Points[n] = [parseFloat(obj.points[n][0]),
+                            parseFloat(obj.points[n][1])];
+  }
+  this.ClosedLoop = (obj.closedloop == "true");
+  this.Shape.UpdateBuffers();
+}
+
 
 
 PolylineWidget.prototype.RemoveFromViewer = function() {
