@@ -274,11 +274,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   function ArrowPropertyDialogApply() {
     var hexcolor = document.getElementById("arrowcolor").value;
     var widget = VIEWER1.ActiveWidget;
-    var fixedSizeFlag = document.getElementById("ArrowFixedSize").checked;
+    //var fixedSizeFlag = document.getElementById("ArrowFixedSize").checked;
     widget.Shape.SetFillColor(hexcolor);
     if (widget != null) {
       widget.SetActive(false);
-      widget.SetFixedSize(fixedSizeFlag);
+      //widget.SetFixedSize(fixedSizeFlag);
     }
     eventuallyRender();
   }
@@ -536,7 +536,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 <body onload="webGLStart();">
   <div class="container ui-widget" >
     <div class="viewer ui-widget-content" >
-      <canvas id="viewer-canvas" style="border: none;" width="1000" height="700"></canvas> 
+      <canvas id="viewer-canvas" style="border: none;" width="900" height="700"></canvas> 
       <table border="1" id="annotbuttons">
         <tr>
           <td>
@@ -620,8 +620,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       <fieldset>
         <!-- I plan to have a color selector and maybe tip,orientation,length,thickness -->
         Color(#rrggbb):<input id="arrowcolor" ></input>
-        </br>
-        <input type="checkbox" id="ArrowFixedSize" checked /> FixedSize </input>
+        <!--<input type="checkbox" id="ArrowFixedSize" checked /> FixedSize </input> -->
         <p id="ArrowLength"></p>
       </fieldset>
     </form>      
