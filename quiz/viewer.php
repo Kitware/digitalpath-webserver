@@ -147,7 +147,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     
     // This may not be used anymore.
     VIEWER1.AnnotationCallback = function(widget) {
-      alert("Annotation Callback is being used.");
+      //alert("Annotation Callback is being used.");
       var json = widget.Serialize();
       $.post("saveannotation.php?id="+QUESTION.qid.$id, {widget:json}, function(){
         saveConstants();
@@ -380,7 +380,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     }
     
     $.post("setquestion.php", {qid: qid, qtitle:questiontitle, qtext: questiontext, choices: questionchoices, cam: camValues, corr: correct, annotations:annots}, function(cs){
-        alert(cs);
+        //alert(cs);
     });
   }
   
