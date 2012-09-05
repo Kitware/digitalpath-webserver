@@ -59,7 +59,7 @@ $lesson = $c2->findOne(array("_id"=>new MongoId($lessonid)));
         ?>
             <a href="studentviewer.php?id=<?php echo $lessonid;?>&index=<?php echo $i;?>" >
             <div class="questionindicator" >
-                <img src="http://localhost:81/tile.php?image=<?php echo $imageid;?>&name=t.jpg" alt="Image" />
+                <img src="../tile.php?image=<?php echo $imageid;?>&name=t.jpg" alt="Image" />
                 <?php
                     if(isset($question['title'])){
                         echo $question['title'];

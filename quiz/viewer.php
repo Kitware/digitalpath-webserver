@@ -56,6 +56,17 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
 
 ?>
 
+
+<script type="text/javascript">
+  var QUESTION = <?php echo json_encode($mongo_question);?>;
+  var IMAGE = <?php echo json_encode($mongo_image);?>;
+  // These globals are used in the viewer javascript.  I need to get rid of them.	
+  var origin = IMAGE.origin;
+  var spacing = IMAGE.spacing;
+  // Could there be a problem with body not loaded yet?
+  //$('body').data('ID', QUESTION.imageid);
+</script>
+
 <script type="text/javascript">
   var QUESTION = <?php echo json_encode($mongo_question);?>;
   var IMAGE = <?php echo json_encode($mongo_image);?>;
@@ -142,7 +153,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   var VIEWER1;
 
   function initViews() {
-    var source1 = new Cache("http://localhost:81/tile.php?image="+QUESTION.imageid+"&name=");
+    var source1 = new Cache("../tile.php?image="+QUESTION.imageid+"&name=");
     VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height], source1);    
     
     // This may not be used anymore.

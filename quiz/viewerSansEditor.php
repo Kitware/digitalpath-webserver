@@ -109,8 +109,8 @@ var VIEWER1;
         //                    [0,0,GL.viewportWidth, GL.viewportHeight],
         //                    source);
 
-        //http://localhost:81/tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
-        var source1 = new Cache("http://localhost:81/tile.php?image="+IMAGEID+"&name=");
+        //../tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
+        var source1 = new Cache("../tile.php?image="+IMAGEID+"&name=");
         VIEWER1 = new Viewer([0,0, 900,700], source1);
         
         EVENT_MANAGER.AddViewer(VIEWER1);

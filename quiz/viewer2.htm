@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- saved from url=(0040)http://localhost:81/quiz/widget-test.php -->
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"> 
 <title>Connectome Viewer</title> 
 
@@ -173,7 +172,7 @@ var VIEWER1;
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
     
-        var imageRoot= "http://localhost:81/tile.php?image="+IMAGE_ID+"&name="; 
+        var imageRoot= "tile.php?image="+IMAGE_ID+"&name="; 
         var source1 = new Cache(imageRoot);
         VIEWER1 = new Viewer([0,0, 900,700], source1);
 

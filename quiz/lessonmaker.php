@@ -135,7 +135,7 @@ Collection 'questions':
                 ?>
 					<div class="qelement ui-widget-content" id="<?php echo $i['_id'];?>" style="border:1px solid black" >
                         <a href="viewerSansEditor.php?id=<?php echo $i['_id'];?>" >
-                            <img src="http://localhost:81/tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
+                            <img src="../tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
                         </a>
                         <button type="button" class="add" onclick="addquestion('<?php echo $i['_id'];?>');" >Add</button>
                         <?php echo substr($i['name'], 0, 10);?>
