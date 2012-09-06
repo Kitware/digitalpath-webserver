@@ -14,7 +14,7 @@ function init(lessonId){
                 var liststring =
                     '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                         '<a href="viewer.php?id='+qid2+'" >'+
-                            '<img src="../tile.php?image='+imageId+'&name=t.jpg" />'+
+                            '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
                         '</a>'+
                         '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
                         obj[i].title+
@@ -23,7 +23,7 @@ function init(lessonId){
                 var liststring =
                     '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                         '<a href="viewer.php?id='+qid2+'" >'+
-                            '<img src="../tile.php?image='+imageId+'&name=t.jpg" />'+
+                            '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
                         '</a>'+
                         '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
                         qid2.substring(0, 10)+
@@ -59,7 +59,7 @@ function addquestion(imageid){
         var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                 '<a href="viewer.php?id='+qid2+'" >'+
-                    '<img src="../tile.php?image='+imageid+'&name=t.jpg" />'+
+                    '<img src="tile.php?image='+imageid+'&name=t.jpg" />'+
                 '</a>'+
                 '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
                 qid2.substring(0, 10)+
@@ -96,7 +96,7 @@ $(document).ready(function() {
             var liststring =
                 '<li class="ui-state-default" id="'+qid2+'">'+
                     '<a href="viewer.php?id='+qid2+'" >'+
-                        '<img src="../tile.php?image='+imageid+'&name=t.jpg" />'+
+                        '<img src="tile.php?image='+imageid+'&name=t.jpg" />'+
                     '</a>'+
                     '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
                     'Slide'+
@@ -118,7 +118,7 @@ $(document).ready(function() {
             var liststring =
                 '<li class="ui-state-default" id="'+qid2+'">'+
                     '<a href="viewer.php?id='+qid2+'" >'+
-                        '<img src="../tile.php?image='+imageId+'&name=t.jpg" />'+
+                        '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
                     '</a>'+
                     '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
                     'Slide'+

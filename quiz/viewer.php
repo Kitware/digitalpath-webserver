@@ -153,7 +153,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   var VIEWER1;
 
   function initViews() {
-    var source1 = new Cache("../tile.php?image="+QUESTION.imageid+"&name=");
+    var source1 = new Cache("tile.php?image="+QUESTION.imageid+"&name=");
     VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height], source1);    
     
     // This may not be used anymore.

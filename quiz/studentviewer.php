@@ -150,8 +150,8 @@ var spacing = IMAGE.spacing;
     //                    [0,0,GL.viewportWidth, GL.viewportHeight],
     //                    source);
 
-    //../tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg'
-    var source1 = new Cache("../tile.php?image="+QUESTION.imageid+"&name=");
+    //tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg'
+    var source1 = new Cache("tile.php?image="+QUESTION.imageid+"&name=");
     VIEWER1 = new Viewer([0,0, 900,700], source1);
     VIEWER1.AnnotationCallback = function(widget) {
       var json = widget.Serialize();
