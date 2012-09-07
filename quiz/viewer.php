@@ -355,11 +355,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   }
   
   function rotateRight() {
-    VIEWER1.AnimateRoll(12.0); // degrees
+    VIEWER1.AnimateRoll(-12.0); // degrees
   }
   
   function rotateLeft() {
-    VIEWER1.AnimateRoll(-12.0); // degrees
+    VIEWER1.AnimateRoll(12.0); // degrees
   }
   
     //********************************************************
@@ -576,11 +576,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
       </table>
       <table border="1" id="rotatebuttons" >
         <tr>
-          <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+          <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
             <img src="rotateLeft.jpg" height="25" />
           </td>
-          <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >
-            <img src="rotateRight" height="25" />
+          <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >
+            <img src="rotateRight.jpg" height="25" />
           </td>
         </tr>
       </table>
