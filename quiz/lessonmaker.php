@@ -5,6 +5,7 @@ $lessonid = $_GET['lid'];//THIS IS A STRING
 $m = new Mongo();
 $d = $m->selectDB("demo");
 $c1 = $d->selectCollection("images");
+//$c1 = $d->selectCollection("JoshTrial");
 $c2 = $d->selectCollection("lessons");
 $c3 = $d->selectCollection("questions");
 

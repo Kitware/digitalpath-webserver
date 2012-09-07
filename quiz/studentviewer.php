@@ -192,6 +192,7 @@ var spacing = IMAGE.spacing;
   function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
   function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
   function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
+  function handleMouseWheel(event) {EVENT_MANAGER.HandleMouseWheel(event);}
   function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
   function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
 
@@ -208,6 +209,7 @@ var spacing = IMAGE.spacing;
     GL.enable(GL.DEPTH_TEST);
 
     CANVAS.onmousedown = handleMouseDown;
+    CANVAS.onmousewheel = handleMouseWheel;
     document.onmouseup = handleMouseUp;
     document.onmousemove = handleMouseMove;
 

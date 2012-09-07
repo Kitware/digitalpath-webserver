@@ -110,6 +110,16 @@ EventManager.prototype.HandleMouseMove = function(event) {
   }
 }
 
+EventManager.prototype.HandleMouseWheel = function(event) {
+  this.SetMousePositionFromEvent(event);
+  
+  this.ChooseViewer();
+  if (this.CurrentViewer) {
+    //event.stopPropagation(); // does not work.  Right mouse still brings up browser menu.
+    this.CurrentViewer.HandleMouseWheel(this);
+  }
+}
+
 //------------- Keys ---------------
 
 EventManager.prototype.HandleKeyDown = function(event) { 
