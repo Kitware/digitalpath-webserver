@@ -355,11 +355,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   }
   
   function rotateRight() {
-    VIEWER1.AnimateRoll(-12.0); // degrees
+    VIEWER1.AnimateRoll(12.0); // degrees
   }
   
   function rotateLeft() {
-    VIEWER1.AnimateRoll(12.0); // degrees
+    VIEWER1.AnimateRoll(-12.0); // degrees
   }
   
     //********************************************************
