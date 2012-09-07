@@ -384,6 +384,38 @@ Viewer.prototype.HandleMouseMove = function(event) {
     eventuallyRender();
 }
 
+Viewer.prototype.HandleMouseWheel = function(event) {
+  // Forward the events to the widget if one is active.
+  if (this.ActiveWidget != null) {
+    //this.ActiveWidget.HandleMouseDown(event);
+    return;
+  }
+  // Compute traslate target to keep position in the same place.
+  this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0];
+  this.TranslateTarget[1] = this.MainView.Camera.FocalPoint[1];
+  this.RollTarget = this.MainView.Camera.Roll;
+
+  // we want to acumilate the target, but not the duration.
+  var tmp = event.SystemEvent.wheelDelta;
+  while (tmp > 0) {
+    this.ZoomTarget *= 1.1;
+    tmp -= 120;
+  }
+  while (tmp < 0) {
+    this.ZoomTarget /= 1.1;
+    tmp += 120;
+  }
+
+  // Artificial limit (fixme).
+  if (VIEWER1.ZoomTarget < 0.9 / (1 << 5)) {
+    this.ZoomTarget = 0.9 / (1 << 5);
+  }
+
+  this.AnimateLast = new Date().getTime();
+  this.AnimateDuration = 200.0; // hard code 200 milliseconds
+  eventuallyRender();    
+}
+
 Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
   if (this.ActiveWidget != null) {
     this.ActiveWidget.HandleKeyPress(keyCode, shift);

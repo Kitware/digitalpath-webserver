@@ -195,6 +195,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
   function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
   function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
+  function handleMouseWheel(event) {EVENT_MANAGER.HandleMouseWheel(event);}
   function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
   function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
   function cancelContextMenu(e) {
@@ -217,6 +218,7 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     GL.enable(GL.DEPTH_TEST);
 
     CANVAS.onmousedown = handleMouseDown;
+    CANVAS.onmousewheel = handleMouseWheel;
     document.onmouseup = handleMouseUp;
     document.onmousemove = handleMouseMove;
 
