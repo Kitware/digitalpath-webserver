@@ -32,6 +32,7 @@
 <script type="text/javascript" src="polylineWidget.js"></script>
 <script type="text/javascript" src="annotation.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
+<script type="text/javascript" src="section.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 
@@ -146,19 +147,12 @@ var spacing = IMAGE.spacing;
   var IMAGE;
 
   function initViews() {
-    //VIEWER = new Viewer(CANVAS,
-    //                    [0,0,GL.viewportWidth, GL.viewportHeight],
-    //                    source);
-
-    //tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg'
-    var source1 = new Cache("tile.php?image="+QUESTION.imageid+"&name=");
     VIEWER1 = new Viewer([0,0, 900,700], source1);
-    VIEWER1.AnnotationCallback = function(widget) {
-      var json = widget.Serialize();
-      $.post("saveannotation.php?id="+QUESTION.qid.$id, {widget:json}, function(){
-        saveConstants();
-      });
-    }
+    VIEWER1.SetOverviewBounds(0,22000,0,22000);
+
+    var source1 = new Cache("tile.php?db=demo&image="+QUESTION.imageid+"&name=",8);
+    VIEWER1.AddCache(source1);
+    
     var cam = QUESTION.cam;
     if(cam){
       VIEWER1.MainView.Camera.Height = parseFloat(cam.height);
@@ -200,10 +194,10 @@ var spacing = IMAGE.spacing;
     CANVAS = document.getElementById("viewer-canvas");
     initGL(CANVAS);
     EVENT_MANAGER = new EventManager(CANVAS);
-    initViews();
     initShaderPrograms();
     initOutlineBuffers();
     initImageTileBuffers();
+    initViews();
 
     GL.clearColor(0.9, 0.9, 0.9, 1.0);
     GL.enable(GL.DEPTH_TEST);

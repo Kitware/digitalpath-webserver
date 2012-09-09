@@ -26,6 +26,7 @@
 <script type="text/javascript" src="webgl-utils.js"></script>
 <script type="text/javascript" src="init.js"></script>
 <script type="text/javascript" src="camera.js"></script>
+<script type="text/javascript" src="section.js"></script>
 <script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="tile.js"></script>
 <script type="text/javascript" src="text.js"></script>
@@ -153,8 +154,11 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
   var VIEWER1;
 
   function initViews() {
-    var source1 = new Cache("tile.php?image="+QUESTION.imageid+"&name=");
-    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height], source1);    
+    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height]);
+    VIEWER1.SetOverviewBounds(0,22000,0,22000);
+
+    var source1 = new Cache("tile.php?db=demo&image="+QUESTION.imageid+"&name=", 8);
+    VIEWER1.AddCache(source1);
     
     // This may not be used anymore.
     VIEWER1.AnnotationCallback = function(widget) {
@@ -209,10 +213,10 @@ $mongo_image = $image_collection->findOne(array('_id'=> new MongoId($mongo_quest
     CANVAS = document.getElementById("viewer-canvas");
     initGL(CANVAS);
     EVENT_MANAGER = new EventManager(CANVAS);
-    initViews();
     initShaderPrograms();
     initOutlineBuffers();
     initImageTileBuffers();
+    initViews();
 
     GL.clearColor(0.9, 0.9, 0.9, 1.0);
     GL.enable(GL.DEPTH_TEST);

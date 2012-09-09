@@ -4,13 +4,13 @@
 //require_once("config.php"); 
 //var_dump($_SESSION['book']);
 
-$database = "demo";
 $base_url = "tile.php";
 $server = "localhost";
 
 # Process the command line parameters
 @$col_name =  $_GET['image'];
 @$fname =     $_GET['name'];
+@$database =  $_GET['db'];
 
 # Return grey image as there is error or parameters not set
 header('content-type: image/jpeg');
