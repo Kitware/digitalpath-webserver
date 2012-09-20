@@ -234,29 +234,6 @@ var spacing = IMAGE.spacing;
   function rotateLeft() {
     VIEWER1.AnimateRoll(-12.0); // -12 degrees
   }
-    
-    
-  /*function NewArrow() {
-    //alert("New Arrow");
-    // When the arrow button is pressed, create the widget.
-    //alert("CLICK!");
-    VIEWER1.Widget = new ArrowWidget(VIEWER1);
-  }
-
-  function NewCircle() {
-    // When the circle button is pressed, create the widget.
-    VIEWER1.Widget = new CircleWidget(VIEWER1);
-  }
-
-  function NewText() {
-    // When the text button is pressed, create the widget.
-    VIEWER1.Widget = new TextWidget(VIEWER1);
-  }
-
-  function NewFreeForm() {
-    // When the text button is pressed, create the widget.
-    VIEWER1.Widget = new FreeFormWidget(VIEWER1);
-  }*/
   
   
   
@@ -306,24 +283,20 @@ var spacing = IMAGE.spacing;
     
     liststring = liststring +
       '<h4>'+QUESTION.title+'</h4><br /><br />'+
-      //'#'+index+':<br />'+
+      '#'+index+':<br />'+
       QUESTION.qtext+'<br /><br />';
     
-    if(QUESTION.type == "question"){
-      for(var i=0; i<QUESTION.choices.length; i++){
-        liststring = liststring+'<input type="radio" name="choices" id="choice'+i+'" value="'+QUESTION.choices[i]+'" />'+QUESTION.choices[i]+'<br />';
-      }
-    
-      liststring = liststring+'<button id="saveanswer" >Submit Answer</button><br />';
-      
-      $("#form").append(liststring);
-    
-      $('#saveanswer').click(function(){
-        saveAnswer();
-      });
-    } else {
-      $("#form").append(liststring);
+    for(var i=0; i<QUESTION.choices.length; i++){
+      liststring = liststring+'<input type="radio" name="choices" id="choice'+i+'" value="'+QUESTION.choices[i]+'" />'+QUESTION.choices[i]+'<br />';
     }
+    
+    liststring = liststring+'<button id="saveanswer" >Submit Answer</button><br />';
+    
+    $("#form").append(liststring);
+    
+    $('#saveanswer').click(function(){
+      saveAnswer();
+    });      
   });
  
 </script> 

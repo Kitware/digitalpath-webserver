@@ -109,37 +109,38 @@ Collection 'questions':
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <title>Lesson Maker</title>
-        
-        <link rel="stylesheet" type="text/css" href="lessonmaker.css" />
-        
-        <link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
-        <script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
-        <script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
-        <style>
-            #sortable {list-style-type: none; margin: 10; padding:0}
-        </style>
-        <script type="text/javascript" src="lessonmaker.js"></script>
-    </head>
+  <head>
+    <title>Lesson Maker</title>
+    
+    <link rel="stylesheet" type="text/css" href="lessonmaker.css" />
+    
+    <link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
+    <script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
+    <style>
+      #sortable {list-style-type: none; margin: 10; padding:0}
+    </style>
+    <script type="text/javascript" src="lessonmaker.js"></script>
+  </head>
 	
 	<body onload='init(<?php echo json_encode($lessonid);?>);'>
 		<div class="container ui-widget">
-            <div class="qlist ui-widget-content" >
-            <!--<button onclick="saveLesson();" style="width:100%;" >Save</button>-->
-                <ul id="sortable">
-                </ul>
-            </div>
-			<div class="table ui-widget-content">
+      <div class="qlist ui-widget-content" >
+      <!--<button onclick="saveLesson();" style="width:100%;" >Save</button>-->
+        <ul id="sortable">
+        </ul>
+      </div>
+  		<div class="table ui-widget-content">
 				<?php
 				foreach($img as $i){
-                ?>
+          ?>
 					<div class="qelement ui-widget-content" id="<?php echo $i['_id'];?>" style="border:1px solid black" >
-                        <a href="viewerSansEditor.php?id=<?php echo $i['_id'];?>" >
-                            <img src="tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
-                        </a>
-                        <button type="button" class="add" onclick="addquestion('<?php echo $i['_id'];?>');" >Add</button>
-                        <?php echo substr($i['name'], 0, 10);?>
+            <a href="viewerSansEditor.php?id=<?php echo $i['_id'];?>" >
+              <img src="tile.php?image=<?php echo $i['_id'];?>&name=t.jpg" alt="Image" />
+            </a>
+            <button type="button" class="add" onclick="addquestion('<?php echo $i['_id'];?>');" >Question</button>
+            <button type="button" class="add" onclick="addnote('<?php echo $i['_id'];?>');" >Note</button>
+            <?php echo substr($i['name'], 0, 10);?>
 					</div>
 					<?php
 				}
