@@ -15,7 +15,7 @@ function init(lessonId){
           var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
               '<a href="questionmaker.php?id='+qid2+'" >'+
-                '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
               '</a>'+
               '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
               'Q:' + obj[i].title +
@@ -24,7 +24,7 @@ function init(lessonId){
           var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
               '<a href="notemaker.php?id='+qid2+'" >'+
-                '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
               '</a>'+
               '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
               'N:' + obj[i].title+
@@ -35,7 +35,7 @@ function init(lessonId){
           var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
               '<a href="questionmaker.php?id='+qid2+'" >'+
-                '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
               '</a>'+
               '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
               'Q:' + obj[i]._id.$id.substring(0, 9)+
@@ -44,7 +44,7 @@ function init(lessonId){
           var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
               '<a href="notemaker.php?id='+qid2+'" >'+
-                '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
               '</a>'+
               '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
               'N:' + obj[i]._id.$id.substring(0, 9)+
@@ -81,7 +81,7 @@ function addquestion(imageid){
         var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                 '<a href="questionmaker.php?id='+qid2+'" >'+
-                    '<img src="tile.php?image='+imageid+'&name=t.jpg" />'+
+                    '<img src="tile.php?db=demo&image='+imageid+'&name=t.jpg" />'+
                 '</a>'+
                 '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
                 qid2.substring(0, 10)+
@@ -101,7 +101,7 @@ function addnote(imageid){
         var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
                 '<a href="notemaker.php?id='+qid2+'" >'+
-                    '<img src="tile.php?image='+imageid+'&name=t.jpg" />'+
+                    '<img src="tile.php?db=demo&image='+imageid+'&name=t.jpg" />'+
                 '</a>'+
                 '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
                 qid2.substring(0, 10)+
