@@ -22,6 +22,7 @@
 <script type="text/javascript" src="view.js"></script> 
 <script type="text/javascript" src="tile.js"></script> 
 <script type="text/javascript" src="cache.js"></script> 
+<script type="text/javascript" src="section.js"></script> 
 <script type="text/javascript" src="viewer.js"></script> 
 <script type="text/javascript" src="eventManager.js"></script> 
 <script type="text/javascript" >
@@ -105,13 +106,10 @@ var EVENT_MANAGER;
 var VIEWER1;
 
     function initViews() {
-        //VIEWER = new Viewer(CANVAS,
-        //                    [0,0,GL.viewportWidth, GL.viewportHeight],
-        //                    source);
-
-        //tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
-        var source1 = new Cache("tile.php?image="+IMAGEID+"&name=");
-        VIEWER1 = new Viewer([0,0, 900,700], source1);
+        VIEWER1 = new Viewer([0,0, 900,700]);
+        var source1 = new Cache("tile.php?db=demo&image="+IMAGEID+"&name=",8);
+        VIEWER1.AddCache(source1);
+        VIEWER1.SetOverviewBounds(0,22000,0,22000);
         
         EVENT_MANAGER.AddViewer(VIEWER1);
         
@@ -137,10 +135,10 @@ var VIEWER1;
         CANVAS = document.getElementById("viewer-canvas");
         initGL(CANVAS);
         EVENT_MANAGER = new EventManager(CANVAS);
-        initViews();
         initShaderPrograms();
         initOutlineBuffers();
         initImageTileBuffers();
+        initViews();
 
         GL.clearColor(0.9, 0.9, 0.9, 1.0);
         GL.enable(GL.DEPTH_TEST);

@@ -5,51 +5,29 @@
 // Views can share a cache for tiles.
 
 // Cache is the source for the image tiles.
-function View (viewport, cache) {
-    this.Cache = cache;
-    this.Viewport = viewport;
-    this.Camera = new Camera(viewport[2], viewport[3]);
-    this.Tiles = [];
-    this.OutlineMatrix = mat4.create();
-    this.OutlineCamMatrix = mat4.create();
+function View (viewport) {
+  this.Section = new Section;
+  this.Viewport = viewport;
+  this.Camera = new Camera(viewport[2], viewport[3]);
+  this.OutlineMatrix = mat4.create();
+  this.OutlineCamMatrix = mat4.create();
+}
+
+View.prototype.AddCache = function(cache) {
+  this.Section.Caches.push(cache);
 }
 
 View.prototype.SetViewport = function(viewport) {
-    this.Viewport = viewport;
-    this.Camera.ViewportWidth = viewport[2];
-    this.Camera.ViewportHeight = viewport[3];
+  this.Viewport = viewport;
+  this.Camera.ViewportWidth = viewport[2];
+  this.Camera.ViewportHeight = viewport[3];
 }
 
 // Note: Tile in the list may not be loaded yet.
 View.prototype.DrawTiles = function () {
-    // Select the tiles to render first.
-    this.Tiles = this.Cache.ChooseTiles(this, SLICE, this.Tiles);
-
-    var program = imageProgram;
-    GL.useProgram(program);
-    
-    // These are the same for every tile.
-    // Vertex points (shifted by tiles matrix)
-    GL.bindBuffer(GL.ARRAY_BUFFER, tileVertexPositionBuffer);
-    // Needed for outline ??? For some reason, DrawOutline did not work
-    // without this call first.
-    GL.vertexAttribPointer(program.vertexPositionAttribute, 
-                           tileVertexPositionBuffer.itemSize, 
-                           GL.FLOAT, false, 0, 0);     // Texture coordinates
-    GL.bindBuffer(GL.ARRAY_BUFFER, tileVertexTextureCoordBuffer);
-    GL.vertexAttribPointer(program.textureCoordAttribute, 
-                           tileVertexTextureCoordBuffer.itemSize, 
-                           GL.FLOAT, false, 0, 0);
-    // Cell Connectivity
-    GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, tileCellBuffer);
-    
-    // Draw tiles.
-    GL.viewport(this.Viewport[0], this.Viewport[1], 
-                this.Viewport[2], this.Viewport[3]);
-    GL.uniformMatrix4fv(program.pMatrixUniform, false, this.Camera.Matrix);
-    for (var i = 0; i < this.Tiles.length; ++i) {
-        this.Tiles[i].Draw(program); // Debugging outline
-    }
+  GL.viewport(this.Viewport[0], this.Viewport[1], 
+              this.Viewport[2], this.Viewport[3]);
+  this.Section.Draw(this); // Too bad we need to pass the view (camera & viewport).
 }
 
 

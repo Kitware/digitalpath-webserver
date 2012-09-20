@@ -9,8 +9,8 @@ function Camera (viewportWidth, viewportHeight) {
     this.Matrix = mat4.create();
     this.ViewportWidth = viewportWidth;
     this.ViewportHeight = viewportHeight;
-    this.Height = 256.0 * 64.0;
-    this.FocalPoint = [128.0*64.0, 128.0*64.0, 10.0];
+    this.Height = 1000.0;
+    this.FocalPoint = [1.0, 0.0, 10.0];
     this.ComputeMatrix();
     // for drawing the view bounds.
     this.Points = [];

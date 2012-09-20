@@ -1,92 +1,129 @@
+
+// Pruning has to be global because we may have many caches.
+var ALL_CACHES = [];
 var TIME_STAMP = 0;
+var MAXIMUM_NUMBER_OF_TILES = 10000;
+var PRUNE_TIME = 0;
+
+function PruneTilesFromCaches() {
+  var numberOfTiles = 0;
+  for (var i = 0; i < ALL_CACHES.length; ++i) {
+    // e could keep a global count of tiles instead of a count in each cache.
+    numberOfTiles += ALL_CACHES[i].NumberOfTiles;
+  }
+  if (numberOfTiles <= MAXIMUM_NUMBER_OF_TILES) {
+    return;
+  }
+
+  // In case of overflow, cycle.  Note: there may be some tiles missed close to the overflow value.
+  if (PRUNE_TIME > TIME_STAMP) {
+    PRUNE_TIME = 0;
+  }
+  
+  // Advance the prune threshold. All tiles less than the prune time will be removed.
+  PRUNE_TIME += 0.05 * (TIME_STAMP - PRUNE_TIME);
+
+  for (var i = 0; i < ALL_CACHES.length; ++i) {
+    ALL_CACHES[i].PruneTiles(PRUNE_TIME);
+  }
+}
+
 
 
 // Source is the directory that contains the tile files.
-function Cache(source) {
-    // For debugging
-    //this.PendingTiles = [];
-    this.Source = source;
+function Cache(source, numLevels) {
+  // For debugging
+  //this.PendingTiles = [];
+  this.Source = source;
+  this.Origin = [0,0];
+  
+  this.NumberOfLevels = numLevels;
+  this.TileDimensions = [256, 256];
+  this.RootSpacing = [(1 << (numLevels-1)), (1 << (numLevels-1)), 10.0];
+  this.NumberOfSections = 1;
+  // For pruning the cache
+  this.NumberOfTiles = 0;
+  // Keep a queue of tiles to load so we can sort them as
+  // new requests come in.
+  this.LoadQueue = [];
+  this.LoadingCount = 0;
+  this.LoadingMaximum = 4;
+  
+  this.RootTiles = [];
+  this.PruneTime = 0;
 
-    this.TileDimensions = [256, 256];
-    this.RootSpacing = [128.0, 128.0, 10.0];
-    this.NumberOfSections = 1;
-    // For pruning the cache
-    this.NumberOfTiles = 0;
-    this.MaximumNumberOfTiles = 3000;
-    // Keep a queue of tiles to load so we can sort them as
-    // new requests come in.
-    this.LoadQueue = [];
-    this.LoadingCount = 0;
-    this.LoadingMaximum = 4;
-    
-    this.RootTiles = [];
-    this.PruneTime = 0;
-
-    this.LoadRoots();
+  this.LoadRoots();
+  ALL_CACHES.push(this);
 }
 
+// todo: Delete cache. Remove from ALL_CACHES list.
 Cache.prototype.destructor=function()
 {
 }
 
 Cache.prototype.GetSource=function()
 {
-    return this.Source;
+  return this.Source;
+}
+
+Cache.prototype.SetOrigin=function(x,y)
+{
+  return this.Origin = [x,y];
 }
 
 Cache.prototype.LoadRoots = function () {
-    var qTile;
-    for (var slice = 1; slice < 2; ++slice) {
-        qTile = this.GetTile(slice, 0, 0);
-        this.LoadQueueAdd(qTile);
+  var qTile;
+  for (var slice = 1; slice < 2; ++slice) {
+    qTile = this.GetTile(slice, 0, 0);
+    this.LoadQueueAdd(qTile);
+  }
+  return;
+  // Theses were for a demo (preload).
+  for (var slice = 201; slice < 251; ++slice) {
+    for (var j = 0; j < 4; ++j) {
+      qTile = this.GetTile(slice, 1, j);
+      this.LoadQueueAdd(qTile);
     }
-    return;
-    // Theses were for a demo (preload).
-    for (var slice = 201; slice < 251; ++slice) {
-        for (var j = 0; j < 4; ++j) {
-            qTile = this.GetTile(slice, 1, j);
-            this.LoadQueueAdd(qTile);
-        }
+  }
+  for (var slice = 0; slice < 50; ++slice) {
+    for (var j = 0; j < 4; ++j) {
+      qTile = this.GetTile(slice, 1, j);
+      this.LoadQueueAdd(qTile);
     }
-    for (var slice = 0; slice < 50; ++slice) {
-        for (var j = 0; j < 4; ++j) {
-            qTile = this.GetTile(slice, 1, j);
-            this.LoadQueueAdd(qTile);
-        }
-        qTile = this.GetTile(slice, 5, 493);
-        this.LoadQueueAdd(qTile);
-        qTile = this.GetTile(slice, 5, 494);
-        this.LoadQueueAdd(qTile);
-        qTile = this.GetTile(slice, 5, 495);
-        this.LoadQueueAdd(qTile);
-        qTile = this.GetTile(slice, 5, 525);
-        this.LoadQueueAdd(qTile);
-        qTile = this.GetTile(slice, 5, 526);
-        this.LoadQueueAdd(qTile);
-        qTile = this.GetTile(slice, 5, 527);
-        this.LoadQueueAdd(qTile);
-    }       
+    qTile = this.GetTile(slice, 5, 493);
+    this.LoadQueueAdd(qTile);
+    qTile = this.GetTile(slice, 5, 494);
+    this.LoadQueueAdd(qTile);
+    qTile = this.GetTile(slice, 5, 495);
+    this.LoadQueueAdd(qTile);
+    qTile = this.GetTile(slice, 5, 525);
+    this.LoadQueueAdd(qTile);
+    qTile = this.GetTile(slice, 5, 526);
+    this.LoadQueueAdd(qTile);
+    qTile = this.GetTile(slice, 5, 527);
+    this.LoadQueueAdd(qTile);
+  }       
 }
 
 // We could chop off the lowest priority tiles if the queue gets too long.
 Cache.prototype.LoadQueueAdd = function (tile) {
-    if (tile.LoadState != 0) { // == 2
-	// Loading
-	return;
-    }
-    if (tile.LoadState == 1) { // Resort the queue.
-	// If the tile is in the queue, remove it.
-	for (var i = 0; i < this.LoadQueue.length; ++i) {
-	    if (this.LoadQueue[i] == tile) {
-		this.LoadQueue[i] = null;
-		break;
+  if (tile.LoadState != 0) { // == 2
+    // Loading
+    return;
+  }
+  if (tile.LoadState == 1) { // Resort the queue.
+    // If the tile is in the queue, remove it.
+    for (var i = 0; i < this.LoadQueue.length; ++i) {
+      if (this.LoadQueue[i] == tile) {
+        this.LoadQueue[i] = null;
+        break;
 	    }
-	}
     }
-    tile.LoadState = 1;
-    // Add the tile at the front of the queue.
-    this.LoadQueue.push(tile);
-    this.LoadQueueUpdate();
+  }
+  tile.LoadState = 1;
+  // Add the tile at the front of the queue.
+  this.LoadQueue.push(tile);
+  this.LoadQueueUpdate();
 }
 
 // I need a way to remove tiles from the queue when they are deleted.
@@ -145,85 +182,89 @@ Cache.prototype.LoadQueueError = function(tile) {
 // ------ I tink this method really belongs in the view! -----------
 // This could get expensive because it is called so often.
 // Eventually I want a quick coverage test to exit early.
-Cache.prototype.ChooseTiles = function(view, slice, tiles) {
-    // I am putting this here to avoid deleting tiles
-    // in the rendering list.
-    if (this.NumberOfTiles >= this.MaximumNumberOfTiles) {
-	this.PruneTiles();           
-    }
-    
-    // Pick a level to display.
-    //var fast = document.getElementById("fast").checked;
-    // Todo: fix this hack. (now a global variable gl).
-    var canvasHeight = view.Viewport[3];
-    var tmp = this.TileDimensions[1]*this.RootSpacing[1] / view.Camera.Height;
-    //if (fast) {
-    //  tmp = tmp * 0.5;
-    //}
-    tmp = tmp * canvasHeight / this.TileDimensions[1];
-    var level = 0;
-    while (tmp > 1.5) {
-        ++level;
-        tmp = tmp * 0.5;
-    }
+Cache.prototype.ChooseTiles = function(view, slice, tiles) {  
+  // I am putting this here to avoid deleting tiles
+  // in the rendering list.
+  PruneTilesFromCaches();
 
-    // Compute the world bounds of camera view.
-    var xMax = 0.0;
-    var yMax = 0.0;
-    var hw = view.Camera.GetWidth()*0.5;
-    var hh = view.Camera.GetHeight()*0.5;
-    var roll = view.Camera.Roll;
-    var s = Math.sin(roll);
-    var c = Math.cos(roll);
-    var rx, ry;
-    // Choose a camera corner and rotate. (Center of bounds in origin).
-    rx = hw*c + hh*s;
-    ry = hh*c - hw*s;
-    // Expand bounds.
-    if (xMax < rx)  { xMax = rx;}
-    if (xMax < -rx) { xMax = -rx;}
-    if (yMax < ry)  { yMax = ry;}
-    if (yMax < -ry) { yMax = -ry;}
-    // Now another corner (90 degrees away).
-    rx = hw*c - hh*s;
-    ry = -hh*c - hw*s;
-    // Expand bounds.
-    if (xMax < rx)  { xMax = rx;}
-    if (xMax < -rx) { xMax = -rx;}
-    if (yMax < ry)  { yMax = ry;}
-    if (yMax < -ry) { yMax = -ry;}
-    
-    var bounds = [];
-    bounds[0] = view.Camera.FocalPoint[0]-xMax;
-    bounds[1] = view.Camera.FocalPoint[0]+xMax;
-    bounds[2] = view.Camera.FocalPoint[1]-yMax;
-    bounds[3] = view.Camera.FocalPoint[1]+yMax;
+  // Pick a level to display.
+  //var fast = document.getElementById("fast").checked;
+  // Todo: fix this hack. (now a global variable gl).
+  var canvasHeight = view.Viewport[3];
+  var tmp = this.TileDimensions[1]*this.RootSpacing[1] / view.Camera.Height;
+  //if (fast) {
+  //  tmp = tmp * 0.5;
+  //}
+  tmp = tmp * canvasHeight / this.TileDimensions[1];
+  var level = 0;
+  while (tmp > 1.5) {
+    ++level;
+    tmp = tmp * 0.5;
+  }
 
-    var tileIds = this.GetVisibleTileIds(level, bounds);
-    var tile;
-    tiles = [];
-    for (var i = 0; i < tileIds.length; ++i) {
-        tile = this.GetTile(slice, level, tileIds[i]);
-	tiles.push(tile);
-	// Do not worry.  If the tile is loaded or loading,
-	// this does nothing.
-	this.LoadQueueAdd(tile);
-    }
-    // Mark the tiles to be rendered so they will be last to be pruned.
-    this.StampTiles(tiles);
+  // Compute the world bounds of camera view.
+  var xMax = 0.0;
+  var yMax = 0.0;
+  var hw = view.Camera.GetWidth()*0.5;
+  var hh = view.Camera.GetHeight()*0.5;
+  var roll = view.Camera.Roll;
+  var s = Math.sin(roll);
+  var c = Math.cos(roll);
+  var rx, ry;
+  // Choose a camera corner and rotate. (Center of bounds in origin).
+  rx = hw*c + hh*s;
+  ry = hh*c - hw*s;
+  // Expand bounds to contain corner of rotated tiles.
+  if (xMax < rx)  { xMax = rx;}
+  if (xMax < -rx) { xMax = -rx;}
+  if (yMax < ry)  { yMax = ry;}
+  if (yMax < -ry) { yMax = -ry;}
+  // Now another corner (90 degrees away).
+  rx = hw*c - hh*s;
+  ry = -hh*c - hw*s;
+  // Expand bounds.
+  if (xMax < rx)  { xMax = rx;}
+  if (xMax < -rx) { xMax = -rx;}
+  if (yMax < ry)  { yMax = ry;}
+  if (yMax < -ry) { yMax = -ry;}
+  
+  var bounds = [];
+  bounds[0] = view.Camera.FocalPoint[0]-xMax;
+  bounds[1] = view.Camera.FocalPoint[0]+xMax;
+  bounds[2] = view.Camera.FocalPoint[1]-yMax;
+  bounds[3] = view.Camera.FocalPoint[1]+yMax;
 
-    // Preload the next slice.
-    //bounds[0] = bounds[1] = camera.FocalPoint[0];
-    //bounds[2] = bounds[3] = camera.FocalPoint[1];
-    //tileIds = this.GetVisibleTileIds(level, bounds);
-    // There will be only one tile because the bounds
-    // contains only the center point.
-    //for (var i = 0; i < tileIds.length; ++i) {
-    //    tile = this.GetTile(slice+1, level, tileIds[i]);
-    //    this.LoadQueueAdd(tile);
-    //}
+  // Adjust bounds for orogin of this cache.
+  bounds[0] -= this.Origin[0];
+  bounds[1] -= this.Origin[0];
+  bounds[2] -= this.Origin[1];
+  bounds[3] -= this.Origin[1];
+  
+  var tileIds = this.GetVisibleTileIds(level, bounds);
+  var tile;
+  tiles = [];
+  for (var i = 0; i < tileIds.length; ++i) {
+    tile = this.GetTile(slice, level, tileIds[i]);
+    tiles.push(tile);
+    // Do not worry.  If the tile is loaded or loading,
+    // this does nothing.
+    this.LoadQueueAdd(tile);
+  }
+  // Mark the tiles to be rendered so they will be last to be pruned.
+  this.StampTiles(tiles);
 
-    return tiles;
+  // Preload the next slice.
+  //bounds[0] = bounds[1] = camera.FocalPoint[0];
+  //bounds[2] = bounds[3] = camera.FocalPoint[1];
+  //tileIds = this.GetVisibleTileIds(level, bounds);
+  // There will be only one tile because the bounds
+  // contains only the center point.
+  //for (var i = 0; i < tileIds.length; ++i) {
+  //    tile = this.GetTile(slice+1, level, tileIds[i]);
+  //    this.LoadQueueAdd(tile);
+  //}
+
+  return tiles;
 }
 
 
@@ -308,106 +349,103 @@ Cache.prototype.UpdateBranchTimeStamp = function(tile) {
 }
 
 Cache.prototype.GetTile = function(slice, level, id) {
-    //Separate x and y.
-    var dim = 1 << level;
-    var x = id & (dim-1);
-    var y = id >> level;
-    if (this.RootTiles[slice] == null) {
-        var tile;
-	//var name = slice + "/t";
-	var name = "t";
-	tile = new Tile(0,0,slice, 0, name, this);
-	this.RootTiles[slice] = tile;
-    }
-    return this.RecursiveGetTile(this.RootTiles[slice], level, x, y, slice);
+  //Separate x and y.
+  var dim = 1 << level;
+  var x = id & (dim-1);
+  var y = id >> level;
+  if (this.RootTiles[slice] == null) {
+    var tile;
+    var name = "t";
+    tile = new Tile(0,0,slice, 0, name, this);
+    // Hard coded for connectome (Josh).
+    //tile.Crop([5000,5000], this.TileDimensions, [32,32]);   
+    this.RootTiles[slice] = tile;
+  }
+  return this.RecursiveGetTile(this.RootTiles[slice], level, x, y, slice);
 }
 
 // This creates the tile tree down to the tile (if necessry) and returns
 // the tile requested.  The tiles objects created are not added to 
 // the load queue here.
 Cache.prototype.RecursiveGetTile = function(node, deltaDepth, x, y, z) {
-    if (deltaDepth == 0) {
-	return node;
+  if (deltaDepth == 0) {
+    return node;
+  }
+  --deltaDepth;
+  var cx = (x>>deltaDepth)&1;
+  var cy = (y>>deltaDepth)&1;
+  var childIdx = cx+(2*cy);
+  var child = node.Children[childIdx];
+  if (child == null) {
+    var childName = node.Name;
+    if (childIdx == 0) {childName += "t";} 
+    if (childIdx == 1) {childName += "s";} 
+    if (childIdx == 2) {childName += "q";} 
+    if (childIdx == 3) {childName += "r";} 
+    child = new Tile(x>>deltaDepth, y>>deltaDepth, z,
+                     (node.Level + 1),
+                     childName, this);
+    // TODO: Get rid of this hard coded image dimensions.
+    //child.Crop([5000,5000], this.TileDimensions, this.RootSpacing);   
+                         
+    // This is to fix a bug. Root.BranchTime larger
+    // than all children BranchTimeStamps.  When
+    // long branch is added, node never gets updated.
+    if (node.Children[0] == null && node.Children[1] == null &&
+      node.Children[2] == null && node.Children[3] == null) {
+      node.BranchTimeStamp = TIME_STAMP;
     }
-    --deltaDepth;
-    var cx = (x>>deltaDepth)&1;
-    var cy = (y>>deltaDepth)&1;
-    var childIdx = cx+(2*cy);
-    var child = node.Children[childIdx];
-    if (child == null) {
-	var childName = node.Name;
-        if (childIdx == 0) {childName += "t";} 
-        if (childIdx == 1) {childName += "s";} 
-        if (childIdx == 2) {childName += "q";} 
-        if (childIdx == 3) {childName += "r";} 
-	child = new Tile(x>>deltaDepth, y>>deltaDepth, z,
-                         (node.Level + 1),
-                         childName, this);
-	// This is to fix a bug. Root.BranchTime larger
-	// than all children BranchTimeStamps.  When
-	// long branch is added, node never gets updated.
-	if (node.Children[0] == null && node.Children[1] == null &&
-	    node.Children[2] == null && node.Children[3] == null) {
-	    node.BranchTimeStamp = TIME_STAMP;
-	}
 
 	node.Children[childIdx] = child;
-        child.Parent = node;
-    }
-    return this.RecursiveGetTile(child, deltaDepth, x, y, z);
+  child.Parent = node;
+  }
+  return this.RecursiveGetTile(child, deltaDepth, x, y, z);
 }
 
 
 // Find the oldest tile, remove it from the tree and return it to be recycled.
-Cache.prototype.PruneTiles = function()
+Cache.prototype.PruneTiles = function(pruneTime)
 {
-    if (this.PruneTime > TIME_STAMP) {
-	this.PruneTime = 0;
+  for (var i = 0; i < this.RootTiles.length; ++i) {
+    var node = this.RootTiles[i];
+    if (node != null && node.BranchTimeStamp < pruneTime) {
+	    this.RecursivePruneTiles(node, pruneTime);
     }
-
-    // Advance the prune threshold.
-    this.PruneTime += 0.05 * (TIME_STAMP - this.PruneTime);
-
-    for (var i = 0; i < this.RootTiles.length; ++i) {
-	var node = this.RootTiles[i];
-	if (node != null && node.BranchTimeStamp < this.PruneTime) {
-	    this.RecursivePruneTiles(node);
-	}
-    }
+  }
 }
 
-Cache.prototype.RecursivePruneTiles = function(node)
+Cache.prototype.RecursivePruneTiles = function(node, pruneTime)
 {
-    var leaf = true;
+  var leaf = true;
     
-    for (var i = 0; i < 4; ++i) {
-	if (node.Children[i] != null) {
-	    leaf = false;
-	    if (node.Children[i].BranchTimeStamp < this.PruneTime) {
-		this.RecursivePruneTiles(node.Children[i]);
-	    }
-	}
+  for (var i = 0; i < 4; ++i) {
+    if (node.Children[i] != null) {
+      leaf = false;
+      if (node.Children[i].BranchTimeStamp < pruneTime) {
+        this.RecursivePruneTiles(node.Children[i]);
+      }
     }
-    if (leaf && node.Parent != null) {
-	if ( node.LoadState == 1) {
+  }
+  if (leaf && node.Parent != null) {
+    if ( node.LoadState == 1) {
 	    this.LoadQueueRemove(node); 
-	}
-	var parent = node.Parent;
-	// nodes will always have parents because we do not steal roots.
-	if (parent.Children[0] == node) {
-	    parent.Children[0] = null;
-	} else if (parent.Children[1] == node) {
-	    parent.Children[1] = null;
-	} else if (parent.Children[2] == node) {
-	    parent.Children[2] = null;
-	} else if (parent.Children[3] == node) {
-	    parent.Children[3] = null;
-	}
-	node.Parent = null;
-	this.UpdateBranchTimeStamp(parent)
-	node.destructor();
-	delete node;
     }
+    var parent = node.Parent;
+    // nodes will always have parents because we do not steal roots.
+    if (parent.Children[0] == node) {
+      parent.Children[0] = null;
+    } else if (parent.Children[1] == node) {
+	    parent.Children[1] = null;
+    } else if (parent.Children[2] == node) {
+	    parent.Children[2] = null;
+    } else if (parent.Children[3] == node) {
+	    parent.Children[3] = null;
+    }
+    node.Parent = null;
+    this.UpdateBranchTimeStamp(parent);
+    node.destructor();
+    delete node;
+  }
 }
 
 

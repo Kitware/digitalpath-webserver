@@ -138,7 +138,7 @@ $(document).ready(function() {
             var liststring =
                 '<li class="ui-state-default" id="'+qid2+'">'+
                     '<a href="viewer.php?id='+qid2+'" >'+
-                        '<img src="tile.php?image='+imageid+'&name=t.jpg" />'+
+                        '<img src="tile.php?db=demo&image='+imageid+'&name=t.jpg" />'+
                     '</a>'+
                     '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
                     'Slide'+
@@ -160,7 +160,7 @@ $(document).ready(function() {
             var liststring =
                 '<li class="ui-state-default" id="'+qid2+'">'+
                     '<a href="viewer.php?id='+qid2+'" >'+
-                        '<img src="tile.php?image='+imageId+'&name=t.jpg" />'+
+                        '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
                     '</a>'+
                     '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
                     'Slide'+

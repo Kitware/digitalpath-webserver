@@ -3,7 +3,7 @@
 // to other objects as it see fit however.
 
 
-function Viewer (viewport, cache) {
+function Viewer (viewport) {
   // Some of these could get transitioned to view or style ...
   // Left click option: Drag in main window, place in overview.
   this.OverViewEventFlag = false;
@@ -12,15 +12,15 @@ function Viewer (viewport, cache) {
   this.AnimateDuration = 0.0;
   this.TranslateTarget = [0.0,0.0];
   
-  this.MainView = new View(viewport, cache);
+  this.MainView = new View(viewport);
   this.MainView.Camera.ZRange = [0,1];
   this.MainView.Camera.ComputeMatrix();
   var overViewport = [viewport[0] + viewport[2]*0.8, 
                       viewport[1] + viewport[3]*0.8,
                       viewport[2]*0.18, viewport[3]*0.18];
-  this.OverView = new View(overViewport, cache);
+  this.OverView = new View(overViewport);
   this.OverView.Camera.ZRange = [-1,0];
-  this.OverView.Camera.FocalPoint = [13000.0, 11000.0, 10.0];
+  this.OverView.Camera.FocalPoint = [0.0, 0.0, 10.0];
   this.OverView.Camera.Height = 22000.0;
   this.OverView.Camera.ComputeMatrix();
   this.ZoomTarget = this.MainView.Camera.GetHeight();
@@ -34,6 +34,37 @@ function Viewer (viewport, cache) {
   this.DoubleClickX = 0; 
   this.DoubleClickY = 0;
 }
+
+// Set the overview from the bounds of the data.
+Viewer.prototype.SetOverviewBounds = function(xMin,xMax,yMin,yMax) {
+  var xMid = 0.5*(xMin + xMax);
+  var yMid = 0.5*(yMin + yMax);
+  var height = (yMax-yMin);
+  
+  this.MainView.Camera.FocalPoint = [xMid,yMid,10];
+  this.MainView.Camera.Height = height;
+  this.MainView.Camera.ComputeMatrix();
+  this.OverView.Camera.FocalPoint = [xMid,yMid,10];
+  this.OverView.Camera.Height = height;
+  this.OverView.Camera.ComputeMatrix();
+
+  this.ZoomTarget = height;
+  this.TranslateTarget[0] = xMid;
+  this.TranslateTarget[1] = yMid;
+}
+
+
+Viewer.prototype.SetSection = function(section) {
+  this.MainView.Section = section;
+  this.OverView.Section = section;
+}
+
+
+Viewer.prototype.AddCache = function(cache) {
+  this.MainView.AddCache(cache);
+  this.OverView.AddCache(cache);
+}
+
 
 // I intend this method to get called when the window resizes.
 Viewer.prototype.SetViewport = function(viewport) {
@@ -333,7 +364,7 @@ Viewer.prototype.HandleMouseMove = function(event) {
     }
   }
     
-  if (event.MouseDown == false) {
+  if (event.SystemEvent.which == 0) {
     return;
   }
   
@@ -422,6 +453,17 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
     return;
   }
 
+  if (String.fromCharCode(keyCode) == '1') {
+    this.SetSection(SECTIONS[0]);
+    eventuallyRender();
+  } else if (String.fromCharCode(keyCode) == '2') {
+    this.SetSection(SECTIONS[1]);
+    eventuallyRender();
+  } else if (String.fromCharCode(keyCode) == '3') {
+    this.SetSection(SECTIONS[2]);
+    eventuallyRender();
+  }
+
   if (String.fromCharCode(keyCode) == 'R') {
     //this.MainView.Camera.Reset();
     this.MainView.Camera.ComputeMatrix();
@@ -430,7 +472,7 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
   }
 
   // Cursor keys just move around the view.
-  if (keyCode == 37) {
+  /*if (keyCode == 37) {
     // Left cursor key
     if (SLICE > 1) {
       this.MainView.Camera.Translate(0,0,-ROOT_SPACING[2]);
@@ -442,7 +484,7 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
     ++SLICE;
     this.MainView.Camera.Translate(0,0,ROOT_SPACING[2]);
     eventuallyRender();
-  } else if (keyCode == 38) {
+  } else */ if (keyCode == 38) {
     // Up cursor key
     this.ZoomTarget *= 2;
     this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0];

@@ -13,8 +13,8 @@ function initViews() {
     //                    [0,0,GL.viewportWidth, GL.viewportHeight],
     //                    source);
 
-	//tile.php?image=4ecb20134834a302ac000001&name=tqsts.jpg
-    var source1 = new Cache("tile.php?image=4ecb20134834a302ac000001&name=");
+	//tile.php?db=demo&image=4ecb20134834a302ac000001&name=tqsts.jpg
+    var source1 = new Cache("tile.php?db=demo&image=4ecb20134834a302ac000001&name=");
     VIEWER1 = new Viewer([0,0, 1400,1000], source1);
 
     EVENT_MANAGER.AddViewer(VIEWER1);
