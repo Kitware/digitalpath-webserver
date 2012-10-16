@@ -5,6 +5,7 @@ var TIME_STAMP = 0;
 var MAXIMUM_NUMBER_OF_TILES = 10000;
 var PRUNE_TIME = 0;
 
+
 function PruneTilesFromCaches() {
   var numberOfTiles = 0;
   for (var i = 0; i < ALL_CACHES.length; ++i) {
@@ -31,14 +32,19 @@ function PruneTilesFromCaches() {
 
 
 // Source is the directory that contains the tile files.
-function Cache(source, numLevels) {
+function Cache(source, numLevels, cropDims, tileDims) {
   // For debugging
   //this.PendingTiles = [];
   this.Source = source;
   this.Origin = [0,0];
+  this.Loop = []; // Loop takes precidence over origin.
   
   this.NumberOfLevels = numLevels;
-  this.TileDimensions = [256, 256];
+  this.TileDimensions = tileDims;
+  if ( ! tileDims) {
+    this.TileDimensions = [256, 256];
+  }
+  this.CropDimensions = cropDims;
   this.RootSpacing = [(1 << (numLevels-1)), (1 << (numLevels-1)), 10.0];
   this.NumberOfSections = 1;
   // For pruning the cache
@@ -52,7 +58,8 @@ function Cache(source, numLevels) {
   this.RootTiles = [];
   this.PruneTime = 0;
 
-  this.LoadRoots();
+  // Delay loading roots until the loop is set.
+  // this.LoadRoots();
   ALL_CACHES.push(this);
 }
 
@@ -66,13 +73,95 @@ Cache.prototype.GetSource=function()
   return this.Source;
 }
 
+// We have two transformation function options:
+// Origin simply shifts the image.
+// Loop arbitrarily warps the image (using texture mapping coordinates).
 Cache.prototype.SetOrigin=function(x,y)
 {
   return this.Origin = [x,y];
 }
+Cache.prototype.SetLoop=function(loop, loopCenter)
+{
+  this.Loop = loop;
+  this.LoopCenter = loopCenter;
+  this.LoadRoots();
+}
+
+// This method converts a point in image coordinates to a point in world coordinates.
+Cache.prototype.ImageToWorld = function(imagePt) {
+  if (this.Loop.length == 0) {
+    // Just shift by the origin.
+    // Assume spacing is 1.
+    return [imagePt[0]+this.Origin[0], imagePt[1]+this.Origin[1]];
+  }
+
+  // move center to the origin.
+  var px = imagePt[0] - this.LoopCenter.ImagePt[0];
+  var py = imagePt[1] - this.LoopCenter.ImagePt[1];
+  
+  // Iterate ovver the wedges of the loop.
+  var i0 = this.Loop.length - 1;
+  var v0 = [this.Loop[i0].ImagePt[0]-this.LoopCenter.ImagePt[0], this.Loop[i0].ImagePt[1]-this.LoopCenter.ImagePt[1]]; 
+  for (var i1 = 0; i1 < this.Loop.length; ++i1) {
+    // Find the two bounding vectors of the wedge.
+    var v1 = [this.Loop[i1].ImagePt[0]-this.LoopCenter.ImagePt[0], this.Loop[i1].ImagePt[1]-this.LoopCenter.ImagePt[1]]; 
+    // Find the linear combination of the vectors that equals the point. (inver the matrix [v0 v1])
+    var d = (v0[0]*v1[1] - v1[0]*v0[1]);
+    var k0 = (v1[1]*px - v1[0]*py) / d;
+    var k1 = (v0[0]*py - v0[1]*px) / d;
+    if (k0 >= 0.0 && k1 >= 0.0) {
+      // Both vector components are positive point lies in the wedge (1 quad of basis space).
+      // Find corresponding vectors in world space.
+      var w0 = [this.Loop[i0].WorldPt[0]-this.LoopCenter.WorldPt[0], this.Loop[i0].WorldPt[1]-this.LoopCenter.WorldPt[1]]; 
+      var w1 = [this.Loop[i1].WorldPt[0]-this.LoopCenter.WorldPt[0], this.Loop[i1].WorldPt[1]-this.LoopCenter.WorldPt[1]]; 
+      return [k0*w0[0] + k1*w1[0] + this.LoopCenter.WorldPt[0], k0*w0[1] + k1*w1[1] + this.LoopCenter.WorldPt[1]]; 
+    }
+    v0 = v1;
+    i0 = i1;
+  }
+  alert("ImageToWorld failed (numberical issue?)");
+  return this.LoopCenter.WorldPt;
+}
+
+// This method converts a point in world coordinates to a point in cache-image coordinates.
+Cache.prototype.WorldToImage = function(worldPt) {
+  if (this.Loop.length == 0) {
+    // Just shift by the origin.
+    // Assume spacing is 1.
+    return [worldPt[0]-this.Origin[0], worldPt[1]-this.Origin[1]];
+  }
+
+  // move center to the origin.
+  var px = worldPt[0] - this.LoopCenter.WorldPt[0];
+  var py = worldPt[1] - this.LoopCenter.WorldPt[1];
+  
+  // Iterate ovver the wedges of the loop.
+  var i0 = this.Loop.length - 1;
+  var v0 = [this.Loop[i0].WorldPt[0]-this.LoopCenter.WorldPt[0], this.Loop[i0].WorldPt[1]-this.LoopCenter.WorldPt[1]]; 
+  for (var i1 = 0; i1 < this.Loop.length; ++i1) {
+    // Find the two bounding vectors of the wedge.
+    var v1 = [this.Loop[i1].WorldPt[0]-this.LoopCenter.WorldPt[0], this.Loop[i1].WorldPt[1]-this.LoopCenter.WorldPt[1]]; 
+    // Find the linear combination of the vectors that equals the point. (inver the matrix [v0 v1])
+    var d = (v0[0]*v1[1] - v1[0]*v0[1]);
+    var k0 = (v1[1]*px - v1[0]*py) / d;
+    var k1 = (v0[0]*py - v0[1]*px) / d;
+    if (k0 >= 0.0 && k1 >= 0.0) {
+      // Both vector components are positive point lies in the wedge (1 quad of basis space).
+      // Find corresponding vectors in world space.
+      var w0 = [this.Loop[i0].ImagePt[0]-this.LoopCenter.ImagePt[0], this.Loop[i0].ImagePt[1]-this.LoopCenter.ImagePt[1]]; 
+      var w1 = [this.Loop[i1].ImagePt[0]-this.LoopCenter.ImagePt[0], this.Loop[i1].ImagePt[1]-this.LoopCenter.ImagePt[1]]; 
+      return [k0*w0[0] + k1*w1[0] + this.LoopCenter.ImagePt[0], k0*w0[1] + k1*w1[1] + this.LoopCenter.ImagePt[1]]; 
+    }
+    v0 = v1;
+    i0 = i1;
+  }
+  alert("WorldToImage failed (numberical issue?)");
+  return this.LoopCenter.ImagePt;
+}
 
 Cache.prototype.LoadRoots = function () {
   var qTile;
+
   for (var slice = 1; slice < 2; ++slice) {
     qTile = this.GetTile(slice, 0, 0);
     this.LoadQueueAdd(qTile);
@@ -197,7 +286,7 @@ Cache.prototype.ChooseTiles = function(view, slice, tiles) {
   //}
   tmp = tmp * canvasHeight / this.TileDimensions[1];
   var level = 0;
-  while (tmp > 1.5) {
+  while (tmp > 1.2) {
     ++level;
     tmp = tmp * 0.5;
   }
@@ -233,14 +322,34 @@ Cache.prototype.ChooseTiles = function(view, slice, tiles) {
   bounds[1] = view.Camera.FocalPoint[0]+xMax;
   bounds[2] = view.Camera.FocalPoint[1]-yMax;
   bounds[3] = view.Camera.FocalPoint[1]+yMax;
-
-  // Adjust bounds for orogin of this cache.
-  bounds[0] -= this.Origin[0];
-  bounds[1] -= this.Origin[0];
-  bounds[2] -= this.Origin[1];
-  bounds[3] -= this.Origin[1];
   
-  var tileIds = this.GetVisibleTileIds(level, bounds);
+  // Adjust bounds for origin of this cache.
+  // Convert the bounds into cache-image coordinates.
+  //bounds[0] -= this.Origin[0];
+  //bounds[1] -= this.Origin[0];
+  //bounds[2] -= this.Origin[1];
+  //bounds[3] -= this.Origin[1];
+  // If this is too slow (occurs every render) we can estimate.
+  var iPt = this.WorldToImage([bounds[0], bounds[2]]);
+  var iBounds = [iPt[0], iPt[0], iPt[1], iPt[1]];
+  iPt = this.WorldToImage([bounds[1], bounds[2]]);
+  if (iBounds[0] > iPt[0]) { iBounds[0] = iPt[0]; }
+  if (iBounds[1] < iPt[0]) { iBounds[1] = iPt[0]; }
+  if (iBounds[2] > iPt[1]) { iBounds[2] = iPt[1]; }
+  if (iBounds[3] < iPt[1]) { iBounds[3] = iPt[1]; }
+  iPt = this.WorldToImage([bounds[0], bounds[3]]);
+  if (iBounds[0] > iPt[0]) { iBounds[0] = iPt[0]; }
+  if (iBounds[1] < iPt[0]) { iBounds[1] = iPt[0]; }
+  if (iBounds[2] > iPt[1]) { iBounds[2] = iPt[1]; }
+  if (iBounds[3] < iPt[1]) { iBounds[3] = iPt[1]; }
+  iPt = this.WorldToImage([bounds[1], bounds[3]]);
+  if (iBounds[0] > iPt[0]) { iBounds[0] = iPt[0]; }
+  if (iBounds[1] < iPt[0]) { iBounds[1] = iPt[0]; }
+  if (iBounds[2] > iPt[1]) { iBounds[2] = iPt[1]; }
+  if (iBounds[3] < iPt[1]) { iBounds[3] = iPt[1]; }
+  
+  var tileIds = this.GetVisibleTileIds(level, iBounds);  
+  
   var tile;
   tiles = [];
   for (var i = 0; i < tileIds.length; ++i) {
@@ -357,8 +466,6 @@ Cache.prototype.GetTile = function(slice, level, id) {
     var tile;
     var name = "t";
     tile = new Tile(0,0,slice, 0, name, this);
-    // Hard coded for connectome (Josh).
-    //tile.Crop([5000,5000], this.TileDimensions, [32,32]);   
     this.RootTiles[slice] = tile;
   }
   return this.RecursiveGetTile(this.RootTiles[slice], level, x, y, slice);
@@ -385,8 +492,6 @@ Cache.prototype.RecursiveGetTile = function(node, deltaDepth, x, y, z) {
     child = new Tile(x>>deltaDepth, y>>deltaDepth, z,
                      (node.Level + 1),
                      childName, this);
-    // TODO: Get rid of this hard coded image dimensions.
-    //child.Crop([5000,5000], this.TileDimensions, this.RootSpacing);   
                          
     // This is to fix a bug. Root.BranchTime larger
     // than all children BranchTimeStamps.  When

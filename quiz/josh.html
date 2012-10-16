@@ -28,6 +28,17 @@
 <script type="text/javascript" src="text.js"></script>
 <script type="text/javascript" src="circleWidget.js"></script>
 <script type="text/javascript" src="textWidget.js"></script>
+
+
+<script type="text/javascript">
+  var TILES = <?php 
+		 $m = new Mongo();
+		 $d = $m->selectDb("JoshTrial");
+                 $c = $d->selectCollection("stitch");
+                 $tiles = $c->find(array('section'=>1));
+		 echo json_encode($tiles);?>;
+</script>
+
 <script type="text/javascript">
   // These globals are used in the viewer javascript.  I need to get rid of them.	
   var origin = [9663763, 7643791.5, 0];
@@ -146,8 +157,11 @@
     source.SetOrigin(9339.35, -8677.718);
     section.Caches.push(source);
     //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    section.Matrix = matrix;
     SECTIONS.push(section);
-    
+    //-----------------------------------------------
     section = new Section();
     source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r1_c1&name=", 6);
     source.SetOrigin(0,0);
@@ -179,8 +193,14 @@
     source.SetOrigin(9164.755, -8875.885);
     section.Caches.push(source);
     //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -295;
+    matrix[13] = 660;
+    mat4.rotateZ(matrix,0.01,matrix);
+    section.Matrix = matrix;    
     SECTIONS.push(section);
-    
+    //-----------------------------------------------    
     section = new Section();    
     source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r1_c1&name=", 6);
     source.SetOrigin(0,0);
@@ -212,24 +232,249 @@
     source.SetOrigin(8936.207, -8324.954);
     section.Caches.push(source);
     //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 305;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
     SECTIONS.push(section);
-
-    // Translate to allign sections.
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c2&name=", 6);
+    source.SetOrigin(4336.507, 215.33325);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c3&name=", 6);
+    source.SetOrigin(8677.457, 222.97803);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c1&name=", 6);
+    source.SetOrigin(26.28247, -4047.015);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c2&name=", 6);
+    source.SetOrigin(4521.2744, -4113.331);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c3&name=", 6);
+    source.SetOrigin(8554.552, -4011.033);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c1&name=", 6);
+    source.SetOrigin(-13.479004, -8648.383);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c2&name=", 6);
+    source.SetOrigin(4243.071, -8351.858);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c3&name=", 6);
+    source.SetOrigin(8921.587, -8290.347);
+    section.Caches.push(source);
+    //
     var matrix = mat4.create();
     mat4.identity(matrix);
-    SECTIONS[0].Matrix = matrix;
+    matrix[12] = 390;
+    matrix[13] = 320;
+    mat4.rotateZ(matrix,0.011,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c2&name=", 6);
+    source.SetOrigin(4283.0386, 162.92017);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c3&name=", 6);
+    source.SetOrigin(8367.365, 141.67773);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c1&name=", 6);
+    source.SetOrigin(26.94934, -4035.266);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c2&name=", 6);
+    source.SetOrigin(4296.0117, -4415.6855);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c3&name=", 6);
+    source.SetOrigin(8697.9375, -4310.1504);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c1&name=", 6);
+    source.SetOrigin(-79.35803, -8743.922);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c2&name=", 6);
+    source.SetOrigin(4480.986, -8476.756);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c3&name=", 6);
+    source.SetOrigin(9092.306, -8774.861);
+    section.Caches.push(source);
+    //
     var matrix = mat4.create();
     mat4.identity(matrix);
-    matrix[12] = -290;
-    matrix[13] = 660;
-    mat4.rotateZ(matrix,0.01,matrix);
-    SECTIONS[1].Matrix = matrix;
+    matrix[12] = 110.0;
+    matrix[13] = 390;
+    mat4.rotateZ(matrix,0.009,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c2&name=", 6);
+    source.SetOrigin(4407.7915, 228.95068);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c3&name=", 6);
+    source.SetOrigin(9048.326, 8.503418);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c1&name=", 6);
+    source.SetOrigin(86.749756, -4529.2275);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c2&name=", 6);
+    source.SetOrigin(4771.2773, -4284.7075);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c3&name=", 6);
+    source.SetOrigin(8901.906, -4377.7275);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c1&name=", 6);
+    source.SetOrigin(-26.57605, -8953.06);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c2&name=", 6);
+    source.SetOrigin(4560.1855, -9130.335);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c3&name=", 6);
+    source.SetOrigin(9242.791, -8658.926);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = 251;
+    matrix[13] = 320;
+    mat4.rotateZ(matrix,0.016,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c2&name=", 6);
+    source.SetOrigin(4300.6377, 285.3811);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c3&name=", 6);
+    source.SetOrigin(8665.195, -39.375);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c1&name=", 6);
+    source.SetOrigin(-37.174805, -4225.1045);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c2&name=", 6);
+    source.SetOrigin(4509.5776, -4500.176);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c3&name=", 6);
+    source.SetOrigin(8800.367, -4373.3174);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c1&name=", 6);
+    source.SetOrigin(-198.16296, -9014.128);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c2&name=", 6);
+    source.SetOrigin(4503.083, -8993.116);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c3&name=", 6);
+    source.SetOrigin(9242.039, -8798.474);
+    section.Caches.push(source);
+    //
     var matrix = mat4.create();
     mat4.identity(matrix);
     matrix[12] = -350;
     matrix[13] = 300;
     mat4.rotateZ(matrix,0.005,matrix);
-    SECTIONS[2].Matrix = matrix;    
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c2&name=", 6);
+    source.SetOrigin(4423.306, 170.95825);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c3&name=", 6);
+    source.SetOrigin(8679.212, 198.55688);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c1&name=", 6);
+    source.SetOrigin(-95.03198, -4339.5195);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c2&name=", 6);
+    source.SetOrigin(4420.8164, -4431.4785);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c3&name=", 6);
+    source.SetOrigin(8867.557, -4154.8193);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c1&name=", 6);
+    source.SetOrigin(-341.89478, -8960.761);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c2&name=", 6);
+    source.SetOrigin(4593.4956, -8622.292);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c3&name=", 6);
+    source.SetOrigin(9174.957, -8870.847);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 300;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c2&name=", 6);
+    source.SetOrigin(4501.11, 161.96777);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c3&name=", 6);
+    source.SetOrigin(8871.324, 351.82764);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c1&name=", 6);
+    source.SetOrigin(-141.46729, -4331.576);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c2&name=", 6);
+    source.SetOrigin(4749.733, -4371.4917);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c3&name=", 6);
+    source.SetOrigin(8895.061, -4381.9473);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c1&name=", 6);
+    source.SetOrigin(45.150024, -9000.6455);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c2&name=", 6);
+    source.SetOrigin(4370.341, -8871.8955);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c3&name=", 6);
+    source.SetOrigin(9273.075, -8868.455);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 300;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------    
+
     
     VIEWER1.SetSection(SECTIONS[0]);
 

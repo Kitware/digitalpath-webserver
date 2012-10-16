@@ -453,17 +453,6 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
     return;
   }
 
-  if (String.fromCharCode(keyCode) == '1') {
-    this.SetSection(SECTIONS[0]);
-    eventuallyRender();
-  } else if (String.fromCharCode(keyCode) == '2') {
-    this.SetSection(SECTIONS[1]);
-    eventuallyRender();
-  } else if (String.fromCharCode(keyCode) == '3') {
-    this.SetSection(SECTIONS[2]);
-    eventuallyRender();
-  }
-
   if (String.fromCharCode(keyCode) == 'R') {
     //this.MainView.Camera.Reset();
     this.MainView.Camera.ComputeMatrix();
@@ -472,19 +461,20 @@ Viewer.prototype.HandleKeyPress = function(keyCode, shift) {
   }
 
   // Cursor keys just move around the view.
-  /*if (keyCode == 37) {
+  if (keyCode == 37) {
     // Left cursor key
-    if (SLICE > 1) {
-      this.MainView.Camera.Translate(0,0,-ROOT_SPACING[2]);
-      --SLICE;
-      eventuallyRender();
+    var idx = SECTIONS.indexOf(this.MainView.Section);
+    if(idx > 0) {
+      this.SetSection(SECTIONS[idx-1]);
     }
-  } else if (keyCode == 39) {
-    // Right cursor key
-    ++SLICE;
-    this.MainView.Camera.Translate(0,0,ROOT_SPACING[2]);
     eventuallyRender();
-  } else */ if (keyCode == 38) {
+  } else if (keyCode == 39) {
+    var idx = SECTIONS.indexOf(this.MainView.Section);
+    if(idx >= 0 && idx < SECTIONS.length-1) {
+      this.SetSection(SECTIONS[idx+1]);
+    }
+    eventuallyRender();
+  } else if (keyCode == 38) {
     // Up cursor key
     this.ZoomTarget *= 2;
     this.TranslateTarget[0] = this.MainView.Camera.FocalPoint[0];

@@ -16,9 +16,10 @@
 <script type="text/javascript" src="webgl-utils.js"></script>
 <script type="text/javascript" src="init.js"></script>
 <script type="text/javascript" src="camera.js"></script>
-<script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="tile.js"></script>
 <script type="text/javascript" src="cache.js"></script>
+<script type="text/javascript" src="section.js"></script>
+<script type="text/javascript" src="view.js"></script>
 <script type="text/javascript" src="viewer.js"></script>
 <script type="text/javascript" src="eventManager.js"></script>
 <script type="text/javascript" src="shape.js"></script>
@@ -27,10 +28,31 @@
 <script type="text/javascript" src="text.js"></script>
 <script type="text/javascript" src="circleWidget.js"></script>
 <script type="text/javascript" src="textWidget.js"></script>
+
+
+<?php
+$m = new Mongo();
+$d = $m->selectDb('Alyssa');
+$c = $d->selectCollection('stitch');
+
+$world_points = $c->findOne(array('type'=>'WorldPoints'));
+
+$tiles = $c->find(array('type'=>'Image'));
+$tile_arr = array();
+foreach($tiles as $t){
+    array_push($tile_arr, $t);
+}
+?>
+<script type="text/javascript">
+  var TILES = <?php echo json_encode($tile_arr); ?>;
+  var WORLD_POINTS = <?php echo json_encode($world_points); ?>;
+</script>
+
+
 <script type="text/javascript">
   // These globals are used in the viewer javascript.  I need to get rid of them.	
-  var origin = [9663763, 7643791.5, 0];
-  var spacing = [226.17269405242, 227.53127170139, 0];
+  var origin = [0, 0, 0];
+  var spacing = [1, 1, 0];
 </script>
 
 <script id="shader-poly-fs" type="x-shader/x-fragment">
@@ -107,18 +129,43 @@
   var CANVAS;
   var EVENT_MANAGER;
   var VIEWER1;
+  var SECTIONS = [];
 
   function initViews() {
-    var source1 = new Cache("http://localhost:81/tile.php?db=demo&image="+"4ecb20134834a302ac000001"+"&name=");
-    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height], source1);
+    var tileDims = [256,256];
+    // For cropping
+	var imageDims = [16384,16384];
+	// Used to compute the bounds.
+    //var montageDims = [5,3];
+    var montageDims = [5,3];
+    var imageOverlap = 1200;
+	//
+    var numberOfLevels = 7;
+    var dataBaseName = "Alyssa";
+
+
+    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height]);
+    VIEWER1.SetOverviewBounds(0,montageDims[0]*(imageDims[0]-imageOverlap),
+                              0,montageDims[1]*(imageDims[1]-imageOverlap));
+    var section = [];    
+
+    section = new Section();
+    for (var i = 0; i < TILES.length; ++i) {
+      tileMetaData = TILES[i];
+      sourceName = "http://localhost:81/quiz/tile.php?db=" + dataBaseName 
+        + "&image=" + tileMetaData.imageCollection + "&name=";
+      source = new Cache(sourceName, numberOfLevels, imageDims, tileDims);
+      source.SetOrigin(tileMetaData.centerX-(imageDims[0]/2.0),tileMetaData.centerY-(imageDims[1]/2));
+      section.Caches.push(source);
+    }
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    section.Matrix = matrix;
+    SECTIONS.push(section);
     
-      VIEWER1.MainView.Camera.Height = 16384;
-      VIEWER1.MainView.Camera.FocalPoint[0] = 8428.65777;
-      VIEWER1.MainView.Camera.FocalPoint[1] = 8009.9555;
-      VIEWER1.MainView.Camera.FocalPoint[2] = 10;
-      VIEWER1.MainView.Camera.ComputeMatrix();
-      VIEWER1.OverView.Camera.ComputeMatrix();
-      
+    VIEWER1.SetSection(SECTIONS[0]);
+
     EVENT_MANAGER = new EventManager(CANVAS);
     EVENT_MANAGER.AddViewer(VIEWER1); 
   }
@@ -139,10 +186,10 @@
   function webGLStart() {
     CANVAS = document.getElementById("viewer-canvas");
     initGL(CANVAS);
+    initImageTileBuffers();
     initViews();
     initShaderPrograms();
     initOutlineBuffers();
-    initImageTileBuffers();
 
     GL.clearColor(0.9, 0.9, 0.9, 1.0);
     GL.enable(GL.DEPTH_TEST);
@@ -157,8 +204,6 @@
     eventuallyRender();
   }
 
-
- 
  
   function zoomIn() {
     VIEWER1.AnimateZoom(0.5);
