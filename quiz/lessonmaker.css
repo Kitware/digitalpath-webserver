@@ -1,0 +1,70 @@
+
+
+body {
+    background-color: #BCD2EE;
+}
+
+.container {
+	margin-right: auto;
+	margin-left: auto;
+	width: 1165px;
+	height: 650px;
+	background-color:#0198e1;
+}
+
+table {
+	float: right;
+}
+
+img {
+	float:left;
+	width: 100px;
+	height: 100px;
+  margin-right:10px;
+}
+
+li {
+	height: 100px;
+	width: 250px;
+	margin: 10px;
+	background-color: #00eeee;
+  overflow-x:hidden;
+  border:1px solid black;
+}
+
+ul {
+  width:100%;
+  height:100%;
+}
+
+.qlist {
+  margin:0px;
+  padding:0px;
+	width: 290px;
+	height: 100%;
+	overflow-y: scroll;
+	float:left;
+}
+
+.table {
+	width: 870px;
+	height: 100%;
+	overflow-y: scroll;
+	float: right;
+}
+
+.qelement {
+	width: 260px;
+	height: 100px;
+	margin: 10px;
+	float:left;
+	background-color: #00eeee;
+    overflow-x:hidden;
+    border:1px solid black;
+}
+
+.del, .add {
+    float:left;
+    margin:3px;
+}
+

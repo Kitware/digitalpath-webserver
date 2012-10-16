@@ -1,0 +1,53 @@
+
+
+body {
+    background-color: #BCD2EE;
+}
+
+.container {
+    width:1210px;
+    height:750px;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top: 0px;
+    background-color:#ffffff;
+}
+
+.viewer {
+    width:900px;
+    height:700px;
+    overflow:hidden;
+    float:left;
+    position:relative;
+}
+
+#form {
+    width:300px;
+    height:700px;
+    overflow-y:scroll;
+    float:right;
+    background-color:#0198e1;
+}
+
+.header {
+    height:48px;
+    width:100%;
+    background-color:#0198e1;
+    border: 1px solid black;
+}
+
+#zoombuttons {
+    z-index:10;
+    height:45px;
+    top: 640px;
+    left: 860px;
+    position:absolute;
+}
+
+#rotatebuttons {
+    z-index:10;
+    height:45px;
+    top: 645px;
+    left: 10px;
+    position:absolute;
+}

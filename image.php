@@ -214,7 +214,7 @@ if(isset($sessIdStr))
 					<div id="map"></div>
 				</div>
 			</div>
-			<div id="progress"></div>
+
 			<div id="navigation" data-role="controlgroup" data-type="vertical">
 				<a href="" data-role="button" data-icon="plus" id="plus" data-iconpos="notext"></a>
 				<a href="" data-role="button" data-icon="minus" id="minus" data-iconpos="notext"></a>

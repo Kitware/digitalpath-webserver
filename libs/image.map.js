@@ -9,13 +9,14 @@ from PHP:
 	sessionName
 */
 
+var tms;
+
 var map = (function() // Revealing Module Pattern
 	{
 	var pub = {};
 
 	// Private properties
 	var mapObject;
-	var tms;
 	var rotationDegree;
 
 	// Public registration methods
@@ -103,11 +104,6 @@ var map = (function() // Revealing Module Pattern
 			};
 		};
 
-	pub.getTmsLayer = function()
-		{
-		return tms;
-		}
-
 	// OpenLayers callback
 	pub.rotateEventCoords = (function() // this function self-executes once to provide the closure for a 'static' cache
 		{
@@ -190,11 +186,6 @@ var map = (function() // Revealing Module Pattern
 		var stri = rotationDegree + 'deg';
 		$('#map').animate({rotate: stri}, 0); // TODO: review this
 		mapObject.events.triggerEvent("moveend");
-		labelLayers = mapObject.getLayersByName("TextLabels");
-		for(var i = 0, len_i = labelLayers.length; i < len_i; i++)
-			{
-			labelLayers[i].redraw();
-			}
 		}
 
 	function get_my_url(bounds) // TODO: can this be done faster by bitshifting / divide by 2?
@@ -263,6 +254,8 @@ var map = (function() // Revealing Module Pattern
 		else
 			{
 			mapObject.zoomTo(0);
+      tms.clearGrid();
+      tms.redraw();
 			}
 		}
 
@@ -392,14 +385,12 @@ var map = (function() // Revealing Module Pattern
 				'isBaseLayer': true
 			}
 			); // END OpenLayers.Layer.TMS
-		tms.transitionEffect = 'resize'; // TODO: some other Tween too?
-
-		//TODO: move this to image_adjust.js?
-		tms.canvasAsync = false;
-		tms.useCanvas = OpenLayers.Layer.Grid.ONECANVASPERTILE;
-		tms.buffer = 0;
-		tms.canvasFilter = filter;
-
+		// tms.transitionEffect = 'resize'; // TODO: some other Tween too?
+		//
+    tms.canvasAsync = false;
+    tms.useCanvas = OpenLayers.Layer.Grid.ONECANVASPERTILE;
+    tms.buffer = 0;
+    tms.canvasFilter = filter;
 		//add the tiles to the map
 		map.addLayer(tms);
 
@@ -421,7 +412,9 @@ var map = (function() // Revealing Module Pattern
 
 		var zoom = mapObject.getZoom(); // TODO: move this to startup view
 		mapObject.zoomToMaxExtent();
+    // mapObject.zoomTo(0);
 
+    tms.redraw();
 		set_startup_view();
 		}; // END init
 

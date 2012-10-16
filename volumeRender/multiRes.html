@@ -1,0 +1,405 @@
+
+
+
+<html>
+<head>
+<title>Learning WebGL &mdash; lesson 8</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    varying vec3 vVertexPosition;
+
+    void main(void) {
+        gl_Position = vec4(aVertexPosition, 1.0);
+
+        // Fragment shader uses positions in place of texture coordinates.
+        vVertexPosition = aVertexPosition;
+    }
+</script>
+
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec3 vVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform float uAlpha;
+    uniform sampler2D uSampler0;
+    uniform sampler2D uSampler1;
+
+    void main(void) {
+        // First thing: transform the texture coordinates.
+        vec4 tc = uMVMatrix * vec4(vVertexPosition, 1.0);
+        float x = (tc.x + 1.0)*0.5;
+        float y = (tc.y + 1.0)*0.5;
+        float z = (tc.z + 1.0)*0.5;
+
+            
+        bool highRes = false;
+        // default color out of volume
+        vec4 textureColor = vec4(0.0, 0.0, 0.0, 0.0);
+        if (z > 0.25 && z < 0.75 && 
+            x > 0.25 && x < 0.75 && 
+            y > 0.25 && y < 0.75) {
+          highRes = true;
+          z = z*2.0 - 0.5;
+          x = x*2.0 - 0.5;
+          y = y*2.0 - 0.5;
+	}
+
+        if (z > 0.0 && z < 1.0 && 
+            x > 0.0 && x < 1.0 && 
+            y > 0.0 && y < 1.0) {
+          // 256 slices  in 16x16 packed giving 4096x4096
+          z = z * 256.0;
+          float row = floor(z/16.0);
+          z = z - (16.0*row);
+          float col = floor(z);
+          float tx = (col+x)/16.0;
+          float ty = (row+y)/16.0;
+          if (highRes) {
+            textureColor = texture2D(uSampler1, vec2(tx, ty));
+            textureColor.g = 0.0;
+          } else {
+            textureColor = texture2D(uSampler0, vec2(tx, ty));
+          }
+        }
+        float alpha = uAlpha * textureColor.r; 
+        // Crude transfer function.
+        if (alpha < 0.02) {
+          alpha = 0.0;
+        }
+        gl_FragColor = vec4(textureColor.rgb, alpha);
+    }
+</script>
+
+<script type="text/javascript">
+
+    var gl;
+
+    function initGL(canvas) {
+        try {
+            gl = canvas.getContext("experimental-webgl");
+            gl.viewportWidth = canvas.width;
+            gl.viewportHeight = canvas.height;
+        } catch (e) {
+        }
+        if (!gl) {
+            alert("Could not initialise WebGL, sorry :-");
+        }
+    }
+
+
+    function getShader(gl, id) {
+        var shaderScript = document.getElementById(id);
+        if (!shaderScript) {
+            return null;
+        }
+
+        var str = "";
+        var k = shaderScript.firstChild;
+        while (k) {
+            if (k.nodeType == 3) {
+                str += k.textContent;
+            }
+            k = k.nextSibling;
+        }
+
+        var shader;
+        if (shaderScript.type == "x-shader/x-fragment") {
+            shader = gl.createShader(gl.FRAGMENT_SHADER);
+        } else if (shaderScript.type == "x-shader/x-vertex") {
+            shader = gl.createShader(gl.VERTEX_SHADER);
+        } else {
+            return null;
+        }
+
+        gl.shaderSource(shader, str);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            alert(gl.getShaderInfoLog(shader));
+            return null;
+        }
+
+        return shader;
+    }
+
+
+    var shaderProgram;
+
+    function initShaders() {
+        var fragmentShader = getShader(gl, "shader-fs");
+        var vertexShader = getShader(gl, "shader-vs");
+
+        shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
+
+        if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+            alert("Could not initialise shaders");
+        }
+
+        gl.useProgram(shaderProgram);
+
+        shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+        gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+        shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+        shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+        shaderProgram.samplerUniform0 = gl.getUniformLocation(shaderProgram, "uSampler0");
+        shaderProgram.samplerUniform1 = gl.getUniformLocation(shaderProgram, "uSampler1");
+        shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
+    }
+
+
+ function handleLoadedTexture(texture) {
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    var sampleTexture0;
+    var sampleTexture1;
+    function initTexture() {
+        sampleTexture0 = gl.createTexture();
+        sampleTexture0.image = new Image();
+        sampleTexture0.image.onload = function () {
+            handleLoadedTexture(sampleTexture0)
+        }
+        sampleTexture0.image.src = "http://localhost:81/volumeRender/cortexHalf.jpg";
+
+        sampleTexture1 = gl.createTexture();
+        sampleTexture1.image = new Image();
+        sampleTexture1.image.onload = function () {
+            handleLoadedTexture(sampleTexture1)
+        }
+        sampleTexture1.image.src = "http://localhost:81/volumeRender/cortexMiddle.jpg";
+    }
+
+
+    var mvMatrix = mat4.create();
+    var pMatrix = mat4.create();
+
+
+    function setMatrixUniforms() {
+        gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+        gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    }
+
+
+    function degToRad(degrees) {
+        return degrees * Math.PI / 180;
+    }
+
+
+
+    var xRot = 0;
+    var xSpeed = 0;
+
+    var yRot = 0;
+    var ySpeed = 0;
+
+
+    var currentlyPressedKeys = {};
+
+    function handleKeyDown(event) {
+        currentlyPressedKeys[event.keyCode] = true;
+    }
+
+
+    function handleKeyUp(event) {
+        currentlyPressedKeys[event.keyCode] = false;
+    }
+
+
+    function handleKeys() {
+        if (currentlyPressedKeys[37]) {
+            // Left cursor key
+            ySpeed -= 1;
+            //yRot -= 1;
+        }
+        if (currentlyPressedKeys[39]) {
+            // Right cursor key
+            ySpeed += 1;
+            //yRot += 1;
+        }
+        if (currentlyPressedKeys[38]) {
+            // Up cursor key
+            xSpeed -= 1;
+            //xRot -= 1;
+        }
+        if (currentlyPressedKeys[40]) {
+            // Down cursor key
+            xSpeed += 1;
+            //xRot += 1;
+        }
+    }
+
+
+    var cubeVertexPositionBuffer;
+    var cubeVertexIndexBuffer;
+    function initBuffers() {
+
+        var vertices = [];
+        var cubeVertexIndices = [];
+        var numPlanes = 256;
+        for (n = 0; n < numPlanes; ++n) {
+            var z =  -2.0*n/(numPlanes-1) + 1.0;
+            vertices.push(-1.0);
+            vertices.push(-1.0);
+            vertices.push(z);
+            vertices.push( 1.0);
+            vertices.push(-1.0);
+            vertices.push(z);
+            vertices.push( 1.0);
+            vertices.push( 1.0);
+            vertices.push(z);
+            vertices.push(-1.0);
+            vertices.push( 1.0);
+            vertices.push(z);
+
+            cubeVertexIndices.push(0 + n*4);
+            cubeVertexIndices.push(1 + n*4);
+            cubeVertexIndices.push(2 + n*4);
+            cubeVertexIndices.push(0 + n*4);
+            cubeVertexIndices.push(2 + n*4);
+            cubeVertexIndices.push(3 + n*4);    
+        }
+
+        cubeVertexPositionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        cubeVertexPositionBuffer.itemSize = 3;
+        cubeVertexPositionBuffer.numItems = vertices.length / 3;
+
+        cubeVertexIndexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), 
+                      gl.STATIC_DRAW);
+        cubeVertexIndexBuffer.itemSize = 1;
+        cubeVertexIndexBuffer.numItems = cubeVertexIndices.length;
+    }
+
+
+    function drawScene() {
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        //mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
+        // Lets try parallel projection.
+        mat4.identity(pMatrix);
+
+        mat4.identity(mvMatrix);
+
+	// No need for a z shift with the identity parallel projectioncamera.
+        //mat4.translate(mvMatrix, [0.0, 0.0, z]);
+
+        mat4.rotate(mvMatrix, degToRad(xRot), [1, 0, 0]);
+        mat4.rotate(mvMatrix, degToRad(yRot), [0, 1, 0]);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, sampleTexture0);
+        gl.uniform1i(shaderProgram.samplerUniform0, 0);
+
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, sampleTexture1);
+        gl.uniform1i(shaderProgram.samplerUniform1, 1);
+
+        var blending = document.getElementById("blending").checked;
+        if (blending) {
+            gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+            //gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+            gl.enable(gl.BLEND);
+            gl.disable(gl.DEPTH_TEST);
+            gl.uniform1f(shaderProgram.alphaUniform, parseFloat(document.getElementById("alpha").value));
+        } else {
+            gl.disable(gl.BLEND);
+            gl.enable(gl.DEPTH_TEST);
+        }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+        setMatrixUniforms();
+        gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);
+    }
+
+
+    var lastTime = 0;
+
+    function animate() {
+        var timeNow = new Date().getTime();
+        if (lastTime != 0) {
+            var elapsed = timeNow - lastTime;
+
+            xRot += (xSpeed * elapsed) / 1000.0;
+            yRot += (ySpeed * elapsed) / 1000.0;
+        }
+        lastTime = timeNow;
+    }
+
+
+    function tick() {
+        requestAnimFrame(tick);
+        handleKeys();
+        drawScene();
+        animate();
+    }
+
+
+
+    function webGLStart() {
+        var canvas = document.getElementById("lesson08-canvas");
+        initGL(canvas);
+        initShaders();
+        initBuffers();
+        initTexture();
+
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.enable(gl.DEPTH_TEST);
+
+        document.onkeydown = handleKeyDown;
+        document.onkeyup = handleKeyUp;
+
+        tick();
+    }
+
+</script>
+
+
+</head>
+
+
+<body onload="webGLStart();">
+    <a href="http://learningwebgl.com/blog/?p=859">&lt;&lt; Back to Lesson 8</a><br />
+    <canvas id="lesson08-canvas" style="border: none;" width="800" height="800"></canvas>
+
+    <br />
+    <input type="checkbox" id="blending" checked /> Use blending<br/>
+    Alpha level <input type="text" id="alpha" value="0.5" /><br/>
+
+    (Use cursor keys to spin the box and <code>Page Up</code>/<code>Page Down</code> to zoom out/in)
+
+    <br/>
+
+</body>
+
+</html>

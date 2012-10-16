@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html> 
+ 
+<head> 
+
+
+<title>Connectome Viewer</title> 
+
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"> 
+
+<link type="text/css" href="js/css/ui-lightness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="js/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="js/js/jquery-ui-1.8.22.custom.min.js"></script>
+<script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript" src="webgl-utils.js"></script>
+<script type="text/javascript" src="init.js"></script>
+<script type="text/javascript" src="camera.js"></script>
+<script type="text/javascript" src="tile.js"></script>
+<script type="text/javascript" src="cache.js"></script>
+<script type="text/javascript" src="section.js"></script>
+<script type="text/javascript" src="view.js"></script>
+<script type="text/javascript" src="viewer.js"></script>
+<script type="text/javascript" src="eventManager.js"></script>
+<script type="text/javascript" src="shape.js"></script>
+<script type="text/javascript" src="arrow.js"></script>
+<script type="text/javascript" src="circle.js"></script>
+<script type="text/javascript" src="text.js"></script>
+<script type="text/javascript" src="circleWidget.js"></script>
+<script type="text/javascript" src="textWidget.js"></script>
+
+
+<script type="text/javascript">
+  var TILES = <?php 
+		 $m = new Mongo();
+		 $d = $m->selectDb("JoshTrial");
+                 $c = $d->selectCollection("stitch");
+                 $tiles = $c->find(array('section'=>1));
+		 echo json_encode($tiles);?>;
+</script>
+
+<script type="text/javascript">
+  // These globals are used in the viewer javascript.  I need to get rid of them.	
+  var origin = [9663763, 7643791.5, 0];
+  var spacing = [226.17269405242, 227.53127170139, 0];
+</script>
+
+<script id="shader-poly-fs" type="x-shader/x-fragment">
+  precision mediump float;
+  uniform vec3 uColor;
+  void main(void) {
+   gl_FragColor = vec4(uColor, 1.0);
+   //gl_FragColor = vec4(0.5, 0.0, 0.0, 1.0);
+  }
+</script>
+<script id="shader-poly-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+  }
+</script>
+<script id="shader-tile-fs" type="x-shader/x-fragment"> 
+  #ifdef GL_ES
+  precision highp float;
+  #endif
+
+  uniform sampler2D uSampler;
+  varying vec2 vTextureCoord;
+ 
+  void main(void) {
+    gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+  }
+</script>  
+<script id="shader-tile-vs" type="x-shader/x-vertex"> 
+  attribute vec3 aVertexPosition;
+  attribute vec2 aTextureCoord;
+
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+  uniform mat3 uNMatrix;
+  varying vec2 vTextureCoord;
+
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    vTextureCoord = aTextureCoord;
+  }
+</script> 
+<script id="shader-text-fs" type="x-shader/x-fragment">
+  precision mediump float;
+
+  varying vec2 vTextureCoord;
+  uniform sampler2D uSampler;
+  uniform vec3 uColor;
+
+  void main(void) {
+    vec4 textureColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+    // Use the image pixel value as transparency.
+    gl_FragColor = vec4(uColor, textureColor.rgb[0]);
+  }
+</script>
+<script id="shader-text-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+  attribute vec2 aTextureCoord;
+
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+
+  varying vec2 vTextureCoord;
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    vTextureCoord = aTextureCoord;
+  }
+</script>
+<script type="text/javascript"> 
+ 
+
+  var CANVAS;
+  var EVENT_MANAGER;
+  var VIEWER1;
+  var SECTIONS = [];
+
+  function initViews() {
+    VIEWER1 = new Viewer([0,0, CANVAS.width,CANVAS.height]);
+    VIEWER1.SetOverviewBounds(0,15000,-9000,6000);
+    var section = [];    
+
+    section = new Section();
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r1_c2&name=", 6);
+    source.SetOrigin(4431.401, 361.39966);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r1_c3&name=", 6);
+    source.SetOrigin(8934.96, 334.21558);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r2_c1&name=", 6);
+    source.SetOrigin(-4.8398438, -3994.1877);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r2_c2&name=", 6);
+    source.SetOrigin(4738.456, -4168.274);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r2_c3&name=", 6);
+    source.SetOrigin(8889.465, -4401.6562);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r3_c1&name=", 6);
+    source.SetOrigin(260.9054, -8497.892);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r3_c2&name=", 6);
+    source.SetOrigin(4514.011, -8719.1045);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s1_r3_c3&name=", 6);
+    source.SetOrigin(9339.35, -8677.718);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    section.Matrix = matrix;
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r1_c2&name=", 6);
+    source.SetOrigin(4702.973, -146.14258);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r1_c3&name=", 6);
+    source.SetOrigin(8969.242, -247.19629);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r2_c1&name=", 6);
+    source.SetOrigin(454.4292, -4492.7695);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r2_c2&name=", 6);
+    source.SetOrigin(4578.904, -4550.2617);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r2_c3&name=", 6);
+    source.SetOrigin(9113.874, -4662.1704);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r3_c1&name=", 6);
+    source.SetOrigin(355.58887, -9283.428);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r3_c2&name=", 6);
+    source.SetOrigin(4838.5776, -8946.338);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s2_r3_c3&name=", 6);
+    source.SetOrigin(9164.755, -8875.885);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -295;
+    matrix[13] = 660;
+    mat4.rotateZ(matrix,0.01,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------    
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r1_c2&name=", 6);
+    source.SetOrigin(4683.7856, 378.15552);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r1_c3&name=", 6);
+    source.SetOrigin(9023.907, 302.62207);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r2_c1&name=", 6);
+    source.SetOrigin(358.40637, -4333.874);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r2_c2&name=", 6);
+    source.SetOrigin(4487.7466, -4144.28);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r2_c3&name=", 6);
+    source.SetOrigin(8850.037, -3924.163);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r3_c1&name=", 6);
+    source.SetOrigin(-90.04944, -8530.567);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r3_c2&name=", 6);
+    source.SetOrigin(4513.6772, -8632.553);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s3_r3_c3&name=", 6);
+    source.SetOrigin(8936.207, -8324.954);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 305;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c2&name=", 6);
+    source.SetOrigin(4336.507, 215.33325);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r1_c3&name=", 6);
+    source.SetOrigin(8677.457, 222.97803);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c1&name=", 6);
+    source.SetOrigin(26.28247, -4047.015);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c2&name=", 6);
+    source.SetOrigin(4521.2744, -4113.331);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r2_c3&name=", 6);
+    source.SetOrigin(8554.552, -4011.033);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c1&name=", 6);
+    source.SetOrigin(-13.479004, -8648.383);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c2&name=", 6);
+    source.SetOrigin(4243.071, -8351.858);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s4_r3_c3&name=", 6);
+    source.SetOrigin(8921.587, -8290.347);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = 390;
+    matrix[13] = 320;
+    mat4.rotateZ(matrix,0.011,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c2&name=", 6);
+    source.SetOrigin(4283.0386, 162.92017);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r1_c3&name=", 6);
+    source.SetOrigin(8367.365, 141.67773);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c1&name=", 6);
+    source.SetOrigin(26.94934, -4035.266);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c2&name=", 6);
+    source.SetOrigin(4296.0117, -4415.6855);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r2_c3&name=", 6);
+    source.SetOrigin(8697.9375, -4310.1504);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c1&name=", 6);
+    source.SetOrigin(-79.35803, -8743.922);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c2&name=", 6);
+    source.SetOrigin(4480.986, -8476.756);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s5_r3_c3&name=", 6);
+    source.SetOrigin(9092.306, -8774.861);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = 110.0;
+    matrix[13] = 390;
+    mat4.rotateZ(matrix,0.009,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c2&name=", 6);
+    source.SetOrigin(4407.7915, 228.95068);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r1_c3&name=", 6);
+    source.SetOrigin(9048.326, 8.503418);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c1&name=", 6);
+    source.SetOrigin(86.749756, -4529.2275);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c2&name=", 6);
+    source.SetOrigin(4771.2773, -4284.7075);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r2_c3&name=", 6);
+    source.SetOrigin(8901.906, -4377.7275);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c1&name=", 6);
+    source.SetOrigin(-26.57605, -8953.06);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c2&name=", 6);
+    source.SetOrigin(4560.1855, -9130.335);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s6_r3_c3&name=", 6);
+    source.SetOrigin(9242.791, -8658.926);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = 251;
+    matrix[13] = 320;
+    mat4.rotateZ(matrix,0.016,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c2&name=", 6);
+    source.SetOrigin(4300.6377, 285.3811);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r1_c3&name=", 6);
+    source.SetOrigin(8665.195, -39.375);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c1&name=", 6);
+    source.SetOrigin(-37.174805, -4225.1045);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c2&name=", 6);
+    source.SetOrigin(4509.5776, -4500.176);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r2_c3&name=", 6);
+    source.SetOrigin(8800.367, -4373.3174);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c1&name=", 6);
+    source.SetOrigin(-198.16296, -9014.128);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c2&name=", 6);
+    source.SetOrigin(4503.083, -8993.116);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s7_r3_c3&name=", 6);
+    source.SetOrigin(9242.039, -8798.474);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 300;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c2&name=", 6);
+    source.SetOrigin(4423.306, 170.95825);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r1_c3&name=", 6);
+    source.SetOrigin(8679.212, 198.55688);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c1&name=", 6);
+    source.SetOrigin(-95.03198, -4339.5195);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c2&name=", 6);
+    source.SetOrigin(4420.8164, -4431.4785);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r2_c3&name=", 6);
+    source.SetOrigin(8867.557, -4154.8193);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c1&name=", 6);
+    source.SetOrigin(-341.89478, -8960.761);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c2&name=", 6);
+    source.SetOrigin(4593.4956, -8622.292);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s8_r3_c3&name=", 6);
+    source.SetOrigin(9174.957, -8870.847);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 300;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------
+    section = new Section();    
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c1&name=", 6);
+    source.SetOrigin(0,0);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c2&name=", 6);
+    source.SetOrigin(4501.11, 161.96777);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r1_c3&name=", 6);
+    source.SetOrigin(8871.324, 351.82764);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c1&name=", 6);
+    source.SetOrigin(-141.46729, -4331.576);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c2&name=", 6);
+    source.SetOrigin(4749.733, -4371.4917);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r2_c3&name=", 6);
+    source.SetOrigin(8895.061, -4381.9473);
+    section.Caches.push(source);
+    //
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c1&name=", 6);
+    source.SetOrigin(45.150024, -9000.6455);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c2&name=", 6);
+    source.SetOrigin(4370.341, -8871.8955);
+    section.Caches.push(source);
+    source = new Cache("http://localhost:81/quiz/tile.php?db=JoshTrial&image=image_s9_r3_c3&name=", 6);
+    source.SetOrigin(9273.075, -8868.455);
+    section.Caches.push(source);
+    //
+    var matrix = mat4.create();
+    mat4.identity(matrix);
+    matrix[12] = -350;
+    matrix[13] = 300;
+    mat4.rotateZ(matrix,0.005,matrix);
+    section.Matrix = matrix;    
+    SECTIONS.push(section);
+    //-----------------------------------------------    
+
+    
+    VIEWER1.SetSection(SECTIONS[0]);
+
+
+    EVENT_MANAGER = new EventManager(CANVAS);
+    EVENT_MANAGER.AddViewer(VIEWER1); 
+  }
+
+  function draw() {
+    GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
+    // This just changes the camera based on the current time.
+    VIEWER1.Animate();
+    VIEWER1.Draw();	
+  }
+
+  function handleMouseDown(event) {EVENT_MANAGER.HandleMouseDown(event);}
+  function handleMouseUp(event) {EVENT_MANAGER.HandleMouseUp(event);}
+  function handleMouseMove(event) {EVENT_MANAGER.HandleMouseMove(event);}
+  function handleKeyDown(event) {EVENT_MANAGER.HandleKeyDown(event);}
+  function handleKeyUp(event) {EVENT_MANAGER.HandleKeyUp(event);}
+
+  function webGLStart() {
+    CANVAS = document.getElementById("viewer-canvas");
+    initGL(CANVAS);
+    initImageTileBuffers();
+    initViews();
+    initShaderPrograms();
+    initOutlineBuffers();
+
+    GL.clearColor(0.9, 0.9, 0.9, 1.0);
+    GL.enable(GL.DEPTH_TEST);
+
+    CANVAS.onmousedown = handleMouseDown;
+    document.onmouseup = handleMouseUp;
+    document.onmousemove = handleMouseMove;
+
+    document.onkeydown = handleKeyDown;
+    document.onkeyup = handleKeyUp;
+
+    eventuallyRender();
+  }
+
+ 
+  function zoomIn() {
+    VIEWER1.AnimateZoom(0.5);
+  }
+  
+  function zoomOut() {
+    VIEWER1.AnimateZoom(2.0);
+  }
+  
+  function rotateRight() {
+    VIEWER1.AnimateRoll(-12.0); // degrees
+  }
+  
+  function rotateLeft() {
+    VIEWER1.AnimateRoll(12.0); // degrees
+  }
+
+  
+  function newCircle() {
+    var widget = new CircleWidget(VIEWER1, true);
+  }
+  
+  function newText() {
+    var widget = new TextWidget(VIEWER1, "Some Text");
+    widget.SetAnchorShapeVisibility(true);
+    widget.SetPosition(6000,6000);
+    widget.SetTextOffset(30,100);
+  }
+
+  
+  
+</script> 
+ 
+</head> 
+ 
+ 
+<body onload="webGLStart();">
+  <canvas id="viewer-canvas" style="border: none;" width="1000" height="500"></canvas>
+  </br>
+  <table border="1" id="rotatebuttons" >
+    <tr>
+      <td type="button" onclick="zoomIn();" style="width:20px;height:20px;background-color:white;text-align:center;" >+</td>
+      <td type="button" onclick="zoomOut();" style="width:20px;height:20px;background-color:white;text-align:center;" >-</td>
+      <td type="button" onclick="rotateRight();" style="width:20px;height:20px;background-color:white;text-align:center;" >R</td>
+      <td type="button" onclick="rotateLeft();" style="width:20px;height:20px;background-color:white;text-align:center;" >L</td>
+      <td type="button" onclick="newCircle();" style="width:20px;height:20px;background-color:white;text-align:center;" >O</td>
+      <td type="button" onclick="newText();" style="width:20px;height:20px;background-color:white;text-align:center;" >T</td>
+    </tr>
+  </table>
+ </body> 
+ 
+</html> 
