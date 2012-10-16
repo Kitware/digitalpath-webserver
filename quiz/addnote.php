@@ -16,11 +16,11 @@ $id = new MongoId();
 $c3->insert(array(
         'imageid'=>$imgid,
         'qid'=>$id,
-        'type'=>'question'
+        'type'=>'note'
         ));
 
 $c2->update(array('_id'=>new MongoId($lessonid)), array('$push'=>array('questions'=>$id)), true);
-        
+
 echo json_encode($id);
 
 ?>

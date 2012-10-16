@@ -3,40 +3,62 @@
 var LESSONID;
 
 function init(lessonId){
-    LESSONID = lessonId;
-    
-    $.ajax({url:"getquestions.php?lid="+LESSONID, success:function(qidList){
-        var obj = jQuery.parseJSON(qidList);
-        for (var i = 0; i < obj.length; ++i) {
-            var qid2 = obj[i].qid.$id;
-            var imageId = obj[i].imageid;
-            if(obj[i].title){
-                var liststring =
-                    '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
-                        '<a href="viewer.php?id='+qid2+'" >'+
-                            '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
-                        '</a>'+
-                        '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
-                        obj[i].title+
-                    '</li>';
-            } else {
-                var liststring =
-                    '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
-                        '<a href="viewer.php?id='+qid2+'" >'+
-                            '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
-                        '</a>'+
-                        '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
-                        qid2.substring(0, 10)+
-                    '</li>';
-            }
-            $('#sortable').append(liststring);
-            $('#del'+qid2).click(function(){
-                var qid3 = $(this).parent().attr('id');
-                $(this).parent().remove();
-                deleteQuestion(qid3);
-            });
+  LESSONID = lessonId;
+  
+  $.ajax({url:"getquestions.php?lid="+LESSONID, success:function(qidList){
+    var obj = jQuery.parseJSON(qidList);
+    for (var i = 0; i < obj.length; ++i) {
+      var qid2 = obj[i].qid.$id;
+      var imageId = obj[i].imageid;
+      if(obj[i].title){
+        if(obj[i].type == "question"){
+          var liststring =
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
+              '<a href="questionmaker.php?id='+qid2+'" >'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
+              '</a>'+
+              '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
+              'Q:' + obj[i].title +
+            '</li>';
+        } else {// note
+          var liststring =
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
+              '<a href="notemaker.php?id='+qid2+'" >'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
+              '</a>'+
+              '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
+              'N:' + obj[i].title+
+            '</li>';
         }
-    }});
+      } else {
+        if(obj[i].type == "question"){
+          var liststring =
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
+              '<a href="questionmaker.php?id='+qid2+'" >'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
+              '</a>'+
+              '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
+              'Q:' + obj[i]._id.$id.substring(0, 9)+
+            '</li>';
+        } else {
+          var liststring =
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
+              '<a href="notemaker.php?id='+qid2+'" >'+
+                '<img src="tile.php?db=demo&image='+imageId+'&name=t.jpg" />'+
+              '</a>'+
+              '<button id="del'+qid2+'" type="button" class="del" >X</button>'+
+              'N:' + obj[i]._id.$id.substring(0, 9)+
+            '</li>';
+        }
+      }
+      $('#sortable').append(liststring);
+      $('#del'+qid2).click(function(){
+        var qid3 = $(this).parent().attr('id');
+        $(this).parent().remove();
+        deleteQuestion(qid3);
+      });
+    }
+  }});
 }
 
 function saveLesson () {
@@ -58,7 +80,27 @@ function addquestion(imageid){
         var qid2 = jQuery.parseJSON(qid).$id;
         var liststring =
             '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
-                '<a href="viewer.php?id='+qid2+'" >'+
+                '<a href="questionmaker.php?id='+qid2+'" >'+
+                    '<img src="tile.php?db=demo&image='+imageid+'&name=t.jpg" />'+
+                '</a>'+
+                '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
+                qid2.substring(0, 10)+
+            '</li>';
+        $('#sortable').append(liststring);
+        $('#del'+qid2).click(function(){
+            deleteQuestion(qid2);
+        });
+        saveLesson();
+    }});
+}
+
+function addnote(imageid){
+    //qid is a new, unique question id
+    $.ajax({url:"addnote.php?image="+imageid+"&lid="+LESSONID, success:function(qid){
+        var qid2 = jQuery.parseJSON(qid).$id;
+        var liststring =
+            '<li class="ui-state-default" id="'+qid2+'" style="border:1px solid black;">'+
+                '<a href="notemaker.php?id='+qid2+'" >'+
                     '<img src="tile.php?db=demo&image='+imageid+'&name=t.jpg" />'+
                 '</a>'+
                 '<button id = "del'+qid2+'" type="button" class="del" >X</button>'+
